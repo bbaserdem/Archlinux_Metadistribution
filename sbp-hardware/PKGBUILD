@@ -1,0 +1,29 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-hardware
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Common hardware stuff"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    #---System info
+    depends=(
+        'dmidecode'
+        'hdparm'
+        'lshw'
+        'stress'
+        'powertop'
+    #---Power management
+    depends=(
+        'i2c-tools'
+        'lm_sensors'
+        'acpi'
+        'acpid'
+        'cpupower')
+    #---Input methods
+    depends+=(
+        'libinput')
+}

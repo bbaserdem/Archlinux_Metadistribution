@@ -1,0 +1,22 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-kernel
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Kernel related stuff & booting"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    #---Kernel
+    depends=(
+        'linux'
+        'linux-firmware'
+        'linux-headers'
+        'amd-ucode'
+        'intel-ucode'
+        'mkinitcpio'
+        'dracut'
+        'powerline-console-fonts')
+}

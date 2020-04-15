@@ -1,0 +1,42 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-network
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Networking packages"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    #---System info
+    depends=(
+        'bind-tools'
+        'bluez' 'bluez-libs' 'bluez-utils'
+        'bridge-utils' 'hostapd'
+        'cups' 'cups-pdf' 'cups-pk-helper'
+        'dhcpcd'
+        'firewalld'
+        'iptables'
+        'iwd'
+        'nftables'
+        'nmap'
+        'openbsd-netcat'
+        'openresolv'
+        'unbound')
+    #---Encrypted stuff
+    depends+=(
+        'gnupg'
+        'openssh'
+        'qrencode'
+        'tor')
+    #---Applications
+    depends+=(
+        'msmtp'
+        'neomutt'
+        's3cmd'
+        'syncthing'
+        'transmission-cli'
+        'w3m')
+
+}

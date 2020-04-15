@@ -1,0 +1,28 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-audio
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Audio/media files management"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=('audio.mpc-next')
+sha256sums=(SKIP)
+package() {
+    install -Dm 0755 audio.mpc-prev "${pkgdir}/usr/bin/mpc-prev"
+    #---Pulse, alsa, pipewire
+    depends=(
+        'alsa-utils' 'lib32-alsa-plugins'
+        'pulseaudio' 'lib32-libpulse' 'pulseaudio-alsa' 'pulseaudio-bluetooth'
+        'pulsemixer'
+        'pipewire' 'pipewire-pulse')
+    #---MPD and music utilities
+    depends+=(
+        'abcde'
+        'cdparanoia'
+        'mpc'
+        'mpd'
+        'ncmpcpp')
+}

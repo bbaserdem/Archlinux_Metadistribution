@@ -1,0 +1,50 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-admin
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Administration"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=(
+    'admin.reflect-service'
+    'admin.reflect-timer')
+sha256sums=(SKIP SKIP) 
+
+package() {
+    # Create reflector timers
+    install -dm 0755 "${pkgdir}/usr/lib/systemd"
+    install -dm 0755 "${pkgdir}/usr/lib/systemd/system"
+    install -Dm 0644 admin.reflect-service \
+        "${pkgdir}/usr/lib/systemd/system/reflector.service"
+    install -Dm 0644 admin.reflect-timer \
+        "${pkgdir}/usr/lib/systemd/system/reflector.timer"
+    #---Sys-admin
+    depends=(
+        'dbus'
+        'etckeeper'
+        'fcron'
+        'htop'
+        'logrotate'
+        'lsb-release'
+        'mlocate'
+        'neofetch'
+        'rasdaemon'
+        'supervisor'
+        'tzupdate')
+    #---Permissions
+    depends+=(
+        'pam'
+        'polkit'
+        'sudo')
+    #---Packaging
+    depends+=(
+        'aurutils'
+        'devtools'
+        'reflector'
+        'pacman-contrib' 'pacman-cleanup-hook'
+        'archlinux-appstream-data'
+        'archlinux-keyring')
+}
