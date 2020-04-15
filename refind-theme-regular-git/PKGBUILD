@@ -1,0 +1,42 @@
+# Maintainer: Jeremy Asuncion <jeremyasuncion808@gmail.com>
+  
+pkgname='refind-theme-regular-git'
+pkgver=r43.fad648f
+pkgrel=1
+pkgdesc="A simplistic clean and minimal theme for rEFInd"
+arch=('any')
+url="https://github.com/bobafetthotmail/refind-theme-regular"
+license=('AGPL3' 'custom:OFL' 'custom:Ubuntu Font License 1.0')
+depends=('refind-efi')
+provides=('refind-theme-regular')
+conflicts=('refind-theme-regular')
+makedepends=('git')
+source=('git+https://github.com/bobafetthotmail/refind-theme-regular' 'os_grub.png')
+md5sums=('SKIP' '892117fe965e2acd21ed06ccb2d15240')
+
+pkgver() {
+    cd "${pkgname%-git}"
+    printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+    # Specify path to the refind directory
+    _refind_home="$pkgdir/boot/efi/EFI/rEFInd"
+
+    # Fix theme info
+    _config="$srcdir/${pkgname%-git}/theme.conf"
+    sed -i 's|128|placeholder|g'                            "${_config}"
+    sed -i 's|384|128|g'                                    "${_config}"
+    sed -i 's|placeholder|384|g'                            "${_config}"
+    sed -i 's|48|placeholder|g'                             "${_config}"
+    sed -i 's|144|48|g'                                     "${_config}"
+    sed -i 's|placeholder|144|g'                            "${_config}"
+    sed -i 's|\(fonts/[a-z,A-Z,-]*\)[0-9]*\.png|\118.png|g' "${_config}"
+    sed -i 's|bg\.png|bg_dark.png|g' "${_config}"
+
+    # Install to directory
+    install -D "$srcdir/${pkgname%-git}/theme.conf" "$_refind_home/${pkgname%-git}/theme.conf"
+    install -Dm 755 os_grub.png "$_refind_home/${pkgname%-git}/icons/384-144/os_grub.png"
+    cp -r "$srcdir/${pkgname%-git}/fonts" "$_refind_home/${pkgname%-git}"
+    cp -r "$srcdir/${pkgname%-git}/icons" "$_refind_home/${pkgname%-git}"
+}

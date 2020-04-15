@@ -1,0 +1,15 @@
+# Managed by sbp
+
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system>         <dir>       <type>  <options>                                                                                                   <dump>  <pass>
+/dev/mapper/Linux-Arch  /           btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvolid=256,subvol=/@root,subvol=@root                  0       0
+/dev/mapper/Linux-Arch  /.snapshots btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvolid=258,subvol=/@snapshots,subvol=@snapshots        0       0
+/dev/mapper/Data-Home	/home     	xfs     rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota                                                    0       2
+/dev/mapper/Linux-Opt   /opt        ext4    defaults                                                                                                    0       0
+UUID=585A-EF43          /boot/efi   vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
+/swapfile/swap          none        swap    defaults                                                                                                    0       0
+
+# Entry to auto-mount hopper at /home
+batu@hopper.cshl.edu:/home/batu /home/hopper    fuse.sshfs  x-systemd.automount,_netdev,user,idmap=user,follow_symlinks,identityfile=/home/sbp/.ssh/id_rsa_HOPPER,allow_other,default_permissions,uid=1000,gid=1000 0 0

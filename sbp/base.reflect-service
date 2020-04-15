@@ -1,0 +1,11 @@
+# Managed by sbp
+[Unit]
+Description=Pacman mirrorlist update
+Documentation=https://wiki.archlinux.org/index.php/Reflector
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/conf.d/reflector
+ExecStart=/usr/bin/reflector --age "$AGE" --country "${COUNTRY}" --latest "$LATEST" --number "$NUMBER" --sort "$SORT" --save /etc/pacman.d/mirrorlist "$PROTOCOL1" "$PROTOCOL2" "$PROTOCOL3"

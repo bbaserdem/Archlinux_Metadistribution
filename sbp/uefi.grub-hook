@@ -1,0 +1,12 @@
+# Maintained by sbp
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = grub
+
+[Action]
+Description = Reinstalling, updating and signing grub
+When = PostTransaction
+Exec = /usr/share/grub/update-grub.sh
+Depends = sbp-sys-uefi

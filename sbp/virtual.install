@@ -1,0 +1,16 @@
+# Maintained by sbp
+
+post_install() {
+    # Add user to kvm
+    echo '[sbp-sys-virtual]==> Adding user to kvm group'
+    if [ "$(getent passwd | grep -c '^sbp')" == "0" ] ; then
+        gpasswd --add sbp kvm
+        gpasswd --add sbp libvirt
+    else
+        echo '[sbp-sys-virtual]==> User sbp is missing!'
+    fi
+    # Services
+    echo '[sbp-sys-virtual]==> Enabling required services'
+    /usr/bin/systemctl enable libvirtd.service
+    /usr/bin/systemctl enable virtlogd.service
+}

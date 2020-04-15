@@ -1,0 +1,5 @@
+# Managed by sbp
+
+post_install() {
+    echo "[sbp-sys-uefi]=> Make sure to generate secure boot keys in /etc/sbkeys directory."
+}

@@ -1,0 +1,19 @@
+# Maintained by sbp
+post_install() {
+
+    echo '[sbp-cmp-notebook]==> Installing meta package . . .'
+
+    # Do hostname
+    echo '[sbp-cmp-notebook]==> Doing hosts . . .'
+    echo '127.0.0.1 localhost' >  /etc/hosts
+    echo '::1       localhost' >> /etc/hosts
+    echo '127.0.1.1 sbp-notebook.localdomain sbp-notebook' >> /etc/hosts
+
+    echo '[sbp-cmp-notebook]==> Installation done! Check log for errors.'
+    post_upgrade
+}
+
+post_upgrade() {
+    echo '[sbp-cmp-notebook]==> Upgrading . . .'
+    echo '[sbp-cmp-notebook]==> Nothing to do'
+}

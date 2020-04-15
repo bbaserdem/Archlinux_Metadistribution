@@ -1,0 +1,22 @@
+# Maintained by sbp
+post_install() {
+
+    echo '[sbp-cmp-workstation]==> Installing meta package . . .'
+
+    # Do hostname
+    echo '[sbp-cmp-workstation]==> Doing hosts . . .'
+    echo '127.0.0.1 localhost' >  /etc/hosts
+    echo '::1       localhost' >> /etc/hosts
+    echo '127.0.1.1 sbp-workstation.localdomain sbp-workstation' >> /etc/hosts
+
+    echo '[sbp-cmp-workstation]==> Enabling UPS power daemon . . .'
+    /usr/bin/systemctl enable pwrstatd.service
+
+    echo '[sbp-cmp-workstation]==> Installation done! Check log for errors.'
+    post_upgrade
+}
+
+post_upgrade() {
+    echo '[sbp-cmp-workstation]==> Upgrading . . .'
+    echo '[sbp-cmp-workstation]==> Nothing to do.'
+}

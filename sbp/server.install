@@ -1,0 +1,19 @@
+# Maintained by sbp
+post_install() {
+
+    echo '[sbp-cmp-server]==> Installing meta package . . .'
+
+    # Do hostname
+    echo '[sbp-cmp-server]==> Doing hosts . . .'
+    echo '127.0.0.1 localhost' >  /etc/hosts
+    echo '::1       localhost' >> /etc/hosts
+    echo '127.0.1.1 sbp-server.localdomain sbp-server' >> /etc/hosts
+
+    echo '[sbp-cmp-server]==> Installation done! Check log for errors.'
+    post_upgrade
+}
+
+post_upgrade() {
+    echo '[sbp-cmp-server]==> Upgrading . . .'
+    echo '[sbp-cmp-server]==> Nothing to do.'
+}

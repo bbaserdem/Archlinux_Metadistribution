@@ -1,0 +1,46 @@
+# Maintained by sbp
+
+post_install() {
+    # Create main user
+    echo '[sbp-sys-base]==> Creating user sbp'
+    if [ "$(getent passwd | grep -c '^sbp')" == "0" ] ; then
+        /bin/useradd --create-home --groups \
+            sys,ftp,log,http,games,lock,rfkill,users,video,uucp,lp,input,wheel \
+            --shell /usr/bin/zsh sbp
+    else
+        echo '[sbp-sys-base]==> User sbp exists!'
+    fi
+
+    # Timezone
+    echo '[sbp-sys-base]==> Setting local time'
+    /usr/bin/timedatectl set-ntp true
+    /usr/bin/hwclock --systohc
+
+    # Services
+    echo '[sbp-sys-base]==> Enabling base level services'
+    /usr/bin/systemctl enable org.cups.cupsd.service
+    /usr/bin/systemctl enable acpid.service
+    /usr/bin/systemctl enable bluetooth.service
+    /usr/bin/systemctl enable cpupower.service
+    /usr/bin/systemctl enable dhcpcd.service
+    /usr/bin/systemctl enable fcron.service
+    /usr/bin/systemctl enable firewalld.service
+    /usr/bin/systemctl enable iwd.service
+    /usr/bin/systemctl enable nftables.service
+    /usr/bin/systemctl enable rasdaemon.service
+    /usr/bin/systemctl enable ras-mc-ctl.service
+    /usr/bin/systemctl enable unbound.service
+    /usr/bin/systemctl enable fstrim.timer
+    /usr/bin/systemctl enable snapper-cleanup.timer
+    /usr/bin/systemctl enable snapper-timeline.timer
+}
+
+post_upgrade() {
+    # Resolvconf
+    echo '[sbp-sys-base]==> Updating resolvconf'
+    /usr/bin/resolvconf -u
+
+    # Locale
+    echo '[sbp-sys-base]==> Generating locale'
+    /usr/bin/locale-gen
+}

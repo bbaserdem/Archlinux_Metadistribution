@@ -1,0 +1,7 @@
+# Managed by sbp
+
+# Configuration for encrypted block devices.
+# See crypttab(5) for details.
+
+# <name>       <device>                                     <password>                      <options>
+crypthome      UUID=18559638-3f35-46e9-9600-7c259e2ab7e9    /root/workstation-home.keyfile  luks,timeout=180

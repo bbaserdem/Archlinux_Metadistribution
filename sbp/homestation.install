@@ -1,0 +1,29 @@
+# Maintained by sbp
+post_install() {
+
+    echo '[sbp-cmp-homestation]==> Installing meta package . . .'
+
+    # Do hostname
+    echo '[sbp-cmp-homestation]==> Doing hostname and hosts . . .'
+    echo '127.0.0.1 localhost' >  /etc/hosts
+    echo '::1       localhost' >> /etc/hosts
+    echo '127.0.1.1 sbp-homestation.localdomain sbp-homestation' >> /etc/hosts
+
+    # Enable fan control using NBFC
+    echo '[sbp-cmp-homestation]==> Enabling fans control using nbfc . . .'
+    /bin/systemctl enable nbfc
+    /bin/systemctl enable nbfc-sleep
+    if [ -f '/opt/nbfc/Configs/Asus ROG GL702ZC.xml' ] ; then
+        echo '[sbp-cmp-homestation]==> Fan profile; Asus ROG GL702ZC . . .'
+        rm /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll
+        nbfc config --apply 'Asus ROG GL702ZC'
+    fi
+
+    echo '[sbp-cmp-homestation]==> Installation done! Check log for errors.'
+    post_upgrade
+}
+
+post_upgrade() {
+    echo '[sbp-cmp-homestation]==> Upgrading . . .'
+    echo '[sbp-cmp-homestation]==> Nothing to do.'
+}

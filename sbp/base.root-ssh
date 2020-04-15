@@ -1,0 +1,5 @@
+# Managed by sbp
+Host github.com
+    User bbaserdem
+    IdentitiesOnly yes
+    IdentityFile /home/sbp/.ssh/id_ed25519_GITHUB

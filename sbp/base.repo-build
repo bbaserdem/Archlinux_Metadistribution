@@ -1,0 +1,72 @@
+#!/bin/bash
+# Maintained by sbp
+# Wraps aursync command to build & upload custom PKGBUILD's
+set -uo pipefail
+trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
+
+# Locations
+_name="${SBP_REPO_NAME:-sbp}"
+_dest="${SBP_REPO_URL:-s3://sbp-arch/repo}"
+_source="${SBP_REPO_SOURCE:-/etc/archlinux}"
+
+# Directories
+_local="${HOME}/.cache/${_name}-repo"
+_build="${HOME}/.cache/${_name}-build"
+_chroot="${HOME}/.cache/${_name}-chroot"
+
+# Config
+_conf="${XDG_CONFIG_HOME}/pacman/makepkg.conf"
+[ -e "${_conf}" ] || _conf="/etc/makepkg.conf"
+
+# Create directories if they dont exist and clean
+mkdir -p "${_local}" & rm -rf "${_local}/"*
+mkdir -p "${_build}" & rm -rf "${_build}/"*
+
+# Create the chroot if not present
+mkdir -p "${_chroot}"
+if [ ! -e "${_chroot}/root" ] ; then
+    mkarchroot -C /etc/pacman.conf -M "${_conf}" "$_chroot/root" base base-devel
+fi
+
+# Sync remote DB to local
+_database="$(s3cmd ls "${_dest}/${_name}" | awk '/.db./ && !/old$/ {print $4}')"
+_filelist="$(s3cmd ls "${_dest}/${_name}" | awk '/.files./ && !/old$/ {print $4}')"
+s3cmd sync "${_database}" "${_local}/"
+s3cmd sync "${_filelist}" "${_local}/"
+ln -sf "${_local}/$(basename "${_database}")" "${_local}/$_name.db"
+ln -sf "${_local}/$(basename "${_filelist}")" "${_local}/$_name.files"
+
+# Do for all arguments
+for _arg in "${@}"; do
+    if [ -d "${_source}/${_arg}" ] ; then
+
+        # Copy package to build path
+        cp -rf "${_source}/${_arg}" "${_build}/"
+        _loc="${_build}/${_arg}"
+
+        # Build the package
+        cd "${_loc}"
+        makechrootpkg -cur "${_chroot}"
+        cd -
+
+        # For each individual file packaged
+        for _file in $(find "${_loc}/" -maxdepth 1 -name "*.pkg.tar*") ; do
+            # Add built packages to repo
+            repo-add "${_local}/$(basename "${_database}")" "${_file}" || continue
+            # Remove old versions from s3
+            _pre="$(echo _file | sed 's|^\(a-z,A-Z,-]*\)-[0-9]\(.*\)|\1|g')"
+            s3cmd rm "${_dest}/${_pre}-*" || true
+            # Add to s3
+            s3cmd sync --acl-public $_file "${_dest}/"
+        done
+
+    else
+        echo "Package directory not found; ${_source}/${_arg}, skipping..."
+    fi
+done
+
+# Sync local database to remote
+s3cmd sync --follow-symlinks --acl-public \
+    "${_local}/${_name}.db"* \
+    "${_local}/${_name}.files"* \
+    "${_dest}/"
