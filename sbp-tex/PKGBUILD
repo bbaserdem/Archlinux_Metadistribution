@@ -1,0 +1,21 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-latex
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Latex suite"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    depends=(
+        'fontawesome.sty'
+        'latex-mk'
+        'texlive-fontsextra'
+        'texlive-latexextra'
+        'texlive-pictures'
+        'texlive-pstricks'
+        'texlive-core'
+        'texlive-science')
+}

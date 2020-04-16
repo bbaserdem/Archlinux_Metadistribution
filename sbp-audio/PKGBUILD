@@ -22,7 +22,10 @@ package() {
     depends+=(
         'abcde'
         'cdparanoia'
+        'fluidsynth' 'lib32-fluidsynth'
         'mpc'
         'mpd'
-        'ncmpcpp')
+        'mpdscribble'
+        'ncmpcpp'
+        'soundfont-fluid')
 }

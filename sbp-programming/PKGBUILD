@@ -1,0 +1,26 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-programming
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Programming tools"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    #---Python
+    depends=(
+        'bpython'
+        'python-pip'
+        'python-pipenv')
+    #---Computational libraries
+    depends+=(
+        'lapack'
+        'openblas')
+    #---Matlab
+    depends+=(
+        'octave'
+        'matlab'
+        'jupyter-matlab_kernel')
+}

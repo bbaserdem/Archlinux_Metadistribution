@@ -17,6 +17,7 @@ package() {
         'cups' 'cups-pdf' 'cups-pk-helper'
         'dhcpcd'
         'firewalld'
+        'geoclue2'
         'iptables'
         'iwd'
         'nftables'
@@ -30,13 +31,18 @@ package() {
         'openssh'
         'qrencode'
         'tor')
-    #---Applications
+    #---Network Applications
     depends+=(
+        'aria2'
+        'isync'
         'msmtp'
         'neomutt'
+        'newsboat'
+        'notmuch'
         's3cmd'
         'syncthing'
         'transmission-cli'
-        'w3m')
-
+        'w3m'
+        'weechat'
+        'youtube-dl')
 }

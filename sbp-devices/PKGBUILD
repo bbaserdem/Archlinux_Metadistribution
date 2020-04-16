@@ -1,0 +1,22 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-devices
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Device management"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    #---Arduino
+    depends=(
+        'arm-none-eabi-gcc' 'arm-none-eabi-binutils' 'arm-none-eabi-newlib'
+        'avrdude' 'avr-binutils' 'avr-gcc' 'avr-libc' 
+        'dfu-util' 'dfu-programmer')
+    #---Android
+    depends+=(
+        'android-tools'
+        'android-udev'
+        'libmtp')
+}

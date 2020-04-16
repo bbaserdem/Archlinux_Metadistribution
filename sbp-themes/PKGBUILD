@@ -1,0 +1,43 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-themes
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Themeing"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    depends=('sbp-gui')
+    #---Fonts
+    depends+=(
+        'noto-fonts-emoji'              # Emoji fonts
+        'ttf-nerd-fonts-symbols'        # Nerd font glyphs
+        'otf-fira-code'                 # Ligature font
+        'termsyn-font'                  # Font for status-bars
+        'ttf-inconsolata'               # Monospace font
+        'ttf-iosevka'                   # Thin monospace font (with ligatures)
+        'ttf-droid'                     # Sans and serif fonts
+        'ttf-liberation'                # Compatibility with Windows fonts
+    )
+    #---Icons
+    depends+=(
+        'papirus-icon-theme'
+        'tela-icon-theme'
+        'xcursor-comix'
+        'breeze-hacked-cursor-theme')
+        
+    #---Login manager
+    depends+=('chili-sddm-theme')
+    #---GTK
+    depends+=(
+        'arc-gtk-theme'
+        'layan-gtk-theme')
+    #---QT
+    depends+=(
+        'kvantum-qt5'
+        'kvantum-theme-arc'
+        'kvantum-theme-layan')
+
+}

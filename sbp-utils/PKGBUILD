@@ -14,16 +14,22 @@ package() {
         'cmake' 'clang'
         'docker'
         'git'
+        'imagemagick'
         'jq'
+        'khal'
+        'khard'
         'pass'
         'tmux'
-        'vifm'
+        'todoman'
+        'trash-cli'
+        'vifm' 'perl-image-exiftool'
         'xdg-user-dirs'
         'xdg-utils')
     #---Neovim with needed environment for plugins
     depends+=(
         'ctags'
         'fzf'
+        'languagetool'
         'neovim'
         'neovim-remote'
         'proselint'

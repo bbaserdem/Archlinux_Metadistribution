@@ -1,7 +1,0 @@
-# Maintained by sbp
-
-post_install() {
-    # Services
-    echo '[sbp-gui-base]==> Enabling services'
-    /usr/bin/systemctl enable sddm.service
-    /usr/bin/systemctl enable trezord.service

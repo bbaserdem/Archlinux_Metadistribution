@@ -9,6 +9,7 @@ post_install() {
     else
         echo '[sbp-sys-virtual]==> User sbp is missing!'
     fi
+
     # Services
     echo '[sbp-sys-virtual]==> Enabling required services'
     /usr/bin/systemctl enable libvirtd.service
