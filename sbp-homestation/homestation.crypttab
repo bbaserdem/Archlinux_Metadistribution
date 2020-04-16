@@ -3,8 +3,5 @@
 # Configuration for encrypted block devices.
 # See crypttab(5) for details.
 
-# NOTE: Do not list your root (/) partition here, it must be set up
-#       beforehand by the initramfs (/etc/mkinitcpio.conf).
-
 # <name>            <device>                                    <password>                          <options>
 Homestation-Archive UUID=ea6d84fe-8a9c-484f-b7ef-a7f5c4d0755e   /root/homestation-archive.keyfile

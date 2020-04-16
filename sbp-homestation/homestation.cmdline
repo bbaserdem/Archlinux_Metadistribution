@@ -1,9 +1,9 @@
 rd.luks.name=da9c7226-d355-4dcd-a40a-32418f052f9b=cryptlvm
 rd.shell
 rd.debug
+rd.info
 log_buf_len=1M
 resume=/dev/Homestation/Arch
 resume_offset=10880182
 mem_encrypt=off
 i8042.reset
-rd.info

@@ -8,6 +8,9 @@ arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+optdepends=(
+    'matlab: For work related stuff'
+    'jupyter-matlab_kernel')
 package() {
     #---Python
     depends=(
@@ -18,9 +21,6 @@ package() {
     depends+=(
         'lapack'
         'openblas')
-    #---Matlab
-    depends+=(
-        'octave'
-        'matlab'
-        'jupyter-matlab_kernel')
+    #---Matlab-like stuff
+    depends+=('octave')
 }

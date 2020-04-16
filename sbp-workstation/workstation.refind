@@ -1,2 +1,0 @@
-# Managed by sbp
-"Boot with defaults" "cryptdevice=UUID=bee8e6f1-2687-49e4-b86d-0be90db5bb5d:cryptroot root=/dev/Linux/Arch resume=/dev/Linux/Swap rootflags=subvol=@root"

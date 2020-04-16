@@ -11,7 +11,7 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=('gui.install' 'gui.xinit-session')
 sha256sums=(SKIP SKIP)
 package() {
-    depends=('sbp-base' 'sbp-themes')
+    depends=('sbp-base')
     install=gui.install
     # Install xsession based on xinit
     install -dm 0755 "${pkgdir}/usr/share/xsessions"
@@ -58,4 +58,12 @@ package() {
     depends+=('sddm')
     #---Input methods
     depends+=('ibus' 'ibus-m17n')
+    #---Generic needs
+    depends+=(
+        'sbp-apps'          # General use applications
+        'sbp-programming'   # Applications to use for programming
+        'sbp-tex'           # Texlive distribution
+        'sbp-themes'        # Desktop themeing in general
+        'sbp-virtual'       # Virtualizing other OS's
+    )
 }

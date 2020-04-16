@@ -37,8 +37,10 @@ package() {
     install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
     install -Dm 0755 laptop.refind \
         "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
+    # Early initrd ucode
+    depends=('intel-ucode')
     # Graphics
-    depends=(
+    depends+=(
         'intel-media-driver'
         'mesa' 'mesa-demos' 'lib32-mesa' 'lib32-mesa-demos'
         'vulkan-intel' 'lib32-vulkan-intel')

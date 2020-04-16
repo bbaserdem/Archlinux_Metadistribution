@@ -9,10 +9,13 @@ url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
+    'admin.etckeeper'
     'admin.reflect-service'
-    'admin.reflect-timer')
+    'admin.reflect-timer'
+    'admin.repo-build'
+    'admin.repo-remove'
+    'admin.repo-sync')
 sha256sums=(SKIP SKIP) 
-
 package() {
     # Create reflector timers
     install -dm 0755 "${pkgdir}/usr/lib/systemd"
@@ -21,6 +24,14 @@ package() {
         "${pkgdir}/usr/lib/systemd/system/reflector.service"
     install -Dm 0644 admin.reflect-timer \
         "${pkgdir}/usr/lib/systemd/system/reflector.timer"
+    # Install aur management scripts
+    install -dm 0755 "${pkgdir}/usr/bin"
+    install -Dm 0755 admin.repo-remove  "${pkgdir}/usr/bin/archrepo-remove"
+    install -Dm 0755 admin.repo-sync    "${pkgdir}/usr/bin/archrepo-sync"
+    install -Dm 0755 admin.repo-build   "${pkgdir}/usr/bin/archrepo-build"
+    # Put etckeeper override to select pacman
+    install -dm 0755 "${pkgdir}/etc/etckeeper"
+    install -Dm 0755 base.etckeeper "${pkgdir}/etc/etckeeper/local.conf"
     #---Sys-admin
     depends=(
         'dbus'

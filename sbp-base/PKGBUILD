@@ -8,18 +8,8 @@ arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=(
-    'base.etckeeper'
-    'base.install'
-    'base.reflect-service'
-    'base.reflect-timer'
-    'base.repo-build'
-    'base.repo-remove'
-    'base.repo-sync'
-    'base.root-ssh' )
-
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
-
+source=('base.install' 'base.root-ssh' )
+sha256sums=(SKIP SKIP)
 package() {
     install=base.install
     provides=('vim')
@@ -32,25 +22,9 @@ package() {
     install -Dm 0755 base.repo-sync     "${pkgdir}/usr/bin/archrepo-sync"
     install -Dm 0755 base.repo-build    "${pkgdir}/usr/bin/archrepo-build"
     # Configure root account a bit
-    install -dm 0750 "${pkgdir}/root"
-    install -dm 0700 "${pkgdir}/root/.ssh"
-    install -Dm 0600 base.root-ssh      "${pkgdir}/root/.ssh/config"
-    # Override vim 
-    ln -sf /usr/bin/nvim "${pkgdir}/usr/bin/vim"
-    # Put override to etckeeper config (as a local file)
-    install -dm 0755 "${pkgdir}/etc"
-    install -dm 0755 "${pkgdir}/etc/etckeeper"
-    install -Dm 0755 base.etckeeper "${pkgdir}/etc/etckeeper/local.conf"
-
-    #---SBP modules
-    depends+=(
-        'sbp-admin'
-        'sbp-audio'
-        'sbp-fs'
-        'sbp-hardware'
-        'sbp-kernel'
-        'sbp-network'
-        'sbp-utils')
+    install -dm 0750 "${pkgdir}/root/.local/share"
+    install -dm 0700 "${pkgdir}/root/.local/share/ssh"
+    install -Dm 0600 base.root-ssh      "${pkgdir}/root/.local/share/ssh/config"
     #---Packages in gentoo base group
     depends+=('rsync' 'diffutils' 'wget' 'man-pages' 'device-mapper' 'less'
         'openssh' 'inetutils' 'busybox' 'kbd' )
@@ -59,4 +33,16 @@ package() {
         'groff' 'libtool' 'm4' 'make' 'patch' 'pkgconf' 'sudo' 'texinfo' 'which'
         'man-db' 'perl' 's-nail' 'texinfo' 'usbutils' 'flex' 'groff' 'libtool'
         'm4' 'pkgconf' )
+    #---SBP modules needed for base installation
+    depends+=(
+        'sbp-admin'         # Administration apps
+        'sbp-audio'         # For audio related stuff
+        'sbp-boot'          # Booting (uefi or bios)
+        'sbp-devices'       # General device communications
+        'sbp-fs'            # File-type utilities
+        'sbp-hardware'      # Generic hardware management
+        'sbp-kernel'        # Kernel and kernel related utilities
+        'sbp-network'       # Networking
+        'sbp-utils'         # (Console) only applications
+    )
 }

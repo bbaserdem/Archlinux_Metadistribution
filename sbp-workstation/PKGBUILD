@@ -14,9 +14,8 @@ source=(
     'workstation.hostname'
     'workstation.install'
     'workstation.mkinitcpio'
-    'workstation.refind'
     'workstation.sbupdate')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-homestation' 'sbp-laptop' 'sbp-server')
 package() {
@@ -32,12 +31,10 @@ package() {
     # Install command line booting arguments
     install -dm 0755 "${pkgdir}/etc/cmdline.d"
     install -Dm 0644 workstation.cmdline    "${pkgdir}/etc/cmdline.d/sbp.conf"
-    # Create boot options
-    install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
-    install -Dm 0755 workstation.refind \
-        "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
+    # Early initrd ucode
+    depends=('amd-ucode')
     # Graphics
-    depends=(
+    depends+=(
         'mesa' 'mesa-demos' 'lib32-mesa' 'lib32-mesa-demos'
         'mesa-vdpau' 'lib32-mesa-vdpau'
         'libva-mesa-driver' 'lib32-libva-mesa-driver'

@@ -37,6 +37,8 @@ package() {
     install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
     install -Dm 0755 homestation.refind \
         "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
+    # Early initrd ucode
+    depends=('amd-ucode')
     # Graphics
     depends=(
         'mesa' 'mesa-demos' 'lib32-mesa' 'lib32-mesa-demos'

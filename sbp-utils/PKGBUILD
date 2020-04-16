@@ -3,7 +3,7 @@
 pkgname=sbp-utils
 pkgver=4.0
 pkgrel=1
-pkgdesc="SBP Meta Package: Utilities"
+pkgdesc="SBP Meta Package: Client utilities"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
@@ -26,6 +26,8 @@ package() {
         'xdg-user-dirs'
         'xdg-utils')
     #---Neovim with needed environment for plugins
+    # Override vim 
+    ln -sf /usr/bin/nvim "${pkgdir}/usr/bin/vim"
     depends+=(
         'ctags'
         'fzf'
