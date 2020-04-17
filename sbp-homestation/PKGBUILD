@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-homestation
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Homestation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -64,4 +64,6 @@ package() {
     depends+=(
         'nbfc'  # Don't have better options for this laptop
         'tlp')
+    # Need this for managing windows
+    depends+=('mtools' 'ntfs-3g')
 }
