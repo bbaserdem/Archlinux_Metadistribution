@@ -31,6 +31,7 @@ package() {
     install -Dm 0644 homestation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
     install -Dm 0644 homestation.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
     install -Dm 0644 homestation.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
+    # Put in commandline kernel parameters
     install -dm 0755 "${pkgdir}/etc/cmdline.d"
     install -Dm 0644 homestation.cmdline    "${pkgdir}/etc/cmdline.d/sbp.conf"
     # Create boot options

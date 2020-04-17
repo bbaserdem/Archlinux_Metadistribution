@@ -2,25 +2,26 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-themes
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Themeing"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 package() {
-    depends=('sbp-gui')
     #---Fonts
-    depends+=(
+    depends=(
         'noto-fonts-emoji'              # Emoji fonts
-        'ttf-nerd-fonts-symbols'        # Nerd font glyphs
-        'otf-fira-code'                 # Ligature font
-        'termsyn-font'                  # Font for status-bars
-        'ttf-inconsolata'               # Monospace font
-        'ttf-iosevka'                   # Thin monospace font (with ligatures)
-        'ttf-droid'                     # Sans and serif fonts
-        'ttf-liberation'                # Compatibility with Windows fonts
-    )
+        'ttf-nerd-fonts-symbols-mono'   # Glyphs
+        'ttf-inconsolata'               # Font for status bar
+        'ttf-liberation'                # Windows compatibility font
+        'ttf-caladea'                   # Office fonts alternative
+        'ttf-carlito'                   # Georgia alternative
+        'ttf-croscore'                  # Helvetica, Times and courier alternative
+        'otf-fira-code'                 # Ligature font (monospace)
+        'ttf-droid'                     # Font for sans (sans-serif)
+        'adobe-source-serif-pro-fonts'  # Font for serif (serif)
+        )
     #---Icons
     depends+=(
         'papirus-icon-theme'

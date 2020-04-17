@@ -15,12 +15,6 @@ package() {
     provides=('vim')
     conflicts=('vim')
     depends=('base')
-    # Install user scripts
-    install -dm 0755 "${pkgdir}/usr"
-    install -dm 0755 "${pkgdir}/usr/bin"
-    install -Dm 0755 base.repo-remove   "${pkgdir}/usr/bin/archrepo-remove"
-    install -Dm 0755 base.repo-sync     "${pkgdir}/usr/bin/archrepo-sync"
-    install -Dm 0755 base.repo-build    "${pkgdir}/usr/bin/archrepo-build"
     # Configure root account a bit
     install -dm 0750 "${pkgdir}/root/.local/share"
     install -dm 0700 "${pkgdir}/root/.local/share/ssh"

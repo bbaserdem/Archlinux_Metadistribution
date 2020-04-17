@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-sway
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -11,17 +11,18 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 package() {
     depends=('sbp-gui')
     depends+=(
-        'light'                 # Brightness controls
         'dex'                   # Autostart launcher
-        'grim'                  # Screenshot
+        'grim'                  # Screenshot taking
+        'light'                 # Brightness controls
         'mako'                  # Notification daemon
-        'wofi'                  # App launcher
-        'slurp'                 # Region selector
+        'slurp'                 # Region selector, to aid screenshots
         'sway'                  # Wayland compositor
+        'swaybg'                # Wayland compositor
         'swayidle'              # Timout manager
         'swaylock'              # Screen-locker
-        'waybar'                # Info bar
+        'waybar'                # Information bar
+        'wf-recorder'           # Screen video grabbing
         'wl-clipboard'          # Clipboard utility
-        'xfce4-power-manager'   # Battery notifications
+        'wofi'                  # App launcher (non-native)
     )
 }

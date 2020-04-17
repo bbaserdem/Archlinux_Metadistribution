@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gui
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -53,7 +53,11 @@ package() {
         'xorgproto'
         'xsel')
     #---Wayland
-    depends+=('wayland' 'xorg-server-xwayland')
+    depends+=(
+        'wayland'
+        'wlroots'
+        'xorg-server-xwayland'
+        'ydotool')
     #---Login manager
     depends+=('sddm')
     #---Input methods
@@ -61,8 +65,8 @@ package() {
     #---Generic needs
     depends+=(
         'sbp-apps'          # General use applications
+        'sbp-latex'         # Texlive distribution
         'sbp-programming'   # Applications to use for programming
-        'sbp-tex'           # Texlive distribution
         'sbp-themes'        # Desktop themeing in general
         'sbp-virtual'       # Virtualizing other OS's
     )

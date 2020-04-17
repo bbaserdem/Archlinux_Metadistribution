@@ -2,25 +2,30 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-programming
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Programming tools"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-optdepends=(
-    'matlab: For work related stuff'
-    'jupyter-matlab_kernel')
+optdepends=('matlab: For work related stuff')
 package() {
     #---Python
     depends=(
         'bpython'
         'python-pip'
-        'python-pipenv')
+        'python-pipenv'
+        'python-ipykernel')
+    #---Jupyter stuff
+    depends+=(
+        'jupyter-notebook'
+        'jupyter-matlab_kernel'
+        'jupyter-octave_kernel'
+        'jupyterlab')
     #---Computational libraries
     depends+=(
         'lapack'
         'openblas')
-    #---Matlab-like stuff
+    #---Matlab-like fallback
     depends+=('octave')
 }

@@ -1,6 +1,6 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
-pkgname=sbp--workstation
+pkgname=sbp-workstation
 pkgver=4.0
 pkgrel=1
 pkgdesc="SBP Meta Package: Workstation setup"
@@ -9,13 +9,16 @@ url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
+    'workstation.cmdline'
     'workstation.crypttab'
     'workstation.fstab'
     'workstation.hostname'
+    'workstation.initrdtab'
     'workstation.install'
     'workstation.mkinitcpio'
+    'workstation.refind'
     'workstation.sbupdate')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-homestation' 'sbp-laptop' 'sbp-server')
 package() {
@@ -31,6 +34,10 @@ package() {
     # Install command line booting arguments
     install -dm 0755 "${pkgdir}/etc/cmdline.d"
     install -Dm 0644 workstation.cmdline    "${pkgdir}/etc/cmdline.d/sbp.conf"
+    # Create boot options
+    install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
+    install -Dm 0755 workstation.refind \
+        "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
     # Early initrd ucode
     depends=('amd-ucode')
     # Graphics

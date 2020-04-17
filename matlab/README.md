@@ -1,79 +1,61 @@
-# MATLAB: Arch Linux package
+# MATLAB: Archlinux integration
 
-This PKGBUILD creates an Arch Linux package for the proprietary MATLAB application.
+This PKGBUILD creates an Arch Linux package for MATLAB
+Additionally; it also builds python integration and establishes jupyter kernel.
 
-## Contribution
+# Requirements
 
-I build this PKGBUILD from merging a couple that I have found around;
+Besides the dependencies; the source files must be present at the directory.
+The user must supply;
 
-* [AUR](https://aur.archlinux.org/packages/matlab/)
-* [Early version from hottea](https://gist.github.com/hubutui/612a10a2a20c7bf6a7e3744f6ac27e5e)
-* [MEX options from petronny](https://github.com/petronny/matlab)
+* **matlab.fik**: Plain text file installation key
+* **matlab.lic**: License file
+* **matlab.tar**: Software tarball
 
-## User Provided Files
+Then run `makepkg -s` from the PKGBUILD directory.
+You probably want to run this locally; since the package will be huge.
+Turn off compression if this package will only be locally installed;
+this cuts a fair amount of time from the build.
 
-In order to build the package the user must supply;
+## File Installation Key & Licence File:
 
-* [matlab.fik](#licence-files) : Plain text file installation key
-* [matlab.lic](#licence-files) : The license file
-* [matlab.tar](#source-files) : Software tarball
+[Here is the current link to the instructions](https://www.mathworks.com/help/install/ug/install-using-a-file-installation-key.html)
 
-## AUR packages
+File installation key identifies this specific installation of matlab.
+The license file authorizes that this key can use the toolboxes.
+Follow the steps;
 
-As time of writing, the following AUR packages are needed.
+* Go to [License center](https://www.mathworks.com/licensecenter) on mathworks
+* On install and activate tab; select (or create) an appropriate license
+* Navigate to download the license file and the file installation key
+* Download the **license file** and put the file in the repository
+* Copy and paste the **file installation** key in a plain text file
 
-* [gstreamer0.10-base](https://aur.archlinux.org/packages/gstreamer0.10-base/) for audio playback.
-* [gcc6](https://aur.archlinux.org/packages/gcc6/) for MEX support.
+## Tarball
 
-### Licence Files
+**To run the installer, libselinux is needed!**
 
-Log into your [mathworks](https://mathworks.com/mwaccount/) account.
-Navigate to your licence page.
-From here, navigate to "Activate to Retrieve Licence File".
-Save the **File Installation Key** in an empty text document as *matlab.fik*.
-Download the licence file as *matlab.lic*
+* [Download the matlab installer](https://www.mathworks.com/downloads)
+* Unpack and launch the installer
+* After logging in and accepting license; select
+`Advanced Options > I want to download without installing`
+from the top dropdown menu.
+* Select the toolboxes you want in the `PKGBUILD`.
+(Alternatively install them all)
+* Download the files to an empty directory called `matlab`
+* After downloading; from the parent directory; do
+`tar --create --verbose --file matlab.tar.gz .../matlab`
+to create the tarball.
 
-### Source Files
+# Tips
 
-There are multiple ways of doing this, but I only do the internet installer
+## Large files
+To transport large files in fat32 media; use split and cat;
+* **Split**: `split --bytes 3G --numeric-suffixes=0 matlab.tar.gz matlab.tar.gz.`
+* **Concatenate**: `cat matlab.tar.gz.* > matlab.tar.gz`
 
-#### Internet Installer
+## Modules
 
-Download the [installer](https://www.mathworks.com/downloads/web_downloads/?s_iid=hp_ff_t_downloads),
-unzip and run the installer.
-Set the -tmpdir flag to some directory, so your RAM isn't clogged up.
-The installer will first install toolboxes in this directory.
-When the 'Downloading' switches to 'Installing', pause the installation.
-Copy the temp directory to a directory named *matlab*
-(The copying is to be sure that matlab installer can't delete files on quit)
-Quit (or wait for it to finish) the installer.
-Merge the **archives** directory in the temp file with the files in the original zip.
-
-*Note*: For now, the instructions should work.
-However; there are 4 directories that you should check out for files
-
-* The unzipped installer directory
-* The directory you chose to install matlab to
-* The file (either the `-tmpdir` flag or `/tmp/tmw<numerals>/`
-* Installer temp directory, which is `/tmp/mathworks_<PID>`
-
-The matlab directory should look like this;
-
-* matlab
-* ├─ archives/
-* ├─ bin/
-* ├─ help/
-* ├─ java/
-* ├─ sys/
-* ├─ ui/
-* ├─ activate.ini
-* ├─ install
-* ├─ installer_input.txt
-* ├─ install_guide.pdf
-* ├─ license_agreement.txt
-* ├─ patents.txt
-* ├─ readme.txt
-* ├─ trademarks.txt
-* └─ VersionInfo.xml
-
-Then run `tar -cvf matlab.tar matlab` to put these files in a tarball.
+Matlab comes with a [lot of products](https://www.mathworks.com/products.html).
+Most are not needed.
+The installer will have a 

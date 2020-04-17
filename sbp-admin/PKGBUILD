@@ -15,7 +15,7 @@ source=(
     'admin.repo-build'
     'admin.repo-remove'
     'admin.repo-sync')
-sha256sums=(SKIP SKIP) 
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP) 
 package() {
     # Create reflector timers
     install -dm 0755 "${pkgdir}/usr/lib/systemd"
@@ -31,7 +31,7 @@ package() {
     install -Dm 0755 admin.repo-build   "${pkgdir}/usr/bin/archrepo-build"
     # Put etckeeper override to select pacman
     install -dm 0755 "${pkgdir}/etc/etckeeper"
-    install -Dm 0755 base.etckeeper "${pkgdir}/etc/etckeeper/local.conf"
+    install -Dm 0755 admin.etckeeper    "${pkgdir}/etc/etckeeper/local.conf"
     #---Sys-admin
     depends=(
         'dbus'
