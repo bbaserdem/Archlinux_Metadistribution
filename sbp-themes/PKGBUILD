@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-themes
 pkgver=4.0
-pkgrel=3
+pkgrel=4
 pkgdesc="SBP Meta Package: Themeing"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -25,7 +25,6 @@ package() {
     #---Icons
     depends+=(
         'papirus-icon-theme'
-        'tela-icon-theme'
         'xcursor-comix'
         'breeze-hacked-cursor-theme')
         
