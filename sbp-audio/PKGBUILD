@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-audio
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Audio/media files management"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -16,7 +16,7 @@ package() {
     depends=(
         'alsa-utils' 'lib32-alsa-plugins'
         'pulseaudio' 'lib32-libpulse' 'pulseaudio-alsa' 'pulseaudio-bluetooth'
-        'pulsemixer'
+        'pamixer' 'pulsemixer'
         'pipewire' 'pipewire-pulse')
     #---MPD and music utilities
     depends+=(

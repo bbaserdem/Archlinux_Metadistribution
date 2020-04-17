@@ -23,6 +23,6 @@ package() {
         'waybar'                # Information bar
         'wf-recorder'           # Screen video grabbing
         'wl-clipboard'          # Clipboard utility
-        'wofi'                  # App launcher (non-native)
+        'wofi'                  # App launcher
     )
 }
