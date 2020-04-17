@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gui
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -28,7 +28,6 @@ package() {
         'xorg-mkfontdir'
         'xorg-server'
         'xorg-server-common'
-        'xorg-server-xdmx'
         'xorg-setxkbmap'
         'xorg-xbacklight'
         'xorg-xcursorgen'

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-apps
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Applications (GUI)"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -32,6 +32,7 @@ package() {
         'thunar-archive-plugin' 'raw-thumbnailer'
         'tuxguitar'
         'zathura' 'zathura-cb' 'zathura-djvu' 'zathura-pdf-mupdf' 'zathura-ps'
+        'zoom'
         'zotero')
     #---Tray applications
     depends+=(

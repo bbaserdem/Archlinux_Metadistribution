@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-themes
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: Themeing"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -13,14 +13,14 @@ package() {
     depends=(
         'noto-fonts-emoji'              # Emoji fonts
         'ttf-nerd-fonts-symbols-mono'   # Glyphs
-        'ttf-inconsolata'               # Font for status bar
         'ttf-liberation'                # Windows compatibility font
         'ttf-caladea'                   # Office fonts alternative
         'ttf-carlito'                   # Georgia alternative
         'ttf-croscore'                  # Helvetica, Times and courier alternative
+        'ttf-inconsolata'               # Status font   (statusbar)
         'otf-fira-code'                 # Ligature font (monospace)
-        'ttf-droid'                     # Font for sans (sans-serif)
-        'adobe-source-serif-pro-fonts'  # Font for serif (serif)
+        'ttf-droid'                     # Font for sans (sans-serif|sans)
+        'adobe-source-serif-pro-fonts'  # Serif font    (serif)
         )
     #---Icons
     depends+=(
@@ -40,5 +40,4 @@ package() {
         'kvantum-qt5'
         'kvantum-theme-arc'
         'kvantum-theme-layan')
-
 }
