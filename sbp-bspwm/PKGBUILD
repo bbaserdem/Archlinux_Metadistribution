@@ -2,14 +2,20 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-bspwm
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: BSPWM desktop"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=('bspwm.bars' 'bspwm.layout')
+sha256sums=(SKIP SKIP)
 package() {
-    depends=('sbp-gui')
+    depends=('sbp-xorg')
+    # Install the polybar launcher utility
+    install -dm 0755 "${pkgdir}/usr/bin"
+    install -Dm 0755 bspwm.bars     "${pkgdir}/usr/bin/sbp-bspwm-bar"
+    install -Dm 0755 bspwm.layout   "${pkgdir}/usr/bin/sbp-bspwm-layout"
     depends+=(
         'autorandr'             # Monitor management
         'light'                 # Brightness controls

@@ -8,55 +8,11 @@ arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=('gui.install' 'gui.xinit-session')
-sha256sums=(SKIP SKIP)
+source=('gui.install')
+sha256sums=(SKIP)
 package() {
     depends=('sbp-base')
     install=gui.install
-    # Install xsession based on xinit
-    install -dm 0755 "${pkgdir}/usr/share/xsessions"
-    install -Dm 0755 gui.xinit-session "${pkgdir}/usr/share/xsessions/xinitrc.desktop"
-    #---Xorg
-    depends+=(
-        'xdo'
-        'xdotool'
-        'xf86-input-libinput'
-        'xf86-video-vesa'
-        'xkb-switch'
-        'xorg-font-util'
-        'xorg-fonts-misc'
-        'xorg-mkfontdir'
-        'xorg-server'
-        'xorg-server-common'
-        'xorg-setxkbmap'
-        'xorg-xbacklight'
-        'xorg-xcursorgen'
-        'xorg-xdpyinfo'
-        'xorg-xdriinfo'
-        'xorg-xev'
-        'xorg-xgamma'
-        'xorg-xinit'
-        'xorg-xinput'
-        'xorg-xkbcomp'
-        'xorg-xkbutils'
-        'xorg-xkill'
-        'xorg-xmodmap'
-        'xorg-xprop'
-        'xorg-xrandr'
-        'xorg-xrdb'
-        'xorg-xrefresh'
-        'xorg-xset'
-        'xorg-xsetroot'
-        'xorg-xvinfo'
-        'xorg-xwininfo'
-        'xorgproto'
-        'xsel')
-    #---Wayland
-    depends+=(
-        'wayland'
-        'wlroots'
-        'xorg-server-xwayland'
-        'ydotool')
     #---Login manager
     depends+=('sddm')
     #---Input methods
