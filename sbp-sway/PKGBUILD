@@ -17,10 +17,9 @@ package() {
         'mako'                  # Notification daemon
         'slurp'                 # Region selector, to aid screenshots
         'sway'                  # Wayland compositor
-        'swaybg'                # Wayland compositor
-        'swayidle'              # Timout manager
         'swaylock'              # Screen-locker
         'waybar'                # Information bar
+        'libappindicator-gtk3'  # System-tray
         'wf-recorder'           # Screen video grabbing
         'wl-clipboard'          # Clipboard utility
         'wofi'                  # App launcher
