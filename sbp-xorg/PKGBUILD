@@ -1,0 +1,60 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-xorg
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: X11 server and utils"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=('xorg.locker' 'xorg.wallpaper' 'xorg.xinit-session')
+sha256sums=(SKIP SKIP SKIP)
+package() {
+    depends=('sbp-gui')
+    # Install xsession based on xinit
+    install -dm 0755 "${pkgdir}/usr/share/xsessions"
+    install -Dm 0755 xorg.xinit-session \
+      "${pkgdir}/usr/share/xsessions/xinitrc.desktop"
+    # Install user scripts
+    install -dm 0755 "${pkgdir}/usr/bin"
+    install -Dm 0755 xorg.locker    "${pkgdir}/usr/bin/sbp-xlocker"
+    install -Dm 0755 xorg.wallpaper "${pkgdir}/usr/bin/sbp-xpaper"
+    #---Xorg stuff
+    depends+=(
+        'xdo'
+        'xdotool'
+        'xf86-input-libinput'
+        'xf86-video-vesa'
+        'xkb-switch'
+        'xorg-font-util'
+        'xorg-fonts-misc'
+        'xorg-mkfontdir'
+        'xorg-server'
+        'xorg-server-common'
+        'xorg-setxkbmap'
+        'xorg-xbacklight'
+        'xorg-xcursorgen'
+        'xorg-xdpyinfo'
+        'xorg-xdriinfo'
+        'xorg-xev'
+        'xorg-xgamma'
+        'xorg-xinit'
+        'xorg-xinput'
+        'xorg-xkbcomp'
+        'xorg-xkbutils'
+        'xorg-xkill'
+        'xorg-xmodmap'
+        'xorg-xprop'
+        'xorg-xrandr'
+        'xorg-xrdb'
+        'xorg-xrefresh'
+        'xorg-xset'
+        'xorg-xsetroot'
+        'xorg-xvinfo'
+        'xorg-xwininfo'
+        'xorgproto'
+        'xsel')
+    #---For the utilities
+    depends+=('i3lock-color' 'imagemagick' 'maim')
+}

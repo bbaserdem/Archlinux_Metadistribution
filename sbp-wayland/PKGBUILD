@@ -1,0 +1,24 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-wayland
+pkgver=4.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Wayland compositor and utilities"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+#source=()
+#sha256sums=()
+package() {
+    depends=('sbp-gui')
+    #---Wayland
+    depends+=(
+        'wayland'
+        'wlroots'
+        'xorg-server-xwayland'
+        'ydotool'
+        'swaybg'
+        'swaylock'
+        'swayidle')
+}
