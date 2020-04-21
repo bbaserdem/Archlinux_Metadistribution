@@ -79,11 +79,11 @@ fi
         # Launch the bars
         if grep -q 'primary' <<< "${_pom}" ; then
             # Launch the main bars
-            polybar --reload "btop${_suf}" </dev/null >"${_log}-t" 2>&1 & disown
-            polybar --reload "bbot${_suf}" </dev/null >"${_log}-b" 2>&1 & disown
+            polybar --reload "bspwm-top${_suf}" </dev/null >"${_log}-t" 2>&1 & disown
+            polybar --reload "bspwm-bot${_suf}" </dev/null >"${_log}-b" 2>&1 & disown
         else
             # Launch an auxillary bar
-            polybar --reload "baux${_suf}" </dev/null >"${_log}-a" 2>&1 & disown
+            polybar --reload "bspwm-aux${_suf}" </dev/null >"${_log}-a" 2>&1 & disown
         fi
     done
 
