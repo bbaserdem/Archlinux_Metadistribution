@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-homestation
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: Homestation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -18,6 +18,13 @@ source=(
     'homestation.mkinitcpio'
     'homestation.refind'
     'homestation.sbupdate')
+backup=(
+    'etc/crypttab'
+    'etc/crypttab.initrd'
+    'etc/fstab'
+    'etc/hostname'
+    'etc/mkinitcpio'
+    'boot/efi/EFI/Arch/refind_linux.conf')
 sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server')

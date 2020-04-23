@@ -1,29 +1,64 @@
 # Maintained by sbp
+pre_install() {
+    echo '[sbp-cmp]==> Preparing for meta package...'
+    if [ -e '/etc/fstab' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/fstab away.'
+        mv '/etc/fstab' '/etc/fstab.system'
+    fi
+    if [ -e '/etc/crypttab' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/crypttab away.'
+        mv '/etc/crypttab' '/etc/crypttab.system'
+    fi
+    if [ -e '/etc/mkinitcpio.conf' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/mkinitcpio.conf away.'
+        mv '/etc/mkinitcpio.conf' '/etc/mkinitcpio.system'
+    fi
+    echo '[sbp-cmp]==> Preperations done!'
+}
+
 post_install() {
+    echo '[sbp-homestation]==> Installing meta package...'
 
-    echo '[sbp-cmp-homestation]==> Installing meta package . . .'
-
-    # Do hostname
-    echo '[sbp-cmp-homestation]==> Doing hostname and hosts . . .'
-    echo '127.0.0.1 localhost' >  /etc/hosts
-    echo '::1       localhost' >> /etc/hosts
-    echo '127.0.1.1 sbp-homestation.localdomain sbp-homestation' >> /etc/hosts
+    # Wifi connection
+    echo '[sbp-homestation]==> Enabling wifi.'
+    /bin/systemctl enable iwd.service
 
     # Enable fan control using NBFC
-    echo '[sbp-cmp-homestation]==> Enabling fans control using nbfc . . .'
+    echo '[sbp-homestation]==> Enabling fan control using nbfc.'
     /bin/systemctl enable nbfc
     /bin/systemctl enable nbfc-sleep
     if [ -f '/opt/nbfc/Configs/Asus ROG GL702ZC.xml' ] ; then
-        echo '[sbp-cmp-homestation]==> Fan profile; Asus ROG GL702ZC . . .'
-        rm /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll
+        echo '[sbp-homestation]==> Setting fan profile to Asus ROG GL702ZC . . .'
         nbfc config --apply 'Asus ROG GL702ZC'
     fi
 
-    echo '[sbp-cmp-homestation]==> Installation done! Check log for errors.'
+    echo '[sbp-homestation]==> Installation done!'
     post_upgrade
 }
 
 post_upgrade() {
-    echo '[sbp-cmp-homestation]==> Upgrading . . .'
-    echo '[sbp-cmp-homestation]==> Nothing to do.'
+    echo '[sbp-homestation]==> Upgrading meta package...'
+
+    if [ -e '/opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll' ] ; then
+        echo '[sbp-homestation]==> Applying nbfc ECSysLinux.dll fix'
+        mv /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll \
+            /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll.bak
+    fi
+
+    echo '[sbp-homestation]==> Upgrade done!'
+}
+
+post_remove() {
+    echo '[sbp-homestation]==> Uninstalling meta package...'
+
+    # Wifi connection
+    echo '[sbp-homestation]==> Disabling wifi.'
+    /bin/systemctl disable iwd.service
+
+    # Enable fan control using NBFC
+    echo '[sbp-homestation]==> Disabling fan control using nbfc.'
+    /bin/systemctl disable nbfc
+    /bin/systemctl disable nbfc-sleep
+
+    echo '[sbp-homestation]==> Uninstallation done!'
 }

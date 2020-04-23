@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-games
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Gaming"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -18,7 +18,7 @@ package() {
         'steam'
         'steam-native-runtime')
     install -dm 0755 "${pkgdir}/opt"
-    install -dm 0775 -g games "${pkgdir}/opt/steam"
+    install -dm 0775 -g games -o 1000 "${pkgdir}/opt/steam"
     # Wine
     depends+=(
         'wine-staging'

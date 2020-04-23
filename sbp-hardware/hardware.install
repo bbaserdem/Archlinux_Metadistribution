@@ -1,0 +1,33 @@
+# Maintained by sbp
+
+post_install() {
+    echo '[sbp-hardware]==> Installing meta package...'
+
+    # Services
+    echo '[sbp-hardware]==> Enabling ACPID daemon.'
+    /usr/bin/systemctl enable acpid.service
+
+    echo '[sbp-admin]==> Enabling CPU scaling manager.'
+    /usr/bin/systemctl enable cpupower.service
+
+    echo '[sbp-hardware]==> Installation done!'
+    post_upgrade
+}
+
+post_upgrade() {
+    echo '[sbp-hardware]==> Upgrading meta package...'
+    echo '[sbp-hardware]==> Upgrade done!'
+}
+
+post_remove() {
+    echo '[sbp-hardware]==> Uninstalling meta package...'
+
+    # Services
+    echo '[sbp-hardware]==> Disabling ACPID daemon.'
+    /usr/bin/systemctl disable acpid.service
+
+    echo '[sbp-admin]==> Disabling CPU scaling manager.'
+    /usr/bin/systemctl disable cpupower.service
+
+    echo '[sbp-hardware]==> Uninstallation done!'
+}

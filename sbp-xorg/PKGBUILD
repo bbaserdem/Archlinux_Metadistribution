@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-xorg
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: X11 server and utils"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"

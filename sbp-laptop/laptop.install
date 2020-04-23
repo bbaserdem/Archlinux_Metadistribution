@@ -1,19 +1,53 @@
 # Maintained by sbp
+pre_install() {
+    echo '[sbp-cmp]==> Preparing for meta package...'
+    if [ -e '/etc/fstab' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/fstab away.'
+        mv '/etc/fstab' '/etc/fstab.system'
+    fi
+    if [ -e '/etc/crypttab' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/crypttab away.'
+        mv '/etc/crypttab' '/etc/crypttab.system'
+    fi
+    if [ -e '/etc/mkinitcpio.conf' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/mkinitcpio.conf away.'
+        mv '/etc/mkinitcpio.conf' '/etc/mkinitcpio.system'
+    fi
+    echo '[sbp-cmp]==> Preperations done!'
+}
+
 post_install() {
+    echo '[sbp-laptop]==> Installing meta package...'
 
-    echo '[sbp-cmp-notebook]==> Installing meta package . . .'
+    # Services
+    echo '[sbp-laptop]==> Enabling wifi.'
+    /usr/bin/systemctl enable iwd.service
 
-    # Do hostname
-    echo '[sbp-cmp-notebook]==> Doing hosts . . .'
-    echo '127.0.0.1 localhost' >  /etc/hosts
-    echo '::1       localhost' >> /etc/hosts
-    echo '127.0.1.1 sbp-notebook.localdomain sbp-notebook' >> /etc/hosts
+    echo '[sbp-laptop]==> Enabling System76 services.'
+    /usr/bin/systemctl enable system76.service
+    /usr/bin/systemctl enable system76-firmware-daemon.service
 
-    echo '[sbp-cmp-notebook]==> Installation done! Check log for errors.'
+    # End message
+    echo '[sbp-laptop]==> Installation done!'
     post_upgrade
 }
 
 post_upgrade() {
-    echo '[sbp-cmp-notebook]==> Upgrading . . .'
-    echo '[sbp-cmp-notebook]==> Nothing to do'
+    echo '[sbp-laptop]==> Upgrading...'
+    echo '[sbp-laptop]==> Upgrade done!'
+}
+
+post_remove() {
+    echo '[sbp-laptop]==> Uninstalling meta package...'
+
+    # Services
+    echo '[sbp-laptop]==> Disabling wifi.'
+    /usr/bin/systemctl disable iwd.service
+
+    echo '[sbp-laptop]==> Disabling System76 services.'
+    /usr/bin/systemctl disable system76.service
+    /usr/bin/systemctl disable system76-firmware-daemon.service
+
+    # End message
+    echo '[sbp-laptop]==> Uninstallation done!'
 }

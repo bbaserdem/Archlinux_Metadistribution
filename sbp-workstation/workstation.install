@@ -1,22 +1,44 @@
 # Maintained by sbp
+pre_install() {
+    echo '[sbp-cmp]==> Preparing for meta package...'
+    if [ -e '/etc/fstab' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/fstab away.'
+        mv '/etc/fstab' '/etc/fstab.system'
+    fi
+    if [ -e '/etc/crypttab' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/crypttab away.'
+        mv '/etc/crypttab' '/etc/crypttab.system'
+    fi
+    if [ -e '/etc/mkinitcpio.conf' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/mkinitcpio.conf away.'
+        mv '/etc/mkinitcpio.conf' '/etc/mkinitcpio.system'
+    fi
+    echo '[sbp-cmp]==> Preperations done!'
+}
+
 post_install() {
 
-    echo '[sbp-cmp-workstation]==> Installing meta package . . .'
+    echo '[sbp-workstation]==> Installing meta package...'
 
-    # Do hostname
-    echo '[sbp-cmp-workstation]==> Doing hosts . . .'
-    echo '127.0.0.1 localhost' >  /etc/hosts
-    echo '::1       localhost' >> /etc/hosts
-    echo '127.0.1.1 sbp-workstation.localdomain sbp-workstation' >> /etc/hosts
-
-    echo '[sbp-cmp-workstation]==> Enabling UPS power daemon . . .'
+    echo '[sbp-workstation]==> Enabling UPS power daemon.'
     /usr/bin/systemctl enable pwrstatd.service
 
-    echo '[sbp-cmp-workstation]==> Installation done! Check log for errors.'
+    echo '[sbp-workstation]==> Installation done!'
     post_upgrade
 }
 
 post_upgrade() {
-    echo '[sbp-cmp-workstation]==> Upgrading . . .'
-    echo '[sbp-cmp-workstation]==> Nothing to do.'
+    echo '[sbp-workstation]==> Upgrading...'
+    echo '[sbp-workstation]==> Upgrade done!'
+}
+
+post_install() {
+
+    echo '[sbp-workstation]==> Installing meta package...'
+
+    echo '[sbp-workstation]==> Enabling UPS power daemon.'
+    /usr/bin/systemctl disable pwrstatd.service
+
+    echo '[sbp-workstation]==> Installation done!'
+    post_upgrade
 }

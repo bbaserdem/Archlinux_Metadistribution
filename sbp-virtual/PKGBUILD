@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-virtual
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Virtualization"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"

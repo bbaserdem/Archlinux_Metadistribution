@@ -1,46 +1,36 @@
 # Maintained by sbp
 
 post_install() {
-    # Create main user
-    echo '[sbp-sys-base]==> Creating user sbp'
-    if [ "$(getent passwd | grep -c '^sbp')" == "0" ] ; then
-        /bin/useradd --create-home --groups \
-            sys,ftp,log,http,games,lock,rfkill,users,video,uucp,lp,input,wheel \
-            --shell /usr/bin/zsh sbp
-    else
-        echo '[sbp-sys-base]==> User sbp exists!'
-    fi
+  echo '[sbp-base]==> Installing meta package...'
 
-    # Timezone
-    echo '[sbp-sys-base]==> Setting local time'
-    /usr/bin/timedatectl set-ntp true
-    /usr/bin/hwclock --systohc
+  # Create main user
+  if [ "$(getent passwd | grep -c '^sbp')" == "0" ] ; then
+    echo '[sbp-base]==> Creating user sbp.'
+    /bin/useradd --comment "Batuhan Başerdem" --create-home \
+      --user-group --shell /usr/bin/zsh \
+      --groups ftp,games,http,rfkill,sys,uucp,wheel,locate,lp \ sbp
+  else
+    echo '[sbp-base]==> User sbp exists!'
+  fi
 
-    # Services
-    echo '[sbp-sys-base]==> Enabling base level services'
-    /usr/bin/systemctl enable org.cups.cupsd.service
-    /usr/bin/systemctl enable acpid.service
-    /usr/bin/systemctl enable bluetooth.service
-    /usr/bin/systemctl enable cpupower.service
-    /usr/bin/systemctl enable dhcpcd.service
-    /usr/bin/systemctl enable fcron.service
-    /usr/bin/systemctl enable firewalld.service
-    /usr/bin/systemctl enable iwd.service
-    /usr/bin/systemctl enable nftables.service
-    /usr/bin/systemctl enable rasdaemon.service
-    /usr/bin/systemctl enable ras-mc-ctl.service
-    /usr/bin/systemctl enable unbound.service
-    /usr/bin/systemctl enable fstrim.timer
-    /usr/bin/systemctl enable snapper-cleanup.timer
-    /usr/bin/systemctl enable snapper-timeline.timer
+  echo '[sbp-base]==> Installation done!'
+  post_ugrade
 }
 
 post_upgrade() {
-    # Resolvconf
-    echo '[sbp-sys-base]==> Updating resolvconf'
-    /usr/bin/resolvconf -u
+  echo '[sbp-base]==> Upgrading meta package...'
 
-    # Locale
-    echo '[sbp-sys-base]==> Generating locale'
-    /usr/bin/locale-gen
+  # Locale
+  echo '[sbp-base]==> Generating locale'
+  /usr/bin/locale-gen
+
+  echo '[sbp-base]==> Upgrade done!'
+}
+
+post_remove() {
+  echo '[sbp-base]==> Uninstalling meta package...'
+
+  echo '[sbp-base]==> User "sbp" created by this package will remain!'
+
+  echo '[sbp-base]==> Uninstallation done!'
 }

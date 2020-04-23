@@ -2,13 +2,16 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-apps
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: Applications (GUI)"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=('apps.install')
+sha256sums=(SKIP)
 package() {
+    install=apps.install
     #---GUI applications
     depends=(
         'audacity'

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-uefi
 pkgver=4.0
-pkgrel=2
+pkgrel=4
 pkgdesc="SBP Meta Package: UEFI-booting"
 arch=('any')
 url="https://github.com/bbaserdem/Etcfiles"
@@ -45,7 +45,7 @@ package() {
         'sbsigntools'           # To sign kernels
         'openssl'               # For signing
         'sbupdate'              # Signs kernel automatically
-        'refind-efi'            # Refind loader
+        'refind'                # Refind loader
         'refind-theme-regular'  # Theming refind
     )
 }

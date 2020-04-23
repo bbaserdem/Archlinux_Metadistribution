@@ -1,5 +1,32 @@
 # Managed by sbp
 
 post_install() {
-    echo "[sbp-sys-uefi]=> Make sure to generate secure boot keys in /etc/sbkeys directory."
+    echo "[sbp-uefi]=> Installing meta package..."
+
+    # Warn
+    echo "[sbp-uefi]=> Make sure to populate /etc/sbkeys with neccessary keys."
+    # Install refind
+    echo "[sbp-uefi]=> Running rEFInd installation script."
+    /bin/refind-install
+    # Running sbupdate once
+    echo "[sbp-uefi]=> Signing refind"
+    /bin/sbupdate
+
+    echo "[sbp-uefi]=> Installing done!"
+    post_upgrade
 }
+
+post_upgrade() {
+    echo "[sbp-uefi]=> Upgrading meta package..."
+    echo "[sbp-uefi]=> Upgrade done!"
+}
+
+post_install() {
+    echo "[sbp-uefi]=> Uninstalling meta package..."
+
+    # Install refind
+    echo "[sbp-uefi]=> Remove /boot/efi/EFI/rEFInd directory to clean up."
+
+    echo "[sbp-uefi]=> Installing done!"
+}
+

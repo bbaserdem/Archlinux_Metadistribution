@@ -1,12 +1,11 @@
 # Maintained by sbp
 [Trigger]
-Operation = Install
 Operation = Upgrade
 Type = Package
-Target = refind-efi
+Target = refind
 
 [Action]
 Description = Updating, and signing rEFInd
 When = PostTransaction
 Exec = refind-install --localkeys --yes
-Depends = sbp-sys-uefi
+Depends = sbp-uefi

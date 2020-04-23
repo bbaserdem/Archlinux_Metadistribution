@@ -1,0 +1,42 @@
+# Maintained by sbp
+post_install() {
+    echo '[sbp-admin]==> Installing meta package...'
+
+    # Timezone
+    echo '[sbp-admin]==> Setting local time settings.'
+    /usr/bin/timedatectl set-ntp true
+    /usr/bin/hwclock --systohc
+
+    # Services
+    echo '[sbp-admin]==> Enabling cron.'
+    /usr/bin/systemctl enable fcron.service
+
+    echo '[sbp-admin]==> Enabling MCE monitoring'
+    /usr/bin/systemctl enable rasdaemon.service
+    /usr/bin/systemctl enable ras-mc-ctl.service
+
+    echo '[sbp-admin]==> Installation done!'
+    post_upgrade
+}
+
+post_upgrade() {
+    echo '[sbp-admin]==> Upgrading meta package...'
+    echo '[sbp-admin]==> Upgrade done!'
+}
+
+post_remove() {
+    echo '[sbp-admin]==> Uninstalling meta package...'
+
+    # Services
+    echo '[sbp-admin]==> Disabling CPU scaling manager.'
+    /usr/bin/systemctl disable cpupower.service
+
+    echo '[sbp-admin]==> Disbling cron.'
+    /usr/bin/systemctl disable fcron.service
+
+    echo '[sbp-admin]==> Disbling MCE monitoring'
+    /usr/bin/systemctl disable rasdaemon.service
+    /usr/bin/systemctl disable ras-mc-ctl.service
+
+    echo '[sbp-admin]==> Unistallation done!'
+}

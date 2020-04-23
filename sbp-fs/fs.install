@@ -1,0 +1,34 @@
+# Maintained by sbp
+
+post_install() {
+    echo '[sbp-fs]==> Installing meta package...'
+
+    # Services
+    echo '[sbp-fs]==> Enabling periodic trimming.'
+    /usr/bin/systemctl enable fstrim.timer
+
+    echo '[sbp-fs]==> Enabling snapper snapshots.'
+    /usr/bin/systemctl enable snapper-cleanup.timer
+    /usr/bin/systemctl enable snapper-timeline.timer
+
+    echo '[sbp-fs]==> Installation done!'
+    post_upgrade
+}
+
+post_upgrade() {
+    echo '[sbp-fs]==> Upgrading meta package...'
+    echo '[sbp-fs]==> Upgrade done!'
+}
+
+post_remove() {
+    echo '[sbp-fs]==> Uninstalling meta package...'
+
+    echo '[sbp-fs]==> Disabling periodic trimming.'
+    /usr/bin/systemctl disable fstrim.timer
+
+    echo '[sbp-fs]==> Disabling snapper snapshots.'
+    /usr/bin/systemctl disable snapper-cleanup.timer
+    /usr/bin/systemctl disable snapper-timeline.timer
+
+    echo '[sbp-fs]==> Uninstallation done!'
+}

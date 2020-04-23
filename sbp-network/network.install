@@ -1,0 +1,52 @@
+# Maintained by sbp
+
+post_install() {
+    echo '[sbp-network]==> Installing meta package...'
+
+    # Services
+    echo '[sbp-network]==> Enabling CUPS daemon.'
+    /usr/bin/systemctl enable org.cups.cupsd.service
+
+    echo '[sbp-network]==> Enabling Bluetooth daemon.'
+    /usr/bin/systemctl enable bluetooth.service
+
+    echo '[sbp-network]==> Enabling network service.'
+    /usr/bin/systemctl enable dhcpcd.service
+    /usr/bin/systemctl enable unbound.service
+
+    echo '[sbp-network]==> Enabling firewall.'
+    /usr/bin/systemctl enable firewalld.service
+
+    echo '[sbp-network]==> Installation done!'
+    post_ugrade
+}
+
+post_upgrade() {
+    echo '[sbp-network]==> Upgrading meta package...'
+
+    # Resolvconf
+    echo '[sbp-network]==> Updating resolvconf'
+    /usr/bin/resolvconf -u
+
+    echo '[sbp-network]==> Upgrade done!'
+}
+
+post_remove() {
+    echo '[sbp-network]==> Uninstalling meta package...'
+
+    # Services
+    echo '[sbp-network]==> Disabling CUPS daemon.'
+    /usr/bin/systemctl disable org.cups.cupsd.service
+
+    echo '[sbp-network]==> Disabling Bluetooth daemon.'
+    /usr/bin/systemctl disable bluetooth.service
+
+    echo '[sbp-network]==> Disabling network service.'
+    /usr/bin/systemctl disable dhcpcd.service
+    /usr/bin/systemctl disable unbound.service
+
+    echo '[sbp-network]==> Disabling firewall.'
+    /usr/bin/systemctl disable firewalld.service
+
+    echo '[sbp-network]==> Uninstallation done!'
+}

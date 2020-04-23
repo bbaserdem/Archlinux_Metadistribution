@@ -1,8 +1,27 @@
 # Maintained by sbp
 
 post_install() {
+    echo '[sbp-gui]==> Installing meta package...'
+
     # Services
-    echo '[sbp-gui-base]==> Enabling services'
+    echo '[sbp-gui]==> Enabling graphical login. (SDDM)'
     /usr/bin/systemctl enable sddm.service
-    /usr/bin/systemctl enable trezord.service
+
+    echo '[sbp-gui]==> Installation done!'
+    post_upgrade
+}
+
+post_upgrade() {
+    echo '[sbp-gui]==> Upgrading meta package...'
+    echo '[sbp-gui]==> Upgrade done!'
+}
+
+post_remove() {
+    echo '[sbp-gui]==> Uninstalling meta package...'
+
+    # Services
+    echo '[sbp-gui]==> Disabling graphical login. (SDDM)'
+    /usr/bin/systemctl disable sddm.service
+    
+    echo '[sbp-gui]==> Uninstallation done!'
 }

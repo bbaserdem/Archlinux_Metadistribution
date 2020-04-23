@@ -2,13 +2,16 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-network
 pkgver=4.0
-pkgrel=1
+pkgrel=3
 pkgdesc="SBP Meta Package: Networking packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=('network.install')
+sha256sums=('SKIP')
 package() {
+    install=network.install
     #---System info
     depends=(
         'bind-tools'

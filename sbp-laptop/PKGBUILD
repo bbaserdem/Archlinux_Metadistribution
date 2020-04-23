@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-laptop
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Laptop setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -18,6 +18,13 @@ source=(
     'laptop.mkinitcpio'
     'laptop.refind'
     'laptop.sbupdate')
+backup=(
+    'etc/crypttab'
+    'etc/crypttab.initrd'
+    'etc/fstab'
+    'etc/hostname'
+    'etc/mkinitcpio'
+    'boot/efi/EFI/Arch/refind_linux.conf')
 sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-homestation' 'sbp-server' 'sbp-workstation')
@@ -31,6 +38,7 @@ package() {
     install -Dm 0644 laptop.initrdtab  "${pkgdir}/etc/crypttab.initrd"
     install -Dm 0644 laptop.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
     install -Dm 0644 laptop.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
+    # Put in commandline kernel parameters
     install -dm 0755 "${pkgdir}/etc/cmdline.d"
     install -Dm 0644 laptop.cmdline    "${pkgdir}/etc/cmdline.d/sbp.conf"
     # Create boot options
@@ -52,6 +60,5 @@ package() {
         'system76-acpi-dkms'
         'system76-dkms'
         'system76-driver'
-        'system76-firmware-daemon'
-        'system76-io-dkms')
+        'system76-firmware-daemon')
 }
