@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-admin
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: Administration"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
