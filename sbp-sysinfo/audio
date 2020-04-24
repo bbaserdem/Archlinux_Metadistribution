@@ -47,7 +47,7 @@ get_actions () {
   # Print json
   _jsonact="{\"middle\":\"${_middle}\""
   _jsonact="${_jsonact},\"left\":\"${_left}\",\"right\":\"${_right}\""
-  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}"
+  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}" | jq --color-output
 }
 
 get_text() {
@@ -114,11 +114,11 @@ get_text() {
       _volm="${_volm} (Muted)"
     fi
     if [ "${_lnum}" = "${_d_lnum}" ] ; then
-      _tip="${_tip}\nSink: (default) ${_sink}"
+      _tip="${_tip}"'\\n'"Sink: (default) ${_sink}"
     else
-      _tip="${_tip}\nSink: ${_sink}"
+      _tip="${_tip}"'\\n'"Sink: ${_sink}"
     fi
-    _tip="${_tip}\n  Volume: ${_volm}, Port: ${_port}"
+    _tip="${_tip}"'\\n'"  Volume: ${_volm}, Port: ${_port}"
     _lnum=$(( _lnum + 1 ))
   done
 
@@ -145,9 +145,5 @@ listener_loop () {
 case $1 in
   actions) get_actions ;;
   once) get_text ;;
-  *) # Try to get_text once; if it fails just gracefully exit
-  get_text || exit 0
-  # Start the listening loop.
-  listener_loop
-  ;;
+  *) get_text ; listener_loop ;;
 esac
