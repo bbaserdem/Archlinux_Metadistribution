@@ -1,0 +1,10 @@
+# Managed by sbp
+[Trigger]
+Type = Package
+Operation = Upgrade
+Target = systemd
+
+[Action]
+Description = Updating systemd-boot
+When = PostTransaction
+Exec = /usr/bin/bootctl --path=/boot/efi update

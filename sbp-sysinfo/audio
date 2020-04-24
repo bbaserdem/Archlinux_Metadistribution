@@ -1,0 +1,153 @@
+#!/bin/dash
+# Print pulseaudio information; specific focus on bluetooth.
+# Depends on: pactl, pamixer, (pavucontrol}
+
+# Kill all descendents on exit
+trap 'exit' INT TERM
+trap 'kill 0' EXIT
+
+# Default battery; if not defined
+if [ -z "${SBP_PULSE_COLOR}" ] ; then
+    SBP_PULSE_COLOR='cyan'
+fi
+
+# Click commands that can be overriden through environment vars
+get_actions () {
+# Function to generate action list
+  # Left click
+  if [ -z "${SBP_PULSE_LEFTCLICK}" ] ; then
+    _left='/usr/bin/pamixer --toggle-mute'
+  else
+    _left="${SBP_PULSE_LEFTCLICK}"
+  fi
+  # Right click
+  if [ -z "${SBP_PULSE_RIGHTCLICK}" ] ; then
+    _right="/usr/bin/pavucontrol & disown"
+  else
+    _right="${SBP_PULSE_RIGHTCLICK}"
+  fi
+  # Middle click
+  if [ -z "${SBP_PULSE_MIDDLECLICK}" ] ; then
+    _middle="true"
+  else
+    _middle="${SBP_PULSE_MIDDLECLICK}"
+  fi
+  # Scroll up
+  if [ -z "${SBP_PULSE_SCROLLUP}" ] ; then
+    _up='/usr/bin/pamixer --increase 1'
+  else
+    _up="${SBP_PULSE_SCROLLUP}"
+  fi
+  # Scroll down
+  if [ -z "${SBP_PULSE_SCROLLDOWN}" ] ; then
+      _down='/usr/bin/pamixer --decrease 1'
+  else
+      _down="${SBP_PULSE_SCROLLDOWN}"
+  fi
+  # Print json
+  _jsonact="{\"middle\":\"${_middle}\""
+  _jsonact="${_jsonact},\"left\":\"${_left}\",\"right\":\"${_right}\""
+  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}"
+}
+
+get_text() {
+# Parse json text that has the fields;
+# * accent: Accent color (not neccessary needed)
+# * prompt: Text to display
+# * prefix: Icon to display at beginning
+# * suffix: Icon to display at end
+# * tooltip: Expanded tooltip; maybe for future
+# * dim: (Boolean) To dim module or not.
+  # Get pulseaudio state info
+  _pinfo="$(/usr/bin/pactl info)"
+  _sinks="$(/usr/bin/pactl list sinks)"
+  _ssink="$(/usr/bin/pactl list sinks short)"
+  _ports="$(echo "${_sinks}" | awk -F ': ' \
+    '/Active Port/ {print $2}')"
+  _muted="$(echo "${_sinks}" | awk -F ': ' \
+    '/Mute/ {print $2}')"
+  _volms="$(echo "${_sinks}" | awk '/^\sVolume/ {vol=0; n=0;
+    for (i = 1; i <= NF; i++) {
+      if( substr($i, length($i), 1) == "%" ) {
+        vol += substr($i, 1, length($i) - 1); n++; }
+      } printf("%.0f\n", vol/n);}')"
+  # Get information about the default sink
+  _d_sink="$(echo "${_pinfo}" | awk -F ': ' '/Default Sink/ {print $2}' | head -n 1)"
+  _d_lnum="$(echo "${_ssink}" | grep --line-number "${_d_sink}" \
+    | cut --delimiter ':' --fields '1')"
+  _d_port="$(echo "${_ports}" | sed --quiet "${_d_lnum}p")"
+  _d_mute="$(echo "${_muted}" | sed --quiet "${_d_lnum}p")"
+  _d_volm="$(echo "${_volms}" | sed --quiet "${_d_lnum}p")"
+  # Determine icon for the sink
+  case "${_d_port}" in
+    *hdmi*)                     _pre="﴿ " ;;
+    *headset*)                  _pre=" " ;;
+    *a2dp*)                     _pre="﫽 " ;;
+    *hifi*)                     _pre="﫛 " ;;
+    *headphone*|*stereo*)       _pre=" " ;;
+    *speaker*)                  _pre="蓼 " ;;
+    *network*)                  _pre="爵 " ;;
+    *analog*)                   _pre=" " ;;
+    *)                          _pre=" " ;;
+  esac
+  # Check if it's a bluetooth sink
+  if echo "${_d_sink}" | grep -q 'bluez' ; then
+    _suf=" "
+  else
+    _suf=""
+  fi
+  # Check if the sink is muted
+  if [ "${_d_mute}" = 'yes' ] ; then
+    _d_mute='true'
+  else
+    _d_mute='false'
+  fi
+  # Format tooltip
+  _tip="Pulseaudio Sinks:"
+  _nsinks="$(echo "${_ssink}" | wc --lines)"
+  _lnum=1 ; while [ "${_lnum}" -le "${_nsinks}" ] ; do
+    _sink="$(echo "${_ssink}" | awk "NR==${_lnum} {print \$2}")"
+    _port="$(echo "${_ports}" | sed --quiet "${_lnum}p")"
+    _volm="$(echo "${_volms}" | sed --quiet "${_lnum}p")"
+    _mute="$(echo "${_muted}" | sed --quiet "${_lnum}p")"
+    if  [ "${_mute}" = 'yes' ] ; then
+      _volm="${_volm} (Muted)"
+    fi
+    if [ "${_lnum}" = "${_d_lnum}" ] ; then
+      _tip="${_tip}\nSink: (default) ${_sink}"
+    else
+      _tip="${_tip}\nSink: ${_sink}"
+    fi
+    _tip="${_tip}\n  Volume: ${_volm}, Port: ${_port}"
+    _lnum=$(( _lnum + 1 ))
+  done
+
+  # Print JSON string
+  _json="{\"prompt\":\"${_d_volm}\""
+  _json="${_json},\"prefix\":\"${_pre}\""
+  _json="${_json},\"suffix\":\"${_suf}\""
+  _json="${_json},\"dim\":${_d_mute}"
+  _json="${_json},\"accent\":\"${SBP_PULSE_COLOR}\""
+  echo "${_json},\"tooltip\":\"${_tip}\"}"
+}
+
+# Listener loop
+listener_loop () {
+  /usr/bin/pactl subscribe 2>/dev/null | while read -r _line ; do
+    if echo "${_line}" \
+      | grep --quiet --ignore-case "sink\|'change' on server #" ; then
+      get_text
+    fi
+  done
+}
+
+# Main function
+case $1 in
+  actions) get_actions ;;
+  once) get_text ;;
+  *) # Try to get_text once; if it fails just gracefully exit
+  get_text || exit 0
+  # Start the listening loop.
+  listener_loop
+  ;;
+esac

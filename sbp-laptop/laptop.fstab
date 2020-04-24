@@ -7,7 +7,7 @@
 /dev/mapper/Laptop-Arch     /           btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@root                                             0       0
 /dev/mapper/Laptop-Arch     /.snapshots btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@snapshots                                        0       0
 /dev/mapper/Laptop-Opt      /opt        ext4    defaults                                                                                                    0       0
-UUID=5563-D66F              /boot/efi   vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
+UUID=A0B4-8ADB              /boot/efi   vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
 /dev/mapper/Laptop-Home     /home       xfs     rw,relatime,attr2,inode64,noquota                                                                           0       2
 /swap/swapfile              none        swap    defaults                                                                                                    0       0
 # Gentoo
