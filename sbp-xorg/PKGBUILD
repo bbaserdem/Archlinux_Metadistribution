@@ -2,20 +2,16 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-xorg
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: X11 server and utils"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=('xorg.locker' 'xorg.wallpaper' 'xorg.xinit-session')
+source=('xorg.locker' 'xorg.wallpaper')
 sha256sums=(SKIP SKIP SKIP)
 package() {
     depends=('sbp-gui')
-    # Install xsession based on xinit
-    install -dm 0755 "${pkgdir}/usr/share/xsessions"
-    install -Dm 0755 xorg.xinit-session \
-      "${pkgdir}/usr/share/xsessions/xinitrc.desktop"
     # Install user scripts
     install -dm 0755 "${pkgdir}/usr/bin"
     install -Dm 0755 xorg.locker    "${pkgdir}/usr/bin/sbp-xlocker"
@@ -33,13 +29,11 @@ package() {
         'xorg-server'
         'xorg-server-common'
         'xorg-setxkbmap'
-        'xorg-xbacklight'
         'xorg-xcursorgen'
         'xorg-xdpyinfo'
         'xorg-xdriinfo'
         'xorg-xev'
         'xorg-xgamma'
-        'xorg-xinit'
         'xorg-xinput'
         'xorg-xkbcomp'
         'xorg-xkbutils'
@@ -55,6 +49,6 @@ package() {
         'xorg-xwininfo'
         'xorgproto'
         'xsel')
-    #---For the utilities
+    #---For the lock binary
     depends+=('i3lock-color' 'imagemagick' 'maim')
 }
