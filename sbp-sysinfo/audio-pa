@@ -41,9 +41,9 @@ get_actions () {
   fi
   # Scroll down
   if [ -z "${SBP_PULSE_SCROLLDOWN}" ] ; then
-      _down='/usr/bin/pamixer --decrease 1'
+    _down='/usr/bin/pamixer --decrease 1'
   else
-      _down="${SBP_PULSE_SCROLLDOWN}"
+    _down="${SBP_PULSE_SCROLLDOWN}"
   fi
   # Print json
   _jsonact="{\"middle\":\"${_middle}\""

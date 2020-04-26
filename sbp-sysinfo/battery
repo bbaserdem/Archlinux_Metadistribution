@@ -41,9 +41,9 @@ get_actions () {
   fi
   # Scroll down
   if [ -z "${SBP_BATTERY_SCROLLDOWN}" ] ; then
-      _down="true"
+    _down="true"
   else
-      _down="${SBP_BATTERY_SCROLLDOWN}"
+    _down="${SBP_BATTERY_SCROLLDOWN}"
   fi
   # Print json
   _jsonact="{\"middle\":\"${_middle}\""
@@ -178,14 +178,9 @@ listener_loop () {
   done
 }
 
-if [ "$1" = 'actions' ] ; then
-  # Just print a json list of actions
-  get_actions
-else
-  # Try to get_text once; if it fails just gracefully exit
-  get_text || exit 0
-  # Start the polling loop
-  polling_loop &
-  # Start the listening loop.
-  listener_loop
-fi
+# Main function
+case $1 in
+  actions) get_actions ;;
+  once) get_text ;;
+  *) get_text ; polling_loop & listener_loop ;;
+esac

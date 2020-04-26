@@ -25,7 +25,7 @@ if [ -z "${SBP_CALENDAR_POLL}" ] ; then
 fi
 # Default max length
 if [ -z "${SBP_CALENDAR_MAXLEN}" ] ; then
-    SBP_CALENDAR_MAXLEN=52
+  SBP_CALENDAR_MAXLEN=52
 fi
 # Click commands that can be overriden through environment vars
 get_actions () {
@@ -56,9 +56,9 @@ get_actions () {
   fi
   # Scroll down
   if [ -z "${SBP_CALENDAR_SCROLLDOWN}" ] ; then
-      _down='true'
+    _down='true'
   else
-      _down="${SBP_CALENDAR_SCROLLDOWN}"
+    _down="${SBP_CALENDAR_SCROLLDOWN}"
   fi
   # Print json
   _jsonact="{\"middle\":\"${_middle}\""
