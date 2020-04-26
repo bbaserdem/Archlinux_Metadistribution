@@ -9,7 +9,7 @@ url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=('xorg.locker' 'xorg.wallpaper')
-sha256sums=(SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP)
 package() {
     depends=('sbp-gui')
     # Install user scripts
