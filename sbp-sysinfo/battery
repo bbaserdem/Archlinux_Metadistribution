@@ -1,4 +1,5 @@
 #!/bin/dash
+# vim:ft=sh
 # Print battery information
 # Depends on: acpid, acpi
 

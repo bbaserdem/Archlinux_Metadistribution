@@ -1,4 +1,5 @@
 #!/bin/dash
+# vim:ft=sh
 # Print pulseaudio information; specific focus on bluetooth.
 # Depends on: pactl, pamixer, (pavucontrol}
 

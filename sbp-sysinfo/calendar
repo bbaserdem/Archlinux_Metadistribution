@@ -1,38 +1,128 @@
 #!/bin/dash
 # vim:ft=sh
-
+# Print latest event on calendar
 # Depends on: khal, inotify
 
 # Kill all descendents on exit
-trap 'kill $(list_children $(cut -d " " -f4 < /proc/self/stat)) 2>/dev/null; exit' INT QUIT KILL TERM PIPE HUP
+trap 'exit' INT TERM
+trap 'kill 0' EXIT
 
-list_children () 
-{
-    children=$(ps -o pid= --ppid "$1")
-    for pid in $children
-    do
-        list_children "$pid"
-    done
-    echo "$children"
+# Default color
+if [ -z "${SBP_CALENDAR_COLOR}" ] ; then
+  SBP_CALENDAR_COLOR='brown'
+fi
+# Location
+if [ -z "${SBP_CALENDAR_LOCATION}" ] ; then
+  if [ -d "${HOME}/Documents/Calendar" ] ; then
+    SBP_CALENDAR_LOCATION="${HOME}/Documents/Calendar"
+  else
+    exit 1
+  fi
+fi
+# Polling loop length
+if [ -z "${SBP_CALENDAR_POLL}" ] ; then
+  SBP_CALENDAR_POLL=3600
+fi
+# Default max length
+if [ -z "${SBP_CALENDAR_MAXLEN}" ] ; then
+    SBP_CALENDAR_MAXLEN=52
+fi
+# Click commands that can be overriden through environment vars
+get_actions () {
+# Function to generate action list
+  # Left click
+  if [ -z "${SBP_CALENDAR_LEFTCLICK}" ] ; then
+    _left='true'
+  else
+    _left="${SBP_CALENDAR_LEFTCLICK}"
+  fi
+  # Right click
+  if [ -z "${SBP_CALENDAR_RIGHTCLICK}" ] ; then
+    _right="${TERMINAL} khal"
+  else
+    _right="${SBP_CALENDAR_RIGHTCLICK}"
+  fi
+  # Middle click
+  if [ -z "${SBP_CALENDAR_MIDDLECLICK}" ] ; then
+    _middle="true"
+  else
+    _middle="${SBP_CALENDAR_MIDDLECLICK}"
+  fi
+  # Scroll up
+  if [ -z "${SBP_CALENDAR_SCROLLUP}" ] ; then
+    _up='true'
+  else
+    _up="${SBP_CALENDAR_SCROLLUP}"
+  fi
+  # Scroll down
+  if [ -z "${SBP_CALENDAR_SCROLLDOWN}" ] ; then
+      _down='true'
+  else
+      _down="${SBP_CALENDAR_SCROLLDOWN}"
+  fi
+  # Print json
+  _jsonact="{\"middle\":\"${_middle}\""
+  _jsonact="${_jsonact},\"left\":\"${_left}\",\"right\":\"${_right}\""
+  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}"
 }
-
-_file="${HOME}/Documents/Calendar"
-_len=52
 
 get_text () {
-    _txt="$(khal list | head -n 1)"
+# Parse json text that has the fields;
+# * accent: Accent color (not neccessary needed)
+# * prompt: Text to display
+# * prefix: Icon to display at beginning
+# * suffix: Icon to display at end
+# * tooltip: Expanded tooltip; maybe for future
+# * dim: (Boolean) To dim module or not.
+  # Get events, and the most recent one
+  _tip="$(khal list)"
+  _txt="$(echo "${_tip}" | head -n 1)"
+  # If there are no events; mute the text
+  if [ "${_txt}" = 'No events' ] ; then
+    _mute='true'
+  else
     _mute='false'
-    if [ "${_txt}" = "No events" ] ; then
-        _mute='true'
-    elif [ "${#_txt}" -gt "${_len}" ] ; then
-        _txt="$(echo $_txt | awk '{print substr($0,1,'$_len'}')…"
-    fi
-
-    echo "{ \"format\":\"${_txt}\", \"mute\":${_mute}, \"prefix\":\" \" }"
+  fi
+  # Shorten text if longer than limit
+  if [ "$(echo "${_txt}" | wc --chars)" -gt "${SBP_CALENDAR_MAXLEN}" ] ; then
+    _txt="$(echo "${_txt}" \
+      | awk "{print substr(\$0, 1, ${SBP_CALENDAR_MAXLEN})}")…"
+  fi
+  # Print JSON string
+  _json="{\"prompt\":\"${_txt}\",\"accent\":\"${SBP_CALENDAR_COLOR}\""
+  _json="${_json},\"prefix\":\" \",\"suffix\":\"\",\"dim\":${_mute}"
+  echo "${_json},\"tooltip\":\"${_tip}\"}"
 }
 
-while : ; do
+# Listener loop
+listener_loop () {
+  # Place inotify watch on the calendar directory, or exit gracefully
+  while : ; do
+    inotifywait --recursive --timeout -1 \
+      --event modify --event move --event create --event delete \
+      "${SBP_CALENDAR_LOCATION}" >/dev/null 2>&1 || exit 2
     get_text
+    # Wait a while before trying to add watches again
     sleep 5
-    inotifywait -r -t -1 "${_file}" -e modify -e move -e create -e delete >/dev/null 2>&1 || break
-done
+  done
+}
+
+# Polling loop to refresh; in case date rolls over or sthng
+polling_loop () {
+  # Don't poll if duration is 0
+  if [ "${SBP_CALENDAR_POLL}" -le 0 ] ; then
+    exit 0
+  fi
+  while : ; do
+    # Wait; then refresh the output every _poll seconds
+    sleep "${SBP_CALENDAR_POLL}"
+    get_text
+  done
+}
+
+# Main function
+case $1 in
+  actions) get_actions ;;
+  once) get_text ;;
+  *) get_text ; polling_loop & listener_loop ;;
+esac

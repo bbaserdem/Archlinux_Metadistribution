@@ -1,4 +1,5 @@
 #!/bin/dash
+# vim:ft=sh
 # Print screen and keyboard brightness levels
 # Depends on: pactl, pamixer, (pavucontrol}
 
