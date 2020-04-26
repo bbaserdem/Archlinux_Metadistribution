@@ -6,7 +6,7 @@
 trap 'exit' INT TERM
 trap 'kill 0' EXIT
 
-# Default battery; if not defined
+# Default color
 if [ -z "${SBP_PULSE_COLOR}" ] ; then
     SBP_PULSE_COLOR='cyan'
 fi
@@ -47,7 +47,7 @@ get_actions () {
   # Print json
   _jsonact="{\"middle\":\"${_middle}\""
   _jsonact="${_jsonact},\"left\":\"${_left}\",\"right\":\"${_right}\""
-  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}" | jq --color-output
+  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}"
 }
 
 get_text() {
