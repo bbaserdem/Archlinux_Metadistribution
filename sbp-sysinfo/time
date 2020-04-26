@@ -9,7 +9,7 @@ trap 'kill 0' EXIT
 
 # Default color
 if [ -z "${SBP_CLOCK_COLOR}" ] ; then
-    SBP_CLOCK_COLOR='indigo'
+  SBP_CLOCK_COLOR='indigo'
 fi
 
 # Click commands that can be overriden through environment vars

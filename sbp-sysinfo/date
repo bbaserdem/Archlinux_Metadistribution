@@ -1,0 +1,109 @@
+#!/bin/dash
+# vim:ft=sh
+# Print the current day, and the moon phase
+# Depends on: date (coreutils)
+
+# Kill all descendents on exit
+trap 'exit' INT TERM
+trap 'kill 0' EXIT
+
+# Default color
+if [ -z "${SBP_DATE_COLOR}" ] ; then
+  SBP_DATE_COLOR='indigo'
+fi
+# Default color
+if [ -z "${SBP_DATE_ICON_STYLE}" ] ; then
+  SBP_DATE_ICON_STYLE='alt'
+fi
+
+# Click commands that can be overriden through environment vars
+get_actions () {
+# Function to generate action list
+  # Left click
+  if [ -z "${SBP_DATE_LEFTCLICK}" ] ; then
+    _left='true'
+  else
+    _left="${SBP_DATE_LEFTCLICK}"
+  fi
+  # Right click
+  if [ -z "${SBP_DATE_RIGHTCLICK}" ] ; then
+    _right="true"
+  else
+    _right="${SBP_DATE_RIGHTCLICK}"
+  fi
+  # Middle click
+  if [ -z "${SBP_DATE_MIDDLECLICK}" ] ; then
+    _middle="true"
+  else
+    _middle="${SBP_DATE_MIDDLECLICK}"
+  fi
+  # Scroll up
+  if [ -z "${SBP_DATE_SCROLLUP}" ] ; then
+    _up='true'
+  else
+    _up="${SBP_DATE_SCROLLUP}"
+  fi
+  # Scroll down
+  if [ -z "${SBP_DATE_SCROLLDOWN}" ] ; then
+    _down='true'
+  else
+    _down="${SBP_DATE_SCROLLDOWN}"
+  fi
+  # Print json
+  _jsonact="{\"middle\":\"${_middle}\""
+  _jsonact="${_jsonact},\"left\":\"${_left}\",\"right\":\"${_right}\""
+  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}"
+}
+
+get_icon () {
+  # Get proper icon for the moon phase
+  _moon="$(echo "$(printf "%.0f" "$(echo "scale=2; ( $(date -d "00:00" +%s) - $(date -d "1999-08-11" +%s) )/(60*60*24)" | bc)") % 29.530588853" | bc | awk '{printf("%d",$1+.5)}')"
+  case "${_moon}" in
+    0)  _out="" ;; 1)  _out="" ;; 2)  _out="" ;; 3)  _out="" ;;
+    4)  _out="" ;; 5)  _out="" ;; 6)  _out="" ;; 7)  _out="" ;;
+    8)  _out="" ;; 9)  _out="" ;; 10) _out="" ;; 11) _out="" ;;
+    12) _out="" ;; 13) _out="" ;; 14) _out="" ;; 15) _out="" ;;
+    16) _out="" ;; 18) _out="" ;; 19) _out="" ;; 20) _out="" ;;
+    21) _out="" ;; 22) _out="" ;; 23) _out="" ;; 24) _out="" ;;
+    25) _out="" ;; 26) _out="" ;; 27) _out="" ;; 28) _out="" ;;
+    29) _out="" ;; 30) _out="" ;;
+  esac
+  case "${SBP_DATE_ICON_STYLE}" in
+    alt) # Grab the second icon
+      echo -n "${_out}" | awk '{print substr($0,2,1)}' ;;
+    *)   # Grab the first icon
+      echo -n "${_out}" | awk '{print substr($0,2,1)}' ;;
+  esac
+}
+
+get_text () {
+# Parse json text that has the fields;
+# * accent: Accent color (not neccessary needed)
+# * prompt: Text to display
+# * prefix: Icon to display at beginning
+# * suffix: Icon to display at end
+# * tooltip: Expanded tooltip; maybe for future
+# * dim: (Boolean) To dim module or not.
+  # Print JSON string
+  _json="{\"prompt\":\"$(date '+%d-%m-%y')\""
+  _json="${_json},\"accent\":\"${SBP_DATE_COLOR}\""
+  _json="${_json},\"prefix\":\" \",\"dim\":false"
+  _json="${_json},\"suffix\":\" $(get_icon)\""
+  echo "${_json},\"tooltip\":\"$(date '+%A, %d %B %Y')\"}"
+}
+
+# The polling loop
+polling_loop () {
+  while : ; do
+    # Sleep until the start of next day, (throw in a sec)
+    sleep "$(( $(date -d "tomorrow 0" +%s) - $(date +%s) + 5 ))"
+    get_text
+  done
+}
+
+# Main function
+case $1 in
+  actions) get_actions ;;
+  once) get_text ;;
+  *) get_text ; polling_loop ;;
+esac
