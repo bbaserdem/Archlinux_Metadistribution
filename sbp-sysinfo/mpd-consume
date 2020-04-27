@@ -20,7 +20,7 @@ get_actions () {
 # Function to generate action list
   # Left click
   if [ -z "${SBP_MPD_LEFTCLICK}" ] ; then
-    _left='/usr/bin/mpc random'
+    _left='/usr/bin/mpc consume'
   else
     _left="${SBP_MPD_LEFTCLICK}"
   fi
