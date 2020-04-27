@@ -1,0 +1,110 @@
+#!/bin/dash
+# vim:ft=sh
+# Print the next todo item
+# Depends on: todoman, inotify
+
+# Kill all descendents on exit
+trap 'exit' INT TERM
+trap 'kill 0' EXIT
+
+# Default color
+if [ -z "${SBP_TODO_COLOR}" ] ; then
+  SBP_TODO_COLOR='brown'
+fi
+# Location
+if [ -z "${SBP_TODO_LOCATION}" ] ; then
+  if [ -d "${HOME}/Documents/Todo" ] ; then
+    SBP_TODO_LOCATION="${HOME}/Documents/Todo"
+  else
+    exit 1
+  fi
+fi
+# Maximum length
+if [ -z "${SBP_TODO_MAXLEN}" ] ; then
+  SBP_TODO_MAXLEN=32
+fi
+
+# Click commands that can be overriden through environment vars
+get_actions () {
+# Function to generate action list
+  # Left click
+  if [ -z "${SBP_TODO_LEFTCLICK}" ] ; then
+    _left='true'
+  else
+    _left="${SBP_TODO_LEFTCLICK}"
+  fi
+  # Right click
+  if [ -z "${SBP_TODO_RIGHTCLICK}" ] ; then
+    _right="${TERMINAL} /usr/bin/todo"
+  else
+    _right="${SBP_TODO_RIGHTCLICK}"
+  fi
+  # Middle click
+  if [ -z "${SBP_TODO_MIDDLECLICK}" ] ; then
+    _middle="true"
+  else
+    _middle="${SBP_TODO_MIDDLECLICK}"
+  fi
+  # Scroll up
+  if [ -z "${SBP_TODO_SCROLLUP}" ] ; then
+    _up='true'
+  else
+    _up="${SBP_TODO_SCROLLUP}"
+  fi
+  # Scroll down
+  if [ -z "${SBP_TODO_SCROLLDOWN}" ] ; then
+    _down='true'
+  else
+    _down="${SBP_TODO_SCROLLDOWN}"
+  fi
+  # Print json
+  _jsonact="{\"middle\":\"${_middle}\""
+  _jsonact="${_jsonact},\"left\":\"${_left}\",\"right\":\"${_right}\""
+  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}"
+}
+
+get_text () {
+# Parse json text that has the fields;
+# * accent: Accent color (not neccessary needed)
+# * prompt: Text to display
+# * prefix: Icon to display at beginning
+# * suffix: Icon to display at end
+# * tooltip: Expanded tooltip; maybe for future
+# * dim: (Boolean) To dim module or not.
+  # Get latest item summary, and full list
+  _tip="$(todo --color never | tr '\n' '~' | sed 's|~|\\\\n|g')"
+  _txt="$(todo --porcelain list --sort priority | jq -r '.[0]."summary"')"
+  # Check if needs to be muted
+  if [ "${_txt}" = 'null' ] ; then
+    _mute='true'
+    _txt='Nothing todo'
+  fi
+  # Shorten text if longer than limit
+  if [ "$(echo "${_txt}" | wc --chars)" -gt "${SBP_TODO_MAXLEN}" ] ; then
+    _txt="$(echo "${_txt}" | awk "{print substr(\$0, 1, ${SBP_TODO_MAXLEN})}")…"
+  fi
+  # Print JSON string
+  _json="{\"prompt\":\"${_txt}\",\"accent\":\"${SBP_TODO_COLOR}\""
+  _json="${_json},\"prefix\":\"省 \",\"suffix\":\"\",\"dim\":${_mute}"
+  echo "${_json},\"tooltip\":\"${_tip}\"}"
+}
+
+# Listener loop
+listener_loop () {
+  # Place inotify watch on the calendar directory, or exit gracefully
+  while : ; do
+    inotifywait --recursive --timeout -1 \
+      --event modify --event move --event create --event delete \
+      "${SBP_TODO_LOCATION}" >/dev/null 2>&1 || exit 2
+    get_text
+    # Wait a while before trying to add watch again
+    sleep 1
+  done
+}
+
+# Main function
+case $1 in
+  actions) get_actions ;;
+  once) get_text ;;
+  *) get_text ; listener_loop ;;
+esac
