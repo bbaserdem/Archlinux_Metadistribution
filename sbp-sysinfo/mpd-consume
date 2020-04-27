@@ -1,0 +1,102 @@
+#!/bin/dash
+# vim:ft=sh
+# Print the currently playing song on the block
+# Depends on: mpd, mpc
+
+# Kill all descendents on exit
+trap 'exit' INT TERM
+trap 'kill 0' EXIT
+
+# Default color
+if [ -z "${SBP_MPD_COLOR}" ] ; then
+  SBP_MPD_COLOR='orange'
+fi
+# Default max length
+if [ -z "${SBP_MPD_MAXLEN}" ] ; then
+  SBP_MPD_MAXLEN=20
+fi
+# Click commands that can be overriden through environment vars
+get_actions () {
+# Function to generate action list
+  # Left click
+  if [ -z "${SBP_MPD_LEFTCLICK}" ] ; then
+    _left='/usr/bin/mpc random'
+  else
+    _left="${SBP_MPD_LEFTCLICK}"
+  fi
+  # Right click
+  if [ -z "${SBP_MPD_RIGHTCLICK}" ] ; then
+    _right="true"
+  else
+    _right="${SBP_MPD_RIGHTCLICK}"
+  fi
+  # Middle click
+  if [ -z "${SBP_MPD_MIDDLECLICK}" ] ; then
+    _middle="true"
+  else
+    _middle="${SBP_MPD_MIDDLECLICK}"
+  fi
+  # Scroll up
+  if [ -z "${SBP_MPD_SCROLLUP}" ] ; then
+    _up='true'
+  else
+    _up="${SBP_MPD_SCROLLUP}"
+  fi
+  # Scroll down
+  if [ -z "${SBP_MPD_SCROLLDOWN}" ] ; then
+    _down='true'
+  else
+    _down="${SBP_MPD_SCROLLDOWN}"
+  fi
+  # Print json
+  _jsonact="{\"middle\":\"${_middle}\""
+  _jsonact="${_jsonact},\"left\":\"${_left}\",\"right\":\"${_right}\""
+  echo "${_jsonact},\"up\":\"${_up}\",\"down\":\"${_down}\"}"
+}
+
+get_text () {
+# Parse json text that has the fields;
+# * accent: Accent color (not neccessary needed)
+# * prompt: Text to display
+# * prefix: Icon to display at beginning
+# * suffix: Icon to display at end
+# * tooltip: Expanded tooltip; maybe for future
+# * dim: (Boolean) To dim module or not.
+  # Get MPD info, even if it breaks
+  _info="$(mpc status 2>&1)"
+  _lines="$(echo "${_info}" | wc --lines)"
+  # Default to no-dimming
+  _mute='false'
+  _txt='陼'
+  _pre=''
+  # Set the _txt variable only if playlist is active
+  if [ "${_lines}" = '3' ] ; then
+    if echo "${_info}" | grep --quiet 'consume: on' ; then
+      _txt=''
+      _pre='裸'
+    fi
+  else
+    _txt=''
+    _pre=''
+  fi
+  # Print JSON string
+  _json="{\"prompt\":\"${_txt}\",\"accent\":\"${SBP_MPD_COLOR}\""
+  _json="${_json},\"prefix\":\"${_pre}\",\"suffix\":\"\",\"dim\":${_mute}"
+  echo "${_json},\"tooltip\":\"\"}"
+}
+
+# Listener loop
+listener_loop () {
+  # Use mpc idle function
+  while : ; do
+    mpc --quiet idle > /dev/null
+    get_text
+  done
+}
+
+# Main function
+case $1 in
+  actions) get_actions ;;
+  once) get_text ;;
+  *) get_text ; listener_loop ;;
+esac
