@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-network
 pkgver=4.0
-pkgrel=3
+pkgrel=4
 pkgdesc="SBP Meta Package: Networking packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -45,6 +45,7 @@ package() {
         's3cmd'
         'syncthing'
         'transmission-cli'
+        'vdirsyncer'
         'w3m'
         'weechat'
         'youtube-dl')
