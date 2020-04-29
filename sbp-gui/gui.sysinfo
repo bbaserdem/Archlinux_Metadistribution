@@ -1,0 +1,253 @@
+#!/bin/dash
+# vim:ft=sh
+
+# Kill all descendents on exit
+trap 'exit' INT TERM
+trap 'kill 0' EXIT
+
+#------------------------------------#
+#  _____           _        __       #
+# /  ___|         (_)      / _|      #
+# \ `--. _   _ ___ _ _ __ | |_ ___   #
+#  `--. \ | | / __| | '_ \|  _/ _ \  #
+# /\__/ / |_| \__ \ | | | | || (_) | #
+# \____/ \__, |___/_|_| |_|_| \___/  #
+#         __/ |                      #
+#        |___/                       #
+#------------------------------------#
+# Script(s) to print system information in a variety of formats.
+#   Expects the following environment variables
+#   - markup:   Decides how the text are going to be formatted
+#             *lemonbar*,pango,plain
+if [ -z "${markup}" ] ;   then markup='lemonbar'  ; fi
+#   - name:     The module to launch
+if [ -z "${name}" ] ;     then name='pulseaudio'  ; fi
+#   - instance: Additional argument to the module
+if [ -z "${instance}" ] ; then instance='default' ; fi
+#   - accent:   The color to apply to special characters
+if [ -z "${accent}" ] ;   then accent='cyan'      ; fi
+
+#--------#
+#-COLORS-#
+#--------#
+# If there are no base16 set defined; do base16-default-dark
+if [ -z "${base00}" ] ; then base00='#181818' ; fi
+if [ -z "${base01}" ] ; then base01='#282828' ; fi
+if [ -z "${base02}" ] ; then base02='#383838' ; fi
+if [ -z "${base03}" ] ; then base03='#585858' ; fi
+if [ -z "${base04}" ] ; then base04='#b8b8b8' ; fi
+if [ -z "${base05}" ] ; then base05='#d8d8d8' ; fi
+if [ -z "${base06}" ] ; then base06='#e8e8e8' ; fi
+if [ -z "${base07}" ] ; then base07='#f8f8f8' ; fi
+if [ -z "${base08}" ] ; then base08='#ab4642' ; fi
+if [ -z "${base09}" ] ; then base09='#dc9656' ; fi
+if [ -z "${base0A}" ] ; then base0A='#f7ca88' ; fi
+if [ -z "${base0B}" ] ; then base0B='#a1b56c' ; fi
+if [ -z "${base0C}" ] ; then base0C='#86c1b9' ; fi
+if [ -z "${base0D}" ] ; then base0D='#7cafc2' ; fi
+if [ -z "${base0E}" ] ; then base0E='#ba8baf' ; fi
+if [ -z "${base0F}" ] ; then base0F='#a16946' ; fi
+# Dimming color is base03
+dim="${base03}"
+# Read accent color; and write it into the variable col
+if   [ "${accent}" = 'frg' ]    ; then
+  col="${base04}"
+elif [ "${accent}" = 'bkg' ]    ; then
+  col="${base01}"
+elif [ "${accent}" = 'dim' ]    ; then
+  col="${base03}"
+elif [ "${accent}" = 'red' ]    ; then
+  col="${base08}"
+elif [ "${accent}" = 'orange' ] ; then
+  col="${base09}"
+elif [ "${accent}" = 'yellow' ] ; then
+  col="${base0A}"
+elif [ "${accent}" = 'green' ]  ; then
+  col="${base0B}"nohup: ignoring input and appending output to 'nohup.out'
+elif [ "${accent}" = 'cyan' ]   ; then
+  col="${base0C}"
+elif [ "${accent}" = 'indigo' ] ; then
+  col="${base0D}"
+elif [ "${accent}" = 'violet' ] ; then
+  col="${base0E}"
+elif [ "${accent}" = 'brown' ]  ; then
+  col="${base0F}"
+else # Invalid accent specification
+  exit 1
+fi
+
+#########################################
+#          _                   _ _      #
+#  ___ _ _| |___ ___ ___ _ _ _| |_|___  #
+# | . | | | |_ -| -_| .'| | | . | | . | #
+# |  _|___|_|___|___|__,|___|___|_|___| #
+# |_|                                   #
+#########################################
+# Pulseaudio module;
+#  * Only needs pacmd (pulseaudion) and pactl (libpulse)
+pulseaudio_click_left () { # Left click action
+  # Toggle mute
+  /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
+}
+
+pulseaudio_click_middle () { # Middle mouse action
+  # Change default sink; and move all inputs to the new sink
+  _info="$(/usr/bin/pacmd list-sinks)"
+  _ndev="$(echo "${_info}" | grep --count 'index:')"
+  _inds="$(echo "${_info}" | grep 'index:' | grep --only-matching '[0-9]\+')"
+  # Get default sink
+  _icur="$(echo "${_info}" | grep 'index:' \
+    | grep --line-number --only-matching '*' \
+    | grep --only-matching '[0-9]\+')"
+  # Get the next sink
+  _inew="$(( ( _icur % _ndev ) + 1 ))"
+  _dnew="$(echo "${_inds}" | sed --quiet "${_inew}p")"
+  # Switch to this default
+  /usr/bin/pacmd set-default-sink "${_dnew}"
+  # Switch all inputs here
+  /usr/bin/pacmd list-sink-inputs | grep 'index:' \
+    | grep --only-matching '[0-9]\+' | while read -r _input ; do
+    /usr/bin/pacmd move-sink-input "${_input}" "${_dnew}"
+  done
+}
+
+pulseaudio_click_right () { # Right mouse action
+  # Launch and disown pavucontrol
+  nohup /usr/bin/pavucontrol >/dev/null 2>&1 &
+}
+
+pulseaudio_scroll_up () { # Scroll up action
+  # Increase volume if the default sink volume is >100%
+  # Default sink
+  _d_sink="$(/usr/bin/pactl info | awk -F ': ' '/Default Sink/ {print $2}')"
+  _d_lnum="$(/usr/bin/pactl list sinks short | grep --line-number "${_d_sink}" \
+    | cut --delimiter ':' --fields '1')"
+  # Volume of default sink
+  _vol="$(/usr/bin/pactl list sinks | awk '/^\sVolume/ {vol=0; n=0;
+    for (i = 1; i <= NF; i++) {
+      if( substr($i, length($i), 1) == "%" ) {
+        vol += substr($i, 1, length($i) - 1); n++; }
+      } printf("%.0f\n", vol/n);}' | sed --quiet "${_d_lnum}p")"
+  if [ "${_vol}" -lt 100 ] ; then
+    /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ +1%
+  else
+    /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ 100%
+  fi
+}
+
+pulseaudio_scroll_down () { # Scroll down action
+  # Launch and disown pavucontrol
+  /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -1%
+}
+
+pulseaudio_print () {   # Print text
+  # Get pulseaudio state info
+  pinfo="$(/usr/bin/pactl info)"
+  sinks="$(/usr/bin/pactl list sinks)"
+  ssink="$(/usr/bin/pactl list sinks short)"
+  ports="$(echo "${sinks}" | awk -F ': ' \
+    '/Active Port/ {print $2}')"
+  muted="$(echo "${sinks}" | awk -F ': ' \
+    '/Mute/ {print $2}')"
+  volms="$(echo "${sinks}" | awk '/^\sVolume/ {vol=0; n=0;
+    for (i = 1; i <= NF; i++) {
+      if( substr($i, length($i), 1) == "%" ) {
+        vol += substr($i, 1, length($i) - 1); n++; }
+      } printf("%.0f\n", vol/n);}')"
+  # Get information about the default sink
+  d_sink="$(echo "${pinfo}" | awk -F ': ' '/Default Sink/ {print $2}')"
+  d_lnum="$(echo "${ssink}" | grep --line-number "${d_sink}" \
+    | cut --delimiter ':' --fields '1')"
+  d_port="$(echo "${ports}" | sed --quiet "${d_lnum}p")"
+  d_mute="$(echo "${muted}" | sed --quiet "${d_lnum}p")"
+  d_volm="$(echo "${volms}" | sed --quiet "${d_lnum}p")"
+  # Determine icon for the sink
+  case "${d_port}" in
+    *hdmi*)                     pre="﴿ " ;;
+    *headset*)                  pre=" " ;;
+    *a2dp*)                     pre="﫽 " ;;
+    *hifi*)                     pre="﫛 " ;;
+    *headphone*|*stereo*)       pre=" " ;;
+    *speaker*)                  pre="蓼 " ;;
+    *network*)                  pre="爵 " ;;
+    *analog*)                   pre=" " ;;
+    *)                          pre=" " ;;
+  esac
+  # Check if it's a bluetooth sink, adjust suffix
+  if echo "${d_sink}" | grep -q 'bluez' ; then
+    suf=" "
+  else
+    suf=""
+  fi
+  # Format tooltip
+  tip="Pulseaudio Sinks:"
+  nsinks="$(echo "${ssink}" | wc --lines)"
+  lnum=1 ; while [ "${lnum}" -le "${nsinks}" ] ; do
+    sink="$(echo "${ssink}" | awk "NR==${lnum} {print \$2}")"
+    port="$(echo "${ports}" | sed --quiet "${lnum}p")"
+    volm="$(echo "${volms}" | sed --quiet "${lnum}p")"
+    mute="$(echo "${muted}" | sed --quiet "${lnum}p")"
+    if  [ "${mute}" = 'yes' ] ; then
+      volm="${volm} (Muted)"
+    fi
+    if [ "${lnum}" = "${d_lnum}" ] ; then
+      tip="${tip}"'\\n'"Sink: (default) ${sink}"
+    else
+      tip="${tip}"'\\n'"Sink: ${sink}"
+    fi
+    tip="${tip}"'\\n'"  Volume: ${volm}, Port: ${port}"
+    lnum=$(( lnum + 1 ))
+  done
+
+  # Formatting and printing
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    txt="%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${d_volm}%{-u u- -o o-}"
+    if [ "${d_mute}" = 'yes' ] ; then
+      txt="%{F${dim}}${txt}%{F-}"
+    fi
+    echo "${txt}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    png="<span color='${col}'>${pre}</span>${d_volm}<span color='${col}'>${suf}</span>"
+    # Start assemling the json string
+    txt="{\"full_text\":\"${png}\""
+    if [ "${d_mute}" = 'yes' ] ; then
+      echo "${txt},\"color\":\"${dim}\"}"
+    else
+      echo "${txt}}"
+    fi
+  fi
+}
+
+pulseaudio_wait () { # Listener loop with callback
+  # Print once
+  pulseaudio_print
+  /usr/bin/pactl subscribe 2>/dev/null | while read -r _line ; do
+    if echo "${_line}" \
+      | grep --quiet --ignore-case "sink\|'change' on server #" ; then
+      pulseaudio_print
+    fi
+  done
+}
+
+pulseaudio_respond () { # Responder loop
+  while read _button ; do
+    case "$(echo "${_button}" | jq -r '.button')" in
+      1) pulseaudio_click_left ;;
+      2) pulseaudio_click_middle ;;
+      3) pulseaudio_click_right ;;
+      4) pulseaudio_scroll_up ;;
+      5) pulseaudio_scroll_down ;;
+      *) true ;;
+    esac
+  done
+}
+
+# Main application
+case "${name}" in
+  pulseaudio) pulseaudio_wait & pulseaudio_respond ;;
+  *)
+    echo "No module ${name} configured!"
+    exit 1 ;;
+esac

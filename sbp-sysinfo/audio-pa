@@ -73,7 +73,7 @@ get_text() {
         vol += substr($i, 1, length($i) - 1); n++; }
       } printf("%.0f\n", vol/n);}')"
   # Get information about the default sink
-  _d_sink="$(echo "${_pinfo}" | awk -F ': ' '/Default Sink/ {print $2}' | head -n 1)"
+  _d_sink="$(echo "${_pinfo}" | awk -F ': ' '/Default Sink/ {print $2}')"
   _d_lnum="$(echo "${_ssink}" | grep --line-number "${_d_sink}" \
     | cut --delimiter ':' --fields '1')"
   _d_port="$(echo "${_ports}" | sed --quiet "${_d_lnum}p")"

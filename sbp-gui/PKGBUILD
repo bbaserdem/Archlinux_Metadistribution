@@ -2,17 +2,19 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gui
 pkgver=4.0
-pkgrel=4
+pkgrel=5
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=('gui.install')
-sha256sums=(SKIP)
+source=('gui.install' 'gui.sysinfo')
+sha256sums=(SKIP SKIP)
 package() {
     depends=('sbp-base')
     install=gui.install
+    # Install the sysinfo script
+    install -Dm 755 gui.sysinfo "${pkgdir}/usr/bin/sbp-sysinfo"
     #---Login manager
     depends+=('sddm')
     #---Input methods
