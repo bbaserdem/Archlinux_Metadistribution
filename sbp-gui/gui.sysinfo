@@ -428,7 +428,6 @@ cpu_click_right  () {
 }
 cpu_scroll_up    () { true ; }
 cpu_scroll_down  () { true ; }
-}
 cpu_print () {
   # Get data from /proc/loadavg
   data="$(cat /proc/loadavg || exit 1)"
@@ -488,8 +487,8 @@ date_print () {
     29) _out="" ;; 30) _out="" ;;
   esac
   case "${SYSINFO_DATE_STYLE}" in
-    alt) suf=" $(echo "${_out}" | awk '{print substr($0, 2, 1)}')" ;;
-    *)   suf=" $(echo "${_out}" | awk '{print substr($0, 1, 1)}')" ;;
+    alt) suf=" $(echo "${_out}" | awk '{print substr($0, 1, 1)}')" ;;
+    *)   suf=" $(echo "${_out}" | awk '{print substr($0, 2, 1)}')" ;;
   esac
   # Print text
   if [ "${markup}" = 'lemonbar' ] ; then
@@ -534,7 +533,7 @@ email_scroll_up    () { true ; }
 email_scroll_down  () { true ; }
 email_print () {
   # Get number of new emails
-  num="$(find "${SYSINFO_MAIL_LOC}/Inbox/new" | wc -l)"
+  num="$(find "${SYSINFO_EMAIL_LOC}/Inbox/new" | wc -l)"
   # Set up prefix
   if [ "${num}" -le 0 ] ; then
     pre=" "
@@ -584,18 +583,114 @@ email_wait () {
 #####################################
 # Keyboard module;
 #  * For keyboard backlight; BRI_KBD needs to be in environment variables
-keyboard_click_left () { true ; }
+keyboard_click_left () {
+  if [ "${XDG_SESSION_TYPE}" = 'x11' ] ; then
+    if [ -x '/usr/bin/xkb-switch' ] ; then
+      /usr/bin/xkb-switch --next
+    fi
+  elif [ -n "${SWAYSOCK}" ] ; then
+    true
+  fi
+}
 keyboard_click_middle () { true ; }
 keyboard_click_right () { true ; }
 keyboard_scroll_up () {
-  if [ -n "${BRI_KBD}" ] && [ -x '/usr/bin/light' ] ; then
-    /usr/bin/light -Ars "sysfs/leds/${BRI_KBD}" 1
+  if [ -x '/usr/bin/light' ] ; then
+    device="$(/usr/bin/light -L | awk '/kbd_backlight/ {print $1}')"
+    if [ -n "${device}" ] ; then
+      /usr/bin/light -Ars "${device}" 1
+    fi
   fi
 }
 keyboard_scroll_down () {
-  if [ -n "${BRI_KBD}" ] && [ -x '/usr/bin/light' ] ; then
-    /usr/bin/light -Urs "sysfs/leds/${BRI_KBD}" 1
+  if [ -x '/usr/bin/light' ] ; then
+    device="$(/usr/bin/light -L | awk '/kbd_backlight/ {print $1}')"
+    if [ -n "${device}" ] ; then
+      /usr/bin/light -Urs "${device}" 1
+    fi
   fi
+}
+keyboard_print () {
+  # Initialize
+  pre=' '
+  suf=''
+  # Different protocols for different software
+  if [ "${XDG_SESSION_TYPE}" = 'x11' ] ; then
+    # Get keymap
+    state="$(xkb-switch --print)"
+  elif [ -n "${SWAYSOCK}" ] ; then
+    state="$(/usr/bin/swaymsg --type get_inputs | jq \
+      '.[] | select(.name | test(".*[K,k]eyboard.*")) | select(.type == "keyboard") | .xkb_active_layout_name' \
+      | tail -n 1)"
+  else
+    exit 1
+  fi
+  # Seperate language and layout
+  lang="$(echo "${state}"   | awk -F '[ ()]' '{print $1}')"
+  layout="$(echo "${state}" | awk -F '[ ()]' '{print $2}')"
+  # Start laying out text (with emoji if possible)
+  case "${lang}" in
+    us) txt='🇺' ;;
+    tr) txt='🇹🇷' ;;
+    *)  txt="$(echo "${lang}" | awk '{print toupper($0)}')"
+  esac
+    # Add the layout
+    if [ -n "${layout}" ] ; then
+      txt="${txt} ("${layout}")"
+    else
+      txt="${txt} (qwerty)"
+    fi
+  # Get the keyboard backlight if it is there
+  if [ -x '/usr/bin/light' ] ; then
+    device="$(/usr/bin/light -L | awk '/kbd_backlight/ {print $1}')"
+    if [ -n "${device}" ] ; then
+      blevel="$(/usr/bin/light -Gs "${device}")"
+      if   [ "${blevel}" -gt 66 ] ; then suf=" "
+      elif [ "${blevel}" -gt 33 ] ; then suf=" "
+      elif [ "${blevel}" -gt  0 ] ; then suf=" "
+      fi
+    fi
+  fi
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    out="%{F${col}}${pre}%{F-}${txt}%{F${col}}${suf}%{F-}"
+    echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    out="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
+    echo "{\"full_text\":\"${out}\"}"
+  fi
+}
+keyboard_wait() {
+  # Check if kbd device exists to wait for it
+  kbdlight_wait() {
+    if [ -x '/usr/bin/light' ] && [ -x '/usr/bin/acpi_listen' ] ; then
+      device="$(/usr/bin/light -L | awk '/kbd_backlight/ {print $1}')"
+      if [ -n "${device}" ] ; then
+        /usr/bin/acpi_listen | while read -r event ; do
+          if echo "${event}" | grep --quiet 'kbd' ; then
+            keyboard_print
+          fi
+        done
+      fi
+    fi
+  }
+  keymap_wait() {
+    if [ "${XDG_SESSION_TYPE}" = 'x11' ] && [ -x '/usr/bin/xkb-switch' ] ; then
+      /usr/bin/xkb-switch -W | while read -r line ; do
+        keyboard_print
+      done
+    elif [ -n "${SWAYSOCK}" ] ; then
+      /usr/bin/swaymsg --type subscribe '["input"]' --monitor | while read -r line ; do
+        if [ "$(echo "${line}" | jq '.change' --raw)" = 'xkb_layout' ] ; then
+          keyboard_print
+        fi
+      done
+    fi
+  }
+  kbdlight_wait &
+  keymap_wait
 }
 
 #################################
@@ -636,10 +731,6 @@ memory_print () {
     txt="${_txt}樂${swap_amnt} (${swap_perc})"
     suf=' 易'
   fi
-  # Print JSON
-  _json="{\"prompt\":\"${_txt}\",\"accent\":\"${SBP_MEM_COLOR}\""
-  _json="${_json},\"prefix\":\"\",,\"suffix\":\"${_suf}\"\"dim\":false"
-  echo "${_json},\"tooltip\":\"${_tip}\"}"
   # Print text
   if [ "${markup}" = 'lemonbar' ] ; then
     # Format by lemonbar tags
