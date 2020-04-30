@@ -82,6 +82,14 @@ fi
 if [ -z "${SYSINFO_TODO_MAXLEN}" ] ; then
   SYSINFO_TODO_MAXLEN=30
 fi
+# By default, DISPLAY is used to identify flags; translate this
+if [ -n "${WAYLAND_DISPLAY}" ] ; then
+  IDENTIFIER="${WAYLAND_DISPLAY}"
+elif [ -n "${DISPLAY}" ] ; then
+  IDENTIFIER="${DISPLAY}"
+else
+  IDENTIFIER="$$"
+fi
 
 #--------#
 #-COLORS-#
@@ -300,7 +308,7 @@ calendar_click_right  () {
     if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/khal' ] ; then
       "${TERMINAL}" /usr/bin/khal interactive
     fi
-  ) 7>"${SYSINFO_FLOCK_DIR}/cal_${DISPLAY}_right" >/dev/null 2>&1 &
+  ) 7>"${SYSINFO_FLOCK_DIR}/cal_${IDENTIFIER}_right" >/dev/null 2>&1 &
 }
 calendar_scroll_up    () { true ; }
 calendar_scroll_down  () { true ; }
@@ -416,7 +424,7 @@ cpu_click_right  () {
     if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/htop' ] ; then
       "${TERMINAL}" /usr/bin/htop
     fi
-  ) 7>"${SYSINFO_FLOCK_DIR}/cpu_${DISPLAY}_right" >/dev/null 2>&1 &
+  ) 7>"${SYSINFO_FLOCK_DIR}/cpu_${IDENTIFIER}_right" >/dev/null 2>&1 &
 }
 cpu_scroll_up    () { true ; }
 cpu_scroll_down  () { true ; }
@@ -461,7 +469,7 @@ date_click_right  () {
     if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/khal' ] ; then
       "${TERMINAL}" /usr/bin/khal interactive
     fi
-  ) 7>"${SYSINFO_FLOCK_DIR}/date_${DISPLAY}_right" >/dev/null 2>&1 &
+  ) 7>"${SYSINFO_FLOCK_DIR}/date_${IDENTIFIER}_right" >/dev/null 2>&1 &
 }
 date_print () {
   pre=' '
@@ -520,7 +528,7 @@ email_click_right  () {
     elif [ -x "${TERMINAL}" ] && [ -x '/usr/bin/mutt' ] ; then
       "${TERMINAL}" /usr/bin/mutt
     fi
-  ) 7>"${SYSINFO_FLOCK_DIR}/email_${DISPLAY}_right" >/dev/null 2>&1 &
+  ) 7>"${SYSINFO_FLOCK_DIR}/email_${IDENTIFIER}_right" >/dev/null 2>&1 &
 }
 email_scroll_up    () { true ; }
 email_scroll_down  () { true ; }
@@ -606,7 +614,7 @@ memory_click_right  () {
     if [ -x "${TERMINAL}" ] & [ -x '/usr/bin/htop' ] ; then
       "${TERMINAL}" /usr/bin/htop
     fi
-  ) 7>"${SYSINFO_FLOCK_DIR}/mem_${DISPLAY}_right" >/dev/null 2>&1 &
+  ) 7>"${SYSINFO_FLOCK_DIR}/mem_${IDENTIFIER}_right" >/dev/null 2>&1 &
 }
 memory_scroll_up    () { true ; }
 memory_scroll_down  () { true ; }
@@ -675,7 +683,7 @@ mpd_click_right  () {
     if [ -x '/usr/bin/cantata' ] ; then
       /usr/bin/cantata >/dev/null 2>&1 &
     fi
-  ) 7>"${SYSINFO_FLOCK_DIR}/mpd_${DISPLAY}_right" >/dev/null 2>&1 &
+  ) 7>"${SYSINFO_FLOCK_DIR}/mpd_${IDENTIFIER}_right" >/dev/null 2>&1 &
 }
 mpd_scroll_up () { true ; }
 mpd_scroll_down () { true ; }
@@ -869,7 +877,7 @@ pulseaudio_click_right () { # Right mouse action
     if [ -x '/usr/bin/pavucontrol' ] ; then
       /usr/bin/pavucontrol
     fi
-  ) 7>"${SYSINFO_FLOCK_DIR}/pulse_${DISPLAY}_right" >/dev/null 2>&1 &
+  ) 7>"${SYSINFO_FLOCK_DIR}/pulse_${IDENTIFIER}_right" >/dev/null 2>&1 &
 }
 pulseaudio_scroll_up () { # Scroll up action
   if [ "${instance}" = 'source' ] ; then
@@ -1035,7 +1043,7 @@ rss_click_right  () {
     if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/newsboat' ] ; then
       "${TERMINAL}" '/usr/bin/newsboat'
     fi
-  ) 7>"${SYSINFO_FLOCK_DIR}/rss_${DISPLAY}_right" >/dev/null 2>&1 &
+  ) 7>"${SYSINFO_FLOCK_DIR}/rss_${IDENTIFIER}_right" >/dev/null 2>&1 &
 }
 rss_print () {
   pre=' '
