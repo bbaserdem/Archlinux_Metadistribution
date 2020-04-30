@@ -67,6 +67,9 @@ fi
 if [ -z "${SYSINFO_EMAIL_LOC}" ] ; then
   SYSINFO_EMAIL_LOC="${HOME}/Documents/Mail/Gmail"
 fi
+if [ -z "${SYSINFO_FAN_POLL}" ] ; then
+  SYSINFO_FAN_POLL=5
+fi
 if [ -z "${SYSINFO_MEM_POLL}" ] ; then
   SYSINFO_MEM_POLL=30
 fi
@@ -84,6 +87,9 @@ if [ -z "${SYSINFO_TODO_LOC}" ] ; then
 fi
 if [ -z "${SYSINFO_TODO_MAXLEN}" ] ; then
   SYSINFO_TODO_MAXLEN=30
+fi
+if [ -z "${SYSINFO_UPDATE_POLL}" ] ; then
+  SYSINFO_UPDATE_POLL=900
 fi
 # By default, DISPLAY is used to identify flags; translate this
 if [ -n "${WAYLAND_DISPLAY}" ] ; then
@@ -627,6 +633,92 @@ email_wait () {
     # Wait a while before trying to add watches again
     sleep 5
   done
+}
+
+#################
+#  ___          #
+# |  _|___ ___  #
+# |  _| .'|   | #
+# |_| |__,|_|_| #
+#################
+# Fan module
+#  * Takes optional instance
+#  * Polling interval can be changed
+fan_click_left () { true ; }
+fan_click_middle () { true ; }
+fan_click_right () { true ; }
+fan_scroll_up () { true ; }
+fan_scroll_down () { true ; }
+fan_print () {
+  pre=' '
+  # Check fan output
+  if [ "${instance}" = 'default' ] ; then
+    int='fan'
+  else
+    int="${instance}"
+  fi
+  if [ ! -x '/usr/bin/sensors' ] ; then
+    exit 1
+  fi
+  txt="$(/usr/bin/sensors | awk "/${int}/ {print \$2}")"
+  if [ -n "${txt}" ] ; then
+    # Print text
+    if [ "${markup}" = 'lemonbar' ] ; then
+      # Format by lemonbar tags
+      echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${txt}%{-u u- -o o-}"
+    elif [ "${markup}" = 'pango' ] ; then
+      # Create pango formatted string
+      echo "{\"full_text\":\"<span color='${col}'>${pre}</span>${txt}\"}"
+    fi
+  fi
+}
+fan_wait () {
+  # Check first if there is an instance
+  if [ -x '/usr/bin/sensors' ] ; then
+    if [ "${instance}" = 'default' ] ; then
+      int='fan'
+    else
+      int="${instance}"
+    fi
+    if /usr/bin/sensors | grep --quiet "${int}" ; then
+      while : ; do
+        fan_print
+        sleep "${SYSINFO_FAN_POLL}"
+      done
+    fi
+  fi
+}
+
+###########################
+#  _                   _  #
+# | |_ ___ ___ ___ ___| | #
+# | '_| -_|  _|   | -_| | #
+# |_,_|___|_| |_|_|___|_| #
+###########################
+# Kernel module;
+#  * Don't do this as interval
+kernel_click_left () { true ; }
+kernel_click_middle () { true ; }
+kernel_click_right () { true ; }
+kernel_scroll_up () { true ; }
+kernel_scroll_down () { true ; }
+kernel_print () {
+  txt="$(/usr/bin/uname --kernel-release)"
+  pre=' '
+  #ico=' '
+  #ico=' '
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+  # Format by lemonbar tags
+    echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${txt}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    echo "{\"full_text\":\"<span color='${col}'>${pre}</span>${txt}\"}"
+  fi
+}
+kernel_wait () {
+  kernel_print
+  exit 0
 }
 
 #####################################
@@ -1286,6 +1378,74 @@ todo_wait () {
   done
 }
 
+#############################
+#            _     _        #
+#  _ _ ___ _| |___| |_ ___  #
+# | | | . | . | .'|  _| -_| #
+# |___|  _|___|__,|_| |___| #
+#     |_|                   #
+#############################
+# Update module
+#  * Does not take arguments; but polling can be changed
+update_click_left   () { true ; }
+update_click_middle () { true ; }
+update_click_right  () {
+  dis="$(lsb_release --id | awk -F ':\\s' '{print $2}')"
+  ( flock --nonblock 7 || exit 7
+    case "${dis}" in
+      Arch)   if [ -x '/usr/bin/pamac'    ] ; then /usr/bin/pamac    ; fi ;;
+      Gentoo) if [ -x '/usr/bin/porthole' ] ; then /usr/bin/porthole ; fi ;;
+    esac
+  ) 7>"${SYSINFO_FLOCK_DIR}/rss_${IDENTIFIER}_right" >/dev/null 2>&1 &
+}
+update_scroll_up    () { true ; }
+update_scroll_down  () { true ; }
+update_print () {
+  dis="$(lsb_release --id | awk -F ':\\s' '{print $2}')"
+  pre=''
+  txt=''
+  case "${dis}" in
+    Arch)
+      pre=' '
+      if [ -x '/usr/bin/checkupdates' ] ; then
+        txt="$(checkupdates 2>/dev/null | wc --lines)"
+      else
+        txt="…"
+      fi
+      ;;
+    Gentoo)
+      pre=' '
+      if [ -x '/usr/bin/eix' ] ; then
+        txt="$(eix --installed --upgrade 2>/dev/null | wc --lines)"
+      else
+        txt="…"
+      fi
+      ;;
+  esac
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    if [ "${txt}" = '0' ] ; then
+      out="%{F${col}}${pre}%{F-}%{F${dim}}${txt}%{F-}"
+    else
+      out="%{F${col}}${pre}%{F-}${txt}"
+    fi
+    echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    out="<span color='${col}'>${pre}</span>${txt}"
+    if [ "${txt}" = '0' ] ; then
+      echo "{\"full_text\":\"${out}\",\"color\":\"${dim}\"}"
+    else
+      echo "{\"full_text\":\"${out}\"}"
+    fi
+  fi
+}
+update_wait () {
+  while : ; do
+    update_print
+    sleep "${SYSINFO_UPDATE_POLL}"
+  done
+}
+
 ##########################
 # ___  ___      _        #
 # |  \/  |     (_)       #
@@ -1308,6 +1468,11 @@ if type "${name}_wait" 2>/dev/null | grep --quiet 'function' ; then
 else
   echo "${name} module does not exist!"
   exit 1
+fi
+
+# Exit if one of the static modules
+if [ "${name}" = 'kernel' ] ; then
+  exit 0
 fi
 
 # Responde to inputs
