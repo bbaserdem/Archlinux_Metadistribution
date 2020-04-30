@@ -61,6 +61,9 @@ fi
 if [ -z "${SYSINFO_DATE_STYLE}" ] ; then
   SYSINFO_DATE_STYLE='regular'
 fi
+if [ -z "${SYSINFO_DISK_POLL}" ] ; then
+  SYSINFO_DISK_POLL=900
+fi
 if [ -z "${SYSINFO_EMAIL_LOC}" ] ; then
   SYSINFO_EMAIL_LOC="${HOME}/Documents/Mail/Gmail"
 fi
@@ -495,6 +498,70 @@ date_wait () {
     # Sleep until the start of next day, (throw in a sec)
     sleep "$(( $(date -d "tomorrow 0" +%s) - $(date +%s) + 5 ))"
     date_print
+  done
+}
+###################
+#    _ _     _    #
+#  _| |_|___| |_  #
+# | . | |_ -| '_| #
+# |___|_|___|_,_| #
+###################
+# Disk module;
+#  * Needs the an argument either of target; or root/home
+#  * Can change interval using env SYSINFO_DISK_POLL
+disk_click_left   () { true ; }
+disk_click_middle () { true ; }
+disk_click_right  () {
+  ( flock --nonblock 7 || exit 7
+    if [ -x '/usr/bin/baobab' ] ; then
+      /usr/bin/baobab
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/disk_${IDENTIFIER}_right" >/dev/null 2>&1 &
+}
+disk_scroll_up    () { true ; }
+disk_scroll_down  () { true ; }
+disk_print () {
+  pre=' '
+  txt=''
+  if [ -d "${instance}" ] ; then
+    dir="${instance}"
+    txt="${instance}: "
+  elif [ "${instance}" = 'default' ] || [ "${instance}" = 'root' ] ; then
+    dir="/"
+    txt="Root: "
+  elif [ "${instance}" = 'home' ] ; then
+    pre=' '
+    dir="/home"
+    txt="Home: "
+  else
+    exit 1
+  fi
+  prc="$(df --human-readable --portability --local \
+    | awk "{if(\$6 == \"${dir}\"){print substr(\$5, 1, length(\$5)-1)}}")"
+
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    if [ "${prc}" -gt 90 ] ; then
+      out="%{F${col}}${pre}%{F-}${txt}${prc}%{F${base09}} %{F-}"
+    else
+      out="%{F${col}}${pre}%{F-}${txt}${prc}"
+    fi
+    echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    if [ "${prc}" -gt 90 ] ; then
+      out="<span color='${col}'>${pre}</span>${txt}${prc}<span color='${col}'> </span>"
+      echo "{\"full_text\":\"${out}\",\"urgent\":true}"
+    else
+      echo "{\"full_text\":\"<span color='${col}'>${pre}</span>${txt}${prc}\"}"
+    fi
+  fi
+}
+disk_wait () {
+  while : ; do
+    disk_print || exit 2
+    sleep "${SYSINFO_DISK_POLL}"
   done
 }
 
@@ -1237,7 +1304,7 @@ fi
 
 # Run the waiter loops if the module exists
 if type "${name}_wait" 2>/dev/null | grep --quiet 'function' ; then
-  "${name}_wait" &
+  "${name}_wait" || exit &
 else
   echo "${name} module does not exist!"
   exit 1
