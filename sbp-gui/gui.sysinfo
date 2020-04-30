@@ -27,6 +27,45 @@ if [ -z "${instance}" ] ; then instance='default' ; fi
 #   - accent:   The color to apply to special characters
 if [ -z "${accent}" ] ;   then accent='cyan'      ; fi
 
+#----------#
+#-DEFAULTS-#
+#----------#
+# If these variables are made available in the environment;
+#   they take over default values
+if [ -z "${SYSINFO_CAL_LOC}" ] ; then
+  SYSINFO_CAL_LOC="${HOME}/Documents/Calendar"
+fi
+if [ -z "${SYSINFO_CAL_MAXLEN}" ] ; then
+  SYSINFO_CAL_MAXLEN=30
+fi
+if [ -z "${SYSINFO_CPU_POLL}" ] ; then
+  SYSINFO_CPU_POLL=30
+fi
+if [ -z "${SYSINFO_DATE_STYLE}" ] ; then
+  SYSINFO_DATE_STYLE='regular'
+fi
+if [ -z "${SYSINFO_EMAIL_LOC}" ] ; then
+  SYSINFO_EMAIL_LOC="${HOME}/Documents/Mail/Gmail"
+fi
+if [ -z "${SYSINFO_MEM_POLL}" ] ; then
+  SYSINFO_MEM_POLL=30
+fi
+if [ -z "${SYSINFO_MPD_POLL}" ] ; then
+  SYSINFO_MPD_POLL=30
+fi
+if [ -z "${SYSINFO_MPD_MAXLEN}" ] ; then
+  SYSINFO_MPD_MAXLEN=20
+fi
+if [ -z "${SYSINFO_RSS_POLL}" ] ; then
+  SYSINFO_RSS_POLL=600
+fi
+if [ -z "${SYSINFO_TODO_LOC}" ] ; then
+  SYSINFO_TODO_LOC="${HOME}/Documents/Todo"
+fi
+if [ -z "${SYSINFO_TODO_MAXLEN}" ] ; then
+  SYSINFO_TODO_MAXLEN=30
+fi
+
 #--------#
 #-COLORS-#
 #--------#
@@ -76,6 +115,671 @@ else # Invalid accent specification
   exit 1
 fi
 
+#####################################
+#  _           _   _ _     _   _    #
+# | |_ ___ ___| |_| |_|___| |_| |_  #
+# | . | .'|  _| '_| | | . |   |  _| #
+# |___|__,|___|_,_|_|_|_  |_|_|_|   #
+#                     |___|         #
+#####################################
+# Backlight module;
+#  * No instance needed
+backlight_click_left ()   { true ; }
+backlight_click_middle () { true ; }
+backlight_click_right ()  { true ; }
+backlight_scroll_up ()    { /usr/bin/light -A 1 ; }
+backlight_scroll_down ()  { /usr/bin/light -U 1 ; }
+backlight_print () {
+  # Get the current brigtness value; in whole percent
+  val="$(/usr/bin/light -Gs 'sysfs/backlight/auto' | awk '{printf "%.0f", $1}')"
+  if [ -z "${val}" ] ; then
+    exit 1
+  fi
+  # Determine the screen icon icon
+  if   [ "${val}" -ge 75 ] ; then pre=" "
+  elif [ "${val}" -ge 50 ] ; then pre=" "
+  elif [ "${val}" -ge 25 ] ; then pre=" "
+  else                            pre=" "
+  fi
+  # Print string
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${val}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    echo "{\"full_text\":\"<span color='${col}'>${pre}</span>${val}\"}"
+  fi
+}
+backlight_wait () {
+  backlight_print
+  /usr/bin/acpi_listen | while read -r _line ; do
+    if echo "${_line}" | grep --quiet --ignore-case 'brightness' ; then
+      backlight_print
+    fi
+  done
+}
+brightness_respond () {
+  while read -r _button ; do
+    case "$(echo "${_button}" | jq -r '.button')" in
+      1) brightness_click_left ;;
+      2) brightness_click_middle ;;
+      3) brightness_click_right ;;
+      4) brightness_scroll_up ;;
+      5) brightness_scroll_down ;;
+      *) true ;;
+    esac
+  done
+}
+
+
+###################################
+#  _____     _   _                #
+# | __  |___| |_| |_ ___ ___ _ _  #
+# | __ -| .'|  _|  _| -_|  _| | | #
+# |_____|__,|_| |_| |___|_| |_  | #
+#                           |___| #
+###################################
+# Battery module;
+#  * Defaults to battery id 0
+#  * Does not have any functions
+battery_click_left () { true ; }
+battery_click_middle () { true ; }
+battery_click_right () { true ; }
+battery_scroll_up () { true ; }
+battery_scroll_down () { true ; }
+battery_print () {
+  # Default to 0
+  if [ "${instance}" = 'default' ] ; then
+    bid=0
+  else
+    bid="${instance}"
+  fi
+  # Get info on battery state
+  bat="$(acpi --battery    | grep "Battery ${bid}" | head -n 1)"
+  ada="$(acpi --ac-adapter | grep "Adapter ${bid}" | head -n 1)"
+  # Return with error code early if there is no battery
+  if [ -z "${bat}" ] ; then
+      exit 1
+  fi
+  # Write important info to variables
+  stat="$(echo "${bat}" | sed 's|Battery [0-9]: \([ ,A-Z,a-z]*\),.*|\1|')"
+  perc="$(echo "${bat}" | sed 's|.*, \([0-9]\+\)%.*|\1|')"
+  # Change the front icon to capacity; with sign if it's charging
+  if [ "${stat}" = 'Charging' ] ; then
+    if   [ "${perc}" -gt 99 ] ; then col='green'  ; pre=""
+    elif [ "${perc}" -ge 90 ] ; then col='green'  ; pre=""
+    elif [ "${perc}" -ge 80 ] ; then col='green'  ; pre=""
+    elif [ "${perc}" -ge 60 ] ; then col='yellow' ; pre=""
+    elif [ "${perc}" -ge 40 ] ; then col='yellow' ; pre=""
+    elif [ "${perc}" -ge 30 ] ; then col='orange' ; pre=""
+    elif [ "${perc}" -ge 20 ] ; then col='red'    ; pre=""
+    else                             col='red'    ; pre=""
+    fi
+  else
+    if   [ "${perc}" -ge 95 ] ; then col='green'  ; pre=""
+    elif [ "${perc}" -ge 90 ] ; then col='green'  ; pre=""
+    elif [ "${perc}" -ge 80 ] ; then col='green'  ; pre=""
+    elif [ "${perc}" -ge 70 ] ; then col='yellow' ; pre=""
+    elif [ "${perc}" -ge 60 ] ; then col='yellow' ; pre=""
+    elif [ "${perc}" -ge 50 ] ; then col='orange' ; pre=""
+    elif [ "${perc}" -ge 40 ] ; then col='orange' ; pre=""
+    elif [ "${perc}" -ge 30 ] ; then col='red'    ; pre=""
+    elif [ "${perc}" -ge 20 ] ; then col='red'    ; pre=""
+    else                             col='red'    ; pre=""
+    fi
+  fi
+  txt="${perc}"
+  # Check if time info is available, and add it to text if it is
+  if echo "${bat}" | grep -q -e 'until charged' -e 'remaining' ; then
+    txt="${perc}, $(echo "${bat}" | awk '{print $5}' \
+      | sed 's|\([0-9]\+:[0-9]\+\):[0-9]\+|\1|')"
+  fi
+  # Make the suffix into connected/not connected icon
+  if [ "$(echo "${ada}" | awk '{print $3}')" = 'on-line' ] ; then
+    suf=""
+  else
+    suf="ﮤ"
+  fi
+  # Formatting and printing
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${txt}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    png="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
+    # Start assemling the json string
+    echo "{\"full_text\":\"${png}\"}"
+  fi
+}
+battery_wait () { # Listener loop
+  # Also poll every 30 seconds
+  poll_loop () {
+    while : ; do
+      sleep 30
+      get_text || break
+    done
+  }
+  poll_loop &
+  # Subscribe to acpi_listen
+  /usr/bin/acpi_listen | while read -r line ; do
+    if echo "${line}" | grep --quiet --ignore-case 'battery\|ac_adapter' ; then
+      get_text
+    fi 
+  done
+}
+
+###################################
+#          _           _          #
+#  ___ ___| |___ ___ _| |___ ___  #
+# |  _| .'| | -_|   | . | .'|  _| #
+# |___|__,|_|___|_|_|___|__,|_|   #
+###################################
+# Calendar module (depends on khal)
+#  * Can specify location using SYSINFO_CAL_LOC
+calendar_click_left   () { true ; }
+calendar_click_middle () { true ; }
+calendar_scroll_up    () { true ; }
+calendar_scroll_down  () { true ; }
+calendar_click_right  () {
+  if [ -x "${TERMINAL}" ] ; then
+    nohup "${TERMINAL}" khal interactive >/dev/null 2>&1 &
+  fi
+}
+calendar_print () {
+  pre=' '
+  txt="$(khal list | head -n 1)"
+  # Mute if quiet
+  if [ "${txt}" = 'No events' ] ; then
+    mute='yes'
+  else
+    mute='no'
+  fi
+  # Shorten text
+  if [ "$(echo "${txt}" | wc --chars)" -gt "${SYSINFO_CAL_MAXLEN}" ] ; then
+    txt="$(echo "${txt}" | awk "{print substr(\$0, 1, ${SYSINFO_CAL_MAXLEN})}")…"
+  fi
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    out="%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${txt}%{-u u- -o o-}"
+    if [ "${mute}" = yes ] ; then
+      echo "%{F${dim}}${out}%{F-}"
+    else
+      echo "${out}"
+    fi
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    out="<span color='${col}'>${pre}</span>${txt}"
+    if [ "${mute}" = yes ] ; then
+      echo "{\"full_text\":\"${out}\",\"color\":\"${dim}\"}"
+    else
+      echo "{\"full_text\":\"${out}\"}"
+    fi
+  fi
+}
+calendar_wait () {
+  calendar_print
+  # Place inotify watch on the calendar directory, or exit gracefully
+  while : ; do
+    inotifywait --recursive --timeout -1 \
+      --event modify --event move --event create --event delete \
+      "${SYSINFO_CAL_LOC}" >/dev/null 2>&1 || exit 2
+    calendar_print
+    # Wait a while before trying to add watches again
+    sleep 5
+  done
+}
+
+#######################
+#      _         _    #
+#  ___| |___ ___| |_  #
+# |  _| | . |  _| '_| #
+# |___|_|___|___|_,_| #
+#######################
+# Clock module;
+#  * Takes no arguments
+clock_click_left   () { true ; }
+clock_click_middle () { true ; }
+clock_scroll_up    () { true ; }
+clock_scroll_down  () { true ; }
+clock_click_right  () { true ; }
+clock_print () {
+  # Change icon depending on the hour
+  hour="$(date '+%H')"
+  if   [ "${hour}" = '00' ] || [ "${hour}" = '12' ] ; then pre=" "
+  elif [ "${hour}" = '01' ] || [ "${hour}" = '13' ] ; then pre=" "
+  elif [ "${hour}" = '02' ] || [ "${hour}" = '14' ] ; then pre=" "
+  elif [ "${hour}" = '03' ] || [ "${hour}" = '15' ] ; then pre=" "
+  elif [ "${hour}" = '04' ] || [ "${hour}" = '16' ] ; then pre=" "
+  elif [ "${hour}" = '05' ] || [ "${hour}" = '17' ] ; then pre=" "
+  elif [ "${hour}" = '06' ] || [ "${hour}" = '18' ] ; then pre=" "
+  elif [ "${hour}" = '07' ] || [ "${hour}" = '19' ] ; then pre=" "
+  elif [ "${hour}" = '08' ] || [ "${hour}" = '20' ] ; then pre=" "
+  elif [ "${hour}" = '09' ] || [ "${hour}" = '21' ] ; then pre=" "
+  elif [ "${hour}" = '10' ] || [ "${hour}" = '22' ] ; then pre=" "
+  elif [ "${hour}" = '11' ] || [ "${hour}" = '23' ] ; then pre=" "
+  else pre=" "
+  fi
+  txt="$(date '+%H:%M')"
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${txt}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    echo "{\"full_text\":\"<span color='${col}'>${pre}</span>${txt}\"}"
+  fi
+}
+clock_wait () {
+  # Poll the time every minute, starting from the start of every minute
+  clock_print
+  # The first wait should be until the end of the current minute
+  sleep "$(( 1 + 60 - $(date '+%S') ))"
+  while : ; do
+    clock_print
+    sleep 60
+  done
+}
+
+#################
+#  ___ ___ _ _  #
+# |  _| . | | | #
+# |___|  _|___| #
+#     |_|       #
+#################
+# CPU module;
+#  * Taken no arguments
+#  * Can change interval using env SYSINFO_CPU_POLL
+cpu_click_left   () { true ; }
+cpu_click_middle () { true ; }
+cpu_scroll_up    () { true ; }
+cpu_scroll_down  () { true ; }
+cpu_click_right  () {
+  if [ -x "${TERMINAL}" ] ; then
+    nohup "${TERMINAL}" htop >/dev/null 2>&1 &
+  fi
+}
+cpu_print () {
+  # Get data from /proc/loadavg
+  data="$(cat /proc/loadavg || exit 1)"
+  # Get average load for last minute
+  avg="$(echo "${data}" | awk '{printf("%.1f",$1)}')"
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    echo "%{u${col} +u o${col} +o}%{F${col}} %{F-}${avg}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    echo "{\"full_text\":\"<span color='${col}'> </span>${avg}\"}"
+  fi
+}
+cpu_wait () {
+  cpu_print
+  while : ; do
+    sleep "${SYSINFO_CPU_POLL}"
+    cpu_print || exit 2
+  done
+}
+
+#####################
+#    _     _        #
+#  _| |___| |_ ___  #
+# | . | .'|  _| -_| #
+# |___|__,|_| |___| #
+#####################
+# Date module
+#  * No argument is used
+#  * Can change style using the environment variable SYSINFO_DATE_STYLE
+date_click_left   () { true; }
+date_click_middle () { true ; }
+date_scroll_up    () { true ; }
+date_scroll_down  () { true ; }
+date_click_right  () {
+  if [ -x "${TERMINAL}" ] ; then
+    nohup "${TERMINAL}" khal interactive >/dev/null 2>&1 &
+  fi
+}
+date_print () {
+  pre=' '
+  # Get proper icon for the moon phase
+  moon="$(echo "$(printf "%.0f" \
+    "$(echo "scale=2; ( $(date -d "00:00" +%s) - $(date -d "1999-08-11" +%s) )/(60*60*24)" \
+    | bc)") % 29.530588853" | bc | awk '{printf("%d",$1+.5)}')"
+  case "${moon}" in
+    0)  _out="" ;; 1)  _out="" ;; 2)  _out="" ;; 3)  _out="" ;;
+    4)  _out="" ;; 5)  _out="" ;; 6)  _out="" ;; 7)  _out="" ;;
+    8)  _out="" ;; 9)  _out="" ;; 10) _out="" ;; 11) _out="" ;;
+    12) _out="" ;; 13) _out="" ;; 14) _out="" ;; 15) _out="" ;;
+    16) _out="" ;; 18) _out="" ;; 19) _out="" ;; 20) _out="" ;;
+    21) _out="" ;; 22) _out="" ;; 23) _out="" ;; 24) _out="" ;;
+    25) _out="" ;; 26) _out="" ;; 27) _out="" ;; 28) _out="" ;;
+    29) _out="" ;; 30) _out="" ;;
+  esac
+  case "${SYSINFO_DATE_STYLE}" in
+    alt) suf=" $(echo "${_out}" | awk '{print substr($0, 2, 1)}')" ;;
+    *)   suf=" $(echo "${_out}" | awk '{print substr($0, 1, 1)}')" ;;
+  esac
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    out="%{F${col}}${pre}%{F-}${txt}%{F${col}}${suf}%{F-}"
+    echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    out="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
+    echo "{\"full_text\":\"${out}\"}"
+  fi
+}
+date_wait () {
+  date_print
+  while : ; do
+    # Sleep until the start of next day, (throw in a sec)
+    sleep "$(( $(date -d "tomorrow 0" +%s) - $(date +%s) + 5 ))"
+    date_print
+  done
+}
+
+#######################
+#                _ _  #
+#  ___ _____ ___|_| | #
+# | -_|     | .'| | | #
+# |___|_|_|_|__,|_|_| #
+#######################
+# Email module (depends on inotifp)
+#  * Can specify location using SYSINFO_MAIL_LOC
+email_click_left   () { true ; }
+email_click_middle () { true ; }
+email_scroll_up    () { true ; }
+email_scroll_down  () { true ; }
+email_click_right  () {
+  if [ -x "${TERMINAL}" ] ; then
+    nohup "${TERMINAL}" /usr/bin/neomutt >/dev/null 2>&1 &
+  fi
+}
+email_print () {
+  # Get number of new emails
+  num="$(find "${SYSINFO_MAIL_LOC}/Inbox/new" | wc -l)"
+  # Set up prefix
+  if [ "${num}" -le 0 ] ; then
+    pre=" "
+    mute='yes'
+  else
+    pre=" "
+    mute='no'
+  fi
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    out="%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${num}%{-u u- -o o-}"
+    if [ "${mute}" = yes ] ; then
+      echo "%{F${dim}}${out}%{F-}"
+    else
+      echo "${out}"
+    fi
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    out="<span color='${col}'>${pre}</span>${num}"
+    if [ "${mute}" = yes ] ; then
+      echo "{\"full_text\":\"${out}\",\"color\":\"${dim}\"}"
+    else
+      echo "{\"full_text\":\"${out}\"}"
+    fi
+  fi
+}
+email_wait () {
+  email_print
+  # Place inotify watch on the email directory, or exit gracefully
+  while : ; do
+    inotifywait --recursive --timeout -1 \
+      --event modify --event move --event create --event delete \
+      "${SYSINFO_EMAIL_LOC}" >/dev/null 2>&1 || exit 2
+    email_print
+    # Wait a while before trying to add watches again
+    sleep 5
+  done
+}
+
+#####################################
+#  _           _                 _  #
+# | |_ ___ _ _| |_ ___ ___ ___ _| | #
+# | '_| -_| | | . | . | .'|  _| . | #
+# |_,_|___|_  |___|___|__,|_| |___| #
+#         |___|                     #
+#####################################
+# Keyboard module;
+#  * For keyboard backlight; BRI_KBD needs to be in environment variables
+keyboard_click_left () { true ; }
+keyboard_click_middle () { true ; }
+keyboard_click_right () { true ; }
+keyboard_scroll_up () {
+  if [ -n "${BRI_KBD}" ] ; then
+    /usr/bin/light -Ars "sysfs/leds/${BRI_KBD}" 1
+  fi
+}
+keyboard_scroll_down () {
+  if [ -n "${BRI_KBD}" ] ; then
+    /usr/bin/light -Urs "sysfs/leds/${BRI_KBD}" 1
+  fi
+}
+
+#################################
+#  _____ ___ _____ ___ ___ _ _  #
+# |     | -_|     | . |  _| | | #
+# |_|_|_|___|_|_|_|___|_| |_  | #
+#                         |___| #
+#################################
+# Memory module
+#  * Takes no arguments
+#  * Can change polling interval using SYSINFO_MEM_POLL
+memory_click_left   () { true; }
+memory_click_middle () { true ; }
+memory_scroll_up    () { true ; }
+memory_scroll_down  () { true ; }
+memory_click_right  () {
+  if [ -x "${TERMINAL}" ] ; then
+    nohup "${TERMINAL}" htop >/dev/null 2>&1 &
+  fi
+}
+memory_print () {
+  # Initialize
+  pre=' '
+  suf=''
+  # Get memory info (raw and human readable
+  info_raw="$(free -m)"
+  info="$(free -h)"
+  # Get RAM usage
+  ram_perc="$(echo "${info_raw}"  | awk '/Mem:/  {printf("%.0f", $3 / $2 * 100.0);}')"
+  ram_amnt="$(echo "${info}"      | awk '/Mem:/  {print $3}')"
+  txt="${ram_amnt} (${ram_perc})"
+  # Get SWAP usage, and include it if sifnificant
+  swap_perc="$(echo "${info_raw}" | awk '/Swap:/ {printf("%.0f", $3 / $2 * 100.0);}')"
+  swap_amnt="$(echo "${info}"     | awk '/Swap:/ {print $3}')"
+  if [ "${swap_perc}" -gt 0 ] ; then
+    txt="${_txt}樂${swap_amnt} (${swap_perc})"
+    suf=' 易'
+  fi
+  # Print JSON
+  _json="{\"prompt\":\"${_txt}\",\"accent\":\"${SBP_MEM_COLOR}\""
+  _json="${_json},\"prefix\":\"\",,\"suffix\":\"${_suf}\"\"dim\":false"
+  echo "${_json},\"tooltip\":\"${_tip}\"}"
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    out="%{F${col}}${pre}%{F-}${txt}%{F${col}}${suf}%{F-}"
+    echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    out="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
+    echo "{\"full_text\":\"${out}\"}"
+  fi
+}
+memory_wait () {
+  memory_print
+  while : ; do
+    sleep "${SYSINFO_MEM_POLL}"
+    memory_print || exit 2
+  done
+}
+
+###################
+#              _  #
+#  _____ ___ _| | #
+# |     | . | . | #
+# |_|_|_|  _|___| #
+#       |_|       #
+###################
+# MPD module;
+#  * Can take instance name of; default, consume, repeat, shuffle, single, toggle
+mpd_click_left   () {
+  if [ "${instance}" = 'default' ] ; then
+    /usr/bin/mpc toggle
+  else
+    /usr/bin/mpc "${instance}"
+  fi
+}
+mpd_click_middle () { /usr/bin/mpc stop ; }
+mpd_click_right  () {
+  if [ -x '/usr/bin/cantata' ] ; then
+    nohup /usr/bin/cantata >/dev/null 2>&1 &
+  fi
+}
+mpd_scroll_up () { true ; }
+mpd_scroll_down () { true ; }
+mpd_print () {
+  # Get MPD info, even if it breaks
+  info="$(mpc 2>&1)"
+  lines="$(echo "${info}" | wc --lines)"
+  # Initialize things as empty
+  pre=''
+  suf=''
+  txt=''
+  mute='no'
+  # Configure buttons; but only if;
+  #  3 lines: OK (There is playback)
+  #  2 lines: Might be a database update
+  #  1 lines: Empty playlist (iff there is no error)
+  if  [ "${lines}" = '3' ] || \
+    ( [ "${lines}" = '2' ] && echo "${info}" | grep --quiet 'Updating' ) || \
+    ( [ "${lines}" = '1' ] && echo "${info}" | grep --quiet --invert-match 'error' )
+    then
+    # Buttons
+    if [ "${instance}" = 'random' ] ; then
+      if echo "${info}" | grep --quiet "${instance}: on" ; then
+        pre='咽'
+      else
+        txt='咽'
+      fi
+    elif [ "${instance}" = 'repeat' ] ; then
+      if echo "${info}" | grep --quiet "${instance}: on" ; then
+        pre='凌'
+      else
+        txt='稜'
+      fi
+    elif [ "${instance}" = 'consume' ] ; then
+      if echo "${info}" | grep --quiet "${instance}: on" ; then
+        pre='裸'
+      else
+        txt='蘿'
+      fi
+    elif [ "${instance}" = 'single' ] ; then
+      if echo "${info}" | grep --quiet "${instance}: on" ; then
+        pre='綾'
+      else
+        txt='綾'
+      fi
+    elif [ "${instance}" = 'toggle' ] ; then
+      # It's playing/paused only if there are 3 lines
+      if [ "${lines}" = '3' ] ; then
+        if echo "${info}" | grep --quiet 'paused' ; then
+          txt='契'
+        else
+          txt=''
+        fi
+      # It is stopped
+      else
+        txt='懶'
+      fi
+    elif [ "${instance}" = 'song' ] || [ "${instance}" = 'default' ] ; then
+      pre=' '
+      # Check if mpdscribble is working
+      if pgrep mpdscribble >/dev/null 2>&1; then
+        suf=' '
+      fi
+      # Get song title if it's playing: 3 lines
+      if [ "${lines}" = '3' ] ; then
+        tit="$(echo "${info}" | sed --quiet '1p' | awk -F ' - ' '{print $2}')"
+        art="$(echo "${info}" | sed --quiet '1p' | awk -F ' - ' '{print $1}')"
+        # Shorten fields
+        if [ "$(echo "${tit}" | wc --chars)" -gt "${SYSINFO_MPD_MAXLEN}" ] ; then
+          tit="$(echo "${tit}" \
+            | awk "{print substr(\$0, 1, ${SYSINFO_MPD_MAXLEN})}")…"
+        fi
+        if [ "$(echo "${art}" | wc --chars)" -gt "${SYSINFO_MPD_MAXLEN}" ] ; then
+          tit="$(echo "${art}" \
+            | awk "{print substr(\$0, 1, ${SYSINFO_MPD_MAXLEN})}")…"
+        fi
+        txt="${tit}${art}"
+        # Mute if paused
+        if echo "${info}" | grep --quiet 'paused' ; then
+          mute='yes'
+        fi
+      elif  [ "${lines}" = '2' ] ; then
+        txt='Database update…'
+      else
+        txt='Empty playlist…'
+        mute='yes'
+      fi
+    fi
+  # If none of the conditions are satisfied; just apply a disconnect suffix to default
+  elif [ "${instance}" = 'song' ] || [ "${instance}" = 'default' ] ; then
+    pre='ﱙ'
+    # Check if mpdscribble is working
+    if pgrep mpdscribble >/dev/null 2>&1; then
+      suf=' '
+    fi
+  fi
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    out="%{F${col}}${pre}%{F-}${txt}%{F${col}}${suf}%{F-}"
+    if [ "${mute}" = 'yes' ] ; then
+      out="%{F${dim}}${out}%{F-}"
+    fi
+    echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    png="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
+    if [ "${mute}" = 'yes' ] ; then
+      echo "{\"full_text\":\"${png}\",\"color\":\"${dim}\"}"
+    else
+      echo "{\"full_text\":\"${png}\"}"
+    fi
+  fi
+}
+mpd_wait() {
+  mpd_print
+  # Retry to connect every 30 seconds if the mpc command gives error
+  while : ; do
+    while : ; do
+      mpc --quiet idle >/dev/null || break
+      mpd_print
+    done
+    sleep "${SYSINFO_MPD_POLL}"
+  done
+}
+mpd_respond () { # Responder loop
+  while read -r _button ; do
+    case "$(echo "${_button}" | jq -r '.button')" in
+      1) mpd_click_left ;;
+      2) mpd_click_middle ;;
+      3) mpd_click_right ;;
+      4) mpd_scroll_up ;;
+      5) mpd_scroll_down ;;
+      *) true ;;
+    esac
+  done
+}
+
 #########################################
 #          _                   _ _      #
 #  ___ _ _| |___ ___ ___ _ _ _| |_|___  #
@@ -85,14 +789,22 @@ fi
 #########################################
 # Pulseaudio module;
 #  * Only needs pacmd (pulseaudion) and pactl (libpulse)
+#  * Needs a instance of either 'sink' or 'source'
+
 pulseaudio_click_left () { # Left click action
   # Toggle mute
-  /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
+  /usr/bin/pactl "set-${instance}-mute" \
+    "@DEFAULT_$(echo ${instance} | awk '{print toupper($0)}')@" toggle
 }
 
 pulseaudio_click_middle () { # Middle mouse action
+  if [ "${instance}" = 'source' ] ; then
+    _cmd='source-output'
+  elif [ "${instance}" = 'sink' ] ; then
+    _cmd='sink-input'
+  fi
   # Change default sink; and move all inputs to the new sink
-  _info="$(/usr/bin/pacmd list-sinks)"
+  _info="$(/usr/bin/pacmd "list-${instance}s")"
   _ndev="$(echo "${_info}" | grep --count 'index:')"
   _inds="$(echo "${_info}" | grep 'index:' | grep --only-matching '[0-9]\+')"
   # Get default sink
@@ -103,101 +815,145 @@ pulseaudio_click_middle () { # Middle mouse action
   _inew="$(( ( _icur % _ndev ) + 1 ))"
   _dnew="$(echo "${_inds}" | sed --quiet "${_inew}p")"
   # Switch to this default
-  /usr/bin/pacmd set-default-sink "${_dnew}"
+  /usr/bin/pacmd "set-default-${instance}" "${_dnew}"
   # Switch all inputs here
-  /usr/bin/pacmd list-sink-inputs | grep 'index:' \
-    | grep --only-matching '[0-9]\+' | while read -r _input ; do
-    /usr/bin/pacmd move-sink-input "${_input}" "${_dnew}"
+  _inputs="$(/usr/bin/pacmd "list-${_cmd}s")"
+  _iindex="$(echo "${_inputs}" | awk '/index:/ {print $2}')"
+  _iflags="$(echo "${_inputs}" | grep 'flags:')"
+  _i=1
+  while [ "${_i}" -le "$(echo "${_iindex}" | wc --lines)" ] ; do
+    _ind="$(echo "${_iindex}" | sed --quiet "${_i}p")"
+    _fla="$(echo "${_iflags}" | sed --quiet "${_i}p")"
+    # Don't move if the DONT_MOVE flag is on
+    if echo "${_fla}" | grep --invert-match --quiet 'DONT_MOVE' ; then
+      /usr/bin/pacmd "move-${_cmd}" "${_ind}" "${_dnew}"
+    fi
+    _i="$(( _i + 1 ))"
   done
 }
 
 pulseaudio_click_right () { # Right mouse action
   # Launch and disown pavucontrol
-  nohup /usr/bin/pavucontrol >/dev/null 2>&1 &
+  if [ -x '/usr/bin/pavucontrol' ] ; then
+    nohup /usr/bin/pavucontrol >/dev/null 2>&1 &
+  fi
 }
 
 pulseaudio_scroll_up () { # Scroll up action
+  if [ "${instance}" = 'source' ] ; then
+    _cap='Source'
+    _def='@DEFAULT_SOURCE@'
+  elif [ "${instance}" = 'sink' ] ; then
+    _cap='Sink'
+    _def='@DEFAULT_SINK@'
+  fi
   # Increase volume if the default sink volume is >100%
   # Default sink
-  _d_sink="$(/usr/bin/pactl info | awk -F ': ' '/Default Sink/ {print $2}')"
-  _d_lnum="$(/usr/bin/pactl list sinks short | grep --line-number "${_d_sink}" \
-    | cut --delimiter ':' --fields '1')"
+  _d_sink="$(/usr/bin/pactl info | awk -F ': ' "/Default ${_cap}/ {print \$2}")"
+  _d_lnum="$(/usr/bin/pactl list "${instance}s" short \
+    | grep --line-number "${_d_sink}" | cut --delimiter ':' --fields '1')"
   # Volume of default sink
-  _vol="$(/usr/bin/pactl list sinks | awk '/^\sVolume/ {vol=0; n=0;
+  _vol="$(/usr/bin/pactl list "${instance}s" | awk '/^\sVolume/ {vol=0; n=0;
     for (i = 1; i <= NF; i++) {
       if( substr($i, length($i), 1) == "%" ) {
         vol += substr($i, 1, length($i) - 1); n++; }
       } printf("%.0f\n", vol/n);}' | sed --quiet "${_d_lnum}p")"
   if [ "${_vol}" -lt 100 ] ; then
-    /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ +1%
+    /usr/bin/pactl "set-${instance}-volume" "${_def}" +1%
   else
-    /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ 100%
+    /usr/bin/pactl "set-${instance}-volume" "${_def}" 100%
   fi
 }
 
 pulseaudio_scroll_down () { # Scroll down action
   # Launch and disown pavucontrol
-  /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -1%
+  /usr/bin/pactl "set-${instance}-volume" \
+    "@DEFAULT_$(echo "${instance}" | awk '{print toupper($0)}')@" -1%
 }
 
 pulseaudio_print () {   # Print text
-  # Get pulseaudio state info
-  pinfo="$(/usr/bin/pactl info)"
-  sinks="$(/usr/bin/pactl list sinks)"
-  ssink="$(/usr/bin/pactl list sinks short)"
-  ports="$(echo "${sinks}" | awk -F ': ' \
-    '/Active Port/ {print $2}')"
-  muted="$(echo "${sinks}" | awk -F ': ' \
-    '/Mute/ {print $2}')"
-  volms="$(echo "${sinks}" | awk '/^\sVolume/ {vol=0; n=0;
-    for (i = 1; i <= NF; i++) {
-      if( substr($i, length($i), 1) == "%" ) {
-        vol += substr($i, 1, length($i) - 1); n++; }
-      } printf("%.0f\n", vol/n);}')"
-  # Get information about the default sink
-  d_sink="$(echo "${pinfo}" | awk -F ': ' '/Default Sink/ {print $2}')"
-  d_lnum="$(echo "${ssink}" | grep --line-number "${d_sink}" \
-    | cut --delimiter ':' --fields '1')"
-  d_port="$(echo "${ports}" | sed --quiet "${d_lnum}p")"
-  d_mute="$(echo "${muted}" | sed --quiet "${d_lnum}p")"
-  d_volm="$(echo "${volms}" | sed --quiet "${d_lnum}p")"
-  # Determine icon for the sink
-  case "${d_port}" in
-    *hdmi*)                     pre="﴿ " ;;
-    *headset*)                  pre=" " ;;
-    *a2dp*)                     pre="﫽 " ;;
-    *hifi*)                     pre="﫛 " ;;
-    *headphone*|*stereo*)       pre=" " ;;
-    *speaker*)                  pre="蓼 " ;;
-    *network*)                  pre="爵 " ;;
-    *analog*)                   pre=" " ;;
-    *)                          pre=" " ;;
-  esac
-  # Check if it's a bluetooth sink, adjust suffix
-  if echo "${d_sink}" | grep -q 'bluez' ; then
-    suf=" "
-  else
-    suf=""
-  fi
-  # Format tooltip
-  tip="Pulseaudio Sinks:"
-  nsinks="$(echo "${ssink}" | wc --lines)"
-  lnum=1 ; while [ "${lnum}" -le "${nsinks}" ] ; do
-    sink="$(echo "${ssink}" | awk "NR==${lnum} {print \$2}")"
-    port="$(echo "${ports}" | sed --quiet "${lnum}p")"
-    volm="$(echo "${volms}" | sed --quiet "${lnum}p")"
-    mute="$(echo "${muted}" | sed --quiet "${lnum}p")"
-    if  [ "${mute}" = 'yes' ] ; then
-      volm="${volm} (Muted)"
-    fi
-    if [ "${lnum}" = "${d_lnum}" ] ; then
-      tip="${tip}"'\\n'"Sink: (default) ${sink}"
+  # Default instance does not work, only source or sink does
+  if [ "${instance}" = 'default' ] ; then
+    exit 3
+  #--------------------------#
+  #---SINK-type-formatting---#
+  #--------------------------#
+  elif [ "${instance}" = 'sink' ] ; then 
+    # Get pulseaudio state info
+    pinfo="$(/usr/bin/pactl info)"
+    sinks="$(/usr/bin/pactl list "${instance}s")"
+    ssink="$(/usr/bin/pactl list "${instance}s" short)"
+    ports="$(echo "${sinks}" | awk -F ': ' \
+      '/Active Port/ {print $2}')"
+    muted="$(echo "${sinks}" | awk -F ': ' \
+      '/Mute/ {print $2}')"
+    volms="$(echo "${sinks}" | awk '/^\sVolume/ {vol=0; n=0;
+      for (i = 1; i <= NF; i++) {
+        if( substr($i, length($i), 1) == "%" ) {
+          vol += substr($i, 1, length($i) - 1); n++; }
+        } printf("%.0f\n", vol/n);}')"
+    # Get information about the default sink
+    d_sink="$(echo "${pinfo}" | awk -F ': ' '/Default Sink/ {print $2}')"
+    d_lnum="$(echo "${ssink}" | grep --line-number "${d_sink}" \
+      | cut --delimiter ':' --fields '1')"
+    d_port="$(echo "${ports}" | sed --quiet "${d_lnum}p")"
+    d_mute="$(echo "${muted}" | sed --quiet "${d_lnum}p")"
+    d_volm="$(echo "${volms}" | sed --quiet "${d_lnum}p")"
+    # Determine icon for the sink
+    case "${d_port}" in
+      *hdmi*)                                         pre="﴿ " ;;
+      *headset*)            [ "${d_mute}" = 'no' ] && pre=" "  || pre=" "  ;;
+      *a2dp*)               [ "${d_mute}" = 'no' ] && pre="﫽 " || pre="﫾 " ;;
+      *hifi*)                                         pre="﫛 " ;;
+      *headphone*|*stereo*) [ "${d_mute}" = 'no' ] && pre=" "  || pre="ﳌ "  ;;
+      *speaker*)            [ "${d_mute}" = 'no' ] && pre="蓼 " || pre="遼 " ;;
+      *network*)                                      pre="爵 " ;;
+      *)                    [ "${d_mute}" = 'no' ] && pre="墳 " || pre="ﱝ "  ;;
+    esac
+    # Check if it's a bluetooth sink, adjust suffix
+    if echo "${d_sink}" | grep -q 'bluez' ; then
+      suf=" "
     else
-      tip="${tip}"'\\n'"Sink: ${sink}"
+      suf=""
     fi
-    tip="${tip}"'\\n'"  Volume: ${volm}, Port: ${port}"
-    lnum=$(( lnum + 1 ))
-  done
+  #----------------------------#
+  #---SOURCE-type-formatting---#
+  #----------------------------#
+  elif [ "${instance}" = 'source' ] ; then 
+    # Get pulseaudio state info
+    pinfo="$(/usr/bin/pactl info)"
+    srces="$(/usr/bin/pactl list "${instance}s")"
+    ssrcs="$(/usr/bin/pactl list "${instance}s" short)"
+    # Get device.icon_name field
+    iconn="$(echo "${srces}" | awk -F ': ' \
+      '/device.icon_name/ {print substr($2, 2, length($2))}')"
+    muted="$(echo "${srces}" | awk -F ': ' \
+      '/Mute/ {print $2}')"
+    volms="$(echo "${srces}" | awk '/^\sVolume/ {vol=0; n=0;
+      for (i = 1; i <= NF; i++) {
+        if( substr($i, length($i), 1) == "%" ) {
+          vol += substr($i, 1, length($i) - 1); n++; }
+        } printf("%.0f\n", vol/n);}')"
+    # Get information about the default sink
+    d_src="$(echo "${pinfo}" | awk -F ': ' '/Default Source/ {print $2}')"
+    d_lno="$(echo "${ssrcs}" | grep --line-number "${d_src}" \
+      | cut --delimiter ':' --fields '1')"
+    d_icon="$(echo "${iconn}" | sed --quiet "${d_lno}p")"
+    d_mute="$(echo "${muted}" | sed --quiet "${d_lno}p")"
+    d_volm="$(echo "${volms}" | sed --quiet "${d_lno}p")"
+    # Determine icon for the sink
+    case "${d_icon}" in
+      audio-card-pci) [ "${d_mute}" = 'no' ] && pre=" "  || pre=" " ;;
+      camera-web-usb)                           pre="犯 " ;;
+      *)              [ "${d_mute}" = 'no' ] && pre=" "  || pre=" " ;;
+    esac
+    # Check if it's a bluetooth source
+    if echo "${d_src}" | grep -q 'bluez' ; then
+      suf=" "
+    else
+      suf=""
+    fi
+  fi
 
   # Formatting and printing
   if [ "${markup}" = 'lemonbar' ] ; then
@@ -221,33 +977,156 @@ pulseaudio_print () {   # Print text
 }
 
 pulseaudio_wait () { # Listener loop with callback
+  if [ "${instance}" != 'source' ] && [ "${instance}" != 'sink' ] ; then
+    exit 2
+  fi
   # Print once
   pulseaudio_print
   /usr/bin/pactl subscribe 2>/dev/null | while read -r _line ; do
     if echo "${_line}" \
-      | grep --quiet --ignore-case "sink\|'change' on server #" ; then
+      | grep --quiet --ignore-case "${instance}\|'change' on server #" ; then
       pulseaudio_print
     fi
   done
 }
 
-pulseaudio_respond () { # Responder loop
-  while read _button ; do
-    case "$(echo "${_button}" | jq -r '.button')" in
-      1) pulseaudio_click_left ;;
-      2) pulseaudio_click_middle ;;
-      3) pulseaudio_click_right ;;
-      4) pulseaudio_scroll_up ;;
-      5) pulseaudio_scroll_down ;;
-      *) true ;;
-    esac
+#################
+#  ___ ___ ___  #
+# |  _|_ -|_ -| #
+# |_| |___|___| #
+#################
+# RSS module
+#  * Does not take instances
+rss_click_left   () { true ; }
+rss_click_middle () { true ; }
+rss_scroll_up    () { true ; }
+rss_scroll_down  () { true ; }
+rss_click_right  () {
+  if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/newsboat' ] ; then
+    nohup "${TERMINAL}" '/usr/bin/newsboat' >/dev/null 2>&1 &
+  fi
+}
+rss_print () {
+  pre=' '
+  tmp="$(mktmp)"
+  new="$(/usr/bin/newsboat "--cache-file=${tmp}" -x print-unread | awk '{print $1}')"
+  if [ "${new}" = '0' ] ; then
+    mute='yes'
+  else
+    mute='no'
+  fi
+    # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    out="%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${new}%{-u u- -o o-}"
+    if [ "${mute}" = yes ] ; then
+      echo "%{F${dim}}${out}%{F-}"
+    else
+      echo "${out}"
+    fi
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    out="<span color='${col}'>${pre}</span>${new}"
+    if [ "${mute}" = yes ] ; then
+      echo "{\"full_text\":\"${out}\",\"color\":\"${dim}\"}"
+    else
+      echo "{\"full_text\":\"${out}\"}"
+    fi
+  fi
+}
+rss_wait () {
+  # Poll this
+  while : ; do
+    rss_print
+    sleep "${SYSINFO_RSS_POLL}"
   done
 }
 
-# Main application
-case "${name}" in
-  pulseaudio) pulseaudio_wait & pulseaudio_respond ;;
-  *)
-    echo "No module ${name} configured!"
-    exit 1 ;;
-esac
+#####################
+#  _         _      #
+# | |_ ___ _| |___  #
+# |  _| . | . | . | #
+# |_| |___|___|___| #
+#####################
+# Todo module (depends on todoman)
+#  * Can specify location using SYSINFO_TODO_LOC
+#  * Can specify text length SYSINFO_TODO_MAXLEN
+todo_click_left   () { true ; }
+todo_click_middle () { true ; }
+todo_scroll_up    () { true ; }
+todo_scroll_down  () { true ; }
+todo_click_right  () { true ; }
+todo_print () {
+  pre='省 '
+  txt="$(todo --porcelain list --sort priority | jq -r '.[0]."summary"')"
+  # Mute if quiet
+  if [ "${txt}" = 'null' ] ; then
+    mute='yes'
+    txt='Nothing todo'
+  else
+    mute='no'
+  fi
+  # Shorten text
+  if [ "$(echo "${txt}" | wc --chars)" -gt "${SYSINFO_TODO_MAXLEN}" ] ; then
+    txt="$(echo "${txt}" | awk "{print substr(\$0, 1, ${SYSINFO_TODO_MAXLEN})}")…"
+  fi
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    out="%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${txt}%{-u u- -o o-}"
+    if [ "${mute}" = yes ] ; then
+      echo "%{F${dim}}${out}%{F-}"
+    else
+      echo "${out}"
+    fi
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    out="<span color='${col}'>${pre}</span>${txt}"
+    if [ "${mute}" = yes ] ; then
+      echo "{\"full_text\":\"${out}\",\"color\":\"${dim}\"}"
+    else
+      echo "{\"full_text\":\"${out}\"}"
+    fi
+  fi
+}
+todo_wait () {
+  todo_print
+  # Place inotify watch on the calendar directory, or exit gracefully
+  while : ; do
+    inotifywait --recursive --timeout -1 \
+      --event modify --event move --event create --event delete \
+      "${SYSINFO_TODO_LOC}" >/dev/null 2>&1 || exit 2
+    todo_print
+    # Wait a while before trying to add watches again
+    sleep 5
+  done
+}
+
+##########################
+# ___  ___      _        #
+# |  \/  |     (_)       #
+# | .  . | __ _ _ _ __   #
+# | |\/| |/ _` | | '_ \  #
+# | |  | | (_| | | | | | #
+# \_|  |_/\__,_|_|_| |_| #
+##########################
+
+# Run the waiter loops if the module exists
+if type "${name}-wait" 2>/dev/null | grep --quiet 'function' ; then
+  "${name}-wait" &
+else
+  echo "${name} module does not exist!"
+  exit 1
+fi
+
+# Responde to inputs
+while read -r _button ; do
+  case "$(echo "${_button}" | jq -r '.button')" in
+    1) "${name}_click_left"   || continue ;;
+    2) "${name}_click_middle" || continue ;;
+    3) "${name}_click_right"  || continue ;;
+    4) "${name}_scroll_up"    || continue ;;
+    5) "${name}_scroll_down"  || continue ;;
+    *) true ;;
+  esac
+done
