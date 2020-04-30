@@ -5,6 +5,16 @@
 trap 'exit' INT TERM
 trap 'kill 0' EXIT
 
+# Location for flocks
+if [ -z "${SYSINFO_FLOCK_DIR}" ] ; then
+  if [ -n "${XDG_CACHE_HOME}" ] ; then
+    SYSINFO_FLOCK_DIR="${XDG_CACHE_HOME}/sysinfo"
+  else
+    SYSINFO_FLOCK_DIR="${XDG_CACHE_HOME}/sysinfo"
+  fi
+fi
+
+
 #------------------------------------#
 #  _____           _        __       #
 # /  ___|         (_)      / _|      #
@@ -17,11 +27,11 @@ trap 'kill 0' EXIT
 #------------------------------------#
 # Script(s) to print system information in a variety of formats.
 #   Expects the following environment variables
+
 #   - markup:   Decides how the text are going to be formatted
-#             *lemonbar*,pango,plain
 if [ -z "${markup}" ] ;   then markup='lemonbar'  ; fi
 #   - name:     The module to launch
-if [ -z "${name}" ] ;     then name='pulseaudio'  ; fi
+if [ -z "${name}" ] ;     then name='mpd'  ; fi
 #   - instance: Additional argument to the module
 if [ -z "${instance}" ] ; then instance='default' ; fi
 #   - accent:   The color to apply to special characters
@@ -32,6 +42,13 @@ if [ -z "${accent}" ] ;   then accent='cyan'      ; fi
 #----------#
 # If these variables are made available in the environment;
 #   they take over default values
+if [ -z "${SYSINFO_FLOCK_DIR}" ] ; then
+  if [ -n "${XDG_CACHE_HOME}" ] ; then
+    SYSINFO_FLOCK_DIR="${XDG_CACHE_HOME}/sysinfo"
+  else
+    SYSINFO_FLOCK_DIR="${HOME}/.cache/sysinfo"
+  fi
+fi
 if [ -z "${SYSINFO_CAL_LOC}" ] ; then
   SYSINFO_CAL_LOC="${HOME}/Documents/Calendar"
 fi
@@ -278,13 +295,15 @@ battery_wait () { # Listener loop
 #  * Can specify location using SYSINFO_CAL_LOC
 calendar_click_left   () { true ; }
 calendar_click_middle () { true ; }
+calendar_click_right  () {
+  ( flock --nonblock 7 || exit 7
+    if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/khal' ] ; then
+      "${TERMINAL}" /usr/bin/khal interactive
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/cal_${DISPLAY}_right" >/dev/null 2>&1 &
+}
 calendar_scroll_up    () { true ; }
 calendar_scroll_down  () { true ; }
-calendar_click_right  () {
-  if [ -x "${TERMINAL}" ] ; then
-    nohup "${TERMINAL}" khal interactive >/dev/null 2>&1 &
-  fi
-}
 calendar_print () {
   pre=' '
   txt="$(khal list | head -n 1)"
@@ -392,12 +411,15 @@ clock_wait () {
 #  * Can change interval using env SYSINFO_CPU_POLL
 cpu_click_left   () { true ; }
 cpu_click_middle () { true ; }
+cpu_click_right  () {
+  ( flock --nonblock 7 || exit 7
+    if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/htop' ] ; then
+      "${TERMINAL}" /usr/bin/htop
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/cpu_${DISPLAY}_right" >/dev/null 2>&1 &
+}
 cpu_scroll_up    () { true ; }
 cpu_scroll_down  () { true ; }
-cpu_click_right  () {
-  if [ -x "${TERMINAL}" ] ; then
-    nohup "${TERMINAL}" htop >/dev/null 2>&1 &
-  fi
 }
 cpu_print () {
   # Get data from /proc/loadavg
@@ -435,9 +457,11 @@ date_click_middle () { true ; }
 date_scroll_up    () { true ; }
 date_scroll_down  () { true ; }
 date_click_right  () {
-  if [ -x "${TERMINAL}" ] ; then
-    nohup "${TERMINAL}" khal interactive >/dev/null 2>&1 &
-  fi
+  ( flock --nonblock 7 || exit 7
+    if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/khal' ] ; then
+      "${TERMINAL}" /usr/bin/khal interactive
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/date_${DISPLAY}_right" >/dev/null 2>&1 &
 }
 date_print () {
   pre=' '
@@ -489,13 +513,17 @@ date_wait () {
 #  * Can specify location using SYSINFO_MAIL_LOC
 email_click_left   () { true ; }
 email_click_middle () { true ; }
+email_click_right  () {
+  ( flock --nonblock 7 || exit 7
+    if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/neomutt' ] ; then
+      "${TERMINAL}" /usr/bin/neomutt
+    elif [ -x "${TERMINAL}" ] && [ -x '/usr/bin/mutt' ] ; then
+      "${TERMINAL}" /usr/bin/mutt
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/email_${DISPLAY}_right" >/dev/null 2>&1 &
+}
 email_scroll_up    () { true ; }
 email_scroll_down  () { true ; }
-email_click_right  () {
-  if [ -x "${TERMINAL}" ] ; then
-    nohup "${TERMINAL}" /usr/bin/neomutt >/dev/null 2>&1 &
-  fi
-}
 email_print () {
   # Get number of new emails
   num="$(find "${SYSINFO_MAIL_LOC}/Inbox/new" | wc -l)"
@@ -552,12 +580,12 @@ keyboard_click_left () { true ; }
 keyboard_click_middle () { true ; }
 keyboard_click_right () { true ; }
 keyboard_scroll_up () {
-  if [ -n "${BRI_KBD}" ] ; then
+  if [ -n "${BRI_KBD}" ] && [ -x '/usr/bin/light' ] ; then
     /usr/bin/light -Ars "sysfs/leds/${BRI_KBD}" 1
   fi
 }
 keyboard_scroll_down () {
-  if [ -n "${BRI_KBD}" ] ; then
+  if [ -n "${BRI_KBD}" ] && [ -x '/usr/bin/light' ] ; then
     /usr/bin/light -Urs "sysfs/leds/${BRI_KBD}" 1
   fi
 }
@@ -573,13 +601,15 @@ keyboard_scroll_down () {
 #  * Can change polling interval using SYSINFO_MEM_POLL
 memory_click_left   () { true; }
 memory_click_middle () { true ; }
+memory_click_right  () {
+  ( flock --nonblock 7 || exit 7
+    if [ -x "${TERMINAL}" ] & [ -x '/usr/bin/htop' ] ; then
+      "${TERMINAL}" /usr/bin/htop
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/mem_${DISPLAY}_right" >/dev/null 2>&1 &
+}
 memory_scroll_up    () { true ; }
 memory_scroll_down  () { true ; }
-memory_click_right  () {
-  if [ -x "${TERMINAL}" ] ; then
-    nohup "${TERMINAL}" htop >/dev/null 2>&1 &
-  fi
-}
 memory_print () {
   # Initialize
   pre=' '
@@ -637,11 +667,15 @@ mpd_click_left   () {
     /usr/bin/mpc "${instance}"
   fi
 }
-mpd_click_middle () { /usr/bin/mpc stop ; }
+mpd_click_middle () {
+  /usr/bin/mpc stop
+}
 mpd_click_right  () {
-  if [ -x '/usr/bin/cantata' ] ; then
-    nohup /usr/bin/cantata >/dev/null 2>&1 &
-  fi
+  ( flock --nonblock 7 || exit 7
+    if [ -x '/usr/bin/cantata' ] ; then
+      /usr/bin/cantata >/dev/null 2>&1 &
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/mpd_${DISPLAY}_right" >/dev/null 2>&1 &
 }
 mpd_scroll_up () { true ; }
 mpd_scroll_down () { true ; }
@@ -677,9 +711,9 @@ mpd_print () {
       fi
     elif [ "${instance}" = 'consume' ] ; then
       if echo "${info}" | grep --quiet "${instance}: on" ; then
-        pre='裸'
+        pre=''
       else
-        txt='蘿'
+        txt=''
       fi
     elif [ "${instance}" = 'single' ] ; then
       if echo "${info}" | grep --quiet "${instance}: on" ; then
@@ -796,7 +830,6 @@ pulseaudio_click_left () { # Left click action
   /usr/bin/pactl "set-${instance}-mute" \
     "@DEFAULT_$(echo ${instance} | awk '{print toupper($0)}')@" toggle
 }
-
 pulseaudio_click_middle () { # Middle mouse action
   if [ "${instance}" = 'source' ] ; then
     _cmd='source-output'
@@ -831,14 +864,13 @@ pulseaudio_click_middle () { # Middle mouse action
     _i="$(( _i + 1 ))"
   done
 }
-
 pulseaudio_click_right () { # Right mouse action
-  # Launch and disown pavucontrol
-  if [ -x '/usr/bin/pavucontrol' ] ; then
-    nohup /usr/bin/pavucontrol >/dev/null 2>&1 &
-  fi
+  ( flock --nonblock 7 || exit 7
+    if [ -x '/usr/bin/pavucontrol' ] ; then
+      /usr/bin/pavucontrol
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/pulse_${DISPLAY}_right" >/dev/null 2>&1 &
 }
-
 pulseaudio_scroll_up () { # Scroll up action
   if [ "${instance}" = 'source' ] ; then
     _cap='Source'
@@ -864,13 +896,11 @@ pulseaudio_scroll_up () { # Scroll up action
     /usr/bin/pactl "set-${instance}-volume" "${_def}" 100%
   fi
 }
-
 pulseaudio_scroll_down () { # Scroll down action
   # Launch and disown pavucontrol
   /usr/bin/pactl "set-${instance}-volume" \
     "@DEFAULT_$(echo "${instance}" | awk '{print toupper($0)}')@" -1%
 }
-
 pulseaudio_print () {   # Print text
   # Default instance does not work, only source or sink does
   if [ "${instance}" = 'default' ] ; then
@@ -975,7 +1005,6 @@ pulseaudio_print () {   # Print text
     fi
   fi
 }
-
 pulseaudio_wait () { # Listener loop with callback
   if [ "${instance}" != 'source' ] && [ "${instance}" != 'sink' ] ; then
     exit 2
@@ -1002,9 +1031,11 @@ rss_click_middle () { true ; }
 rss_scroll_up    () { true ; }
 rss_scroll_down  () { true ; }
 rss_click_right  () {
-  if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/newsboat' ] ; then
-    nohup "${TERMINAL}" '/usr/bin/newsboat' >/dev/null 2>&1 &
-  fi
+  ( flock --nonblock 7 || exit 7
+    if [ -x "${TERMINAL}" ] && [ -x '/usr/bin/newsboat' ] ; then
+      "${TERMINAL}" '/usr/bin/newsboat'
+    fi
+  ) 7>"${SYSINFO_FLOCK_DIR}/rss_${DISPLAY}_right" >/dev/null 2>&1 &
 }
 rss_print () {
   pre=' '
@@ -1111,9 +1142,16 @@ todo_wait () {
 # \_|  |_/\__,_|_|_| |_| #
 ##########################
 
+# Create file lock directory
+if [ ! -e "${SYSINFO_FLOCK_DIR}" ] ; then
+  mkdir --parents "${SYSINFO_FLOCK_DIR}"
+elif [ ! -d "${SYSINFO_FLOCK_DIR}" ] ; then
+  exit 1
+fi
+
 # Run the waiter loops if the module exists
-if type "${name}-wait" 2>/dev/null | grep --quiet 'function' ; then
-  "${name}-wait" &
+if type "${name}_wait" 2>/dev/null | grep --quiet 'function' ; then
+  "${name}_wait" &
 else
   echo "${name} module does not exist!"
   exit 1
