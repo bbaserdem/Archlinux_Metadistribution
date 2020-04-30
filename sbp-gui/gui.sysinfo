@@ -183,18 +183,6 @@ backlight_wait () {
     fi
   done
 }
-brightness_respond () {
-  while read -r _button ; do
-    case "$(echo "${_button}" | jq -r '.button')" in
-      1) brightness_click_left ;;
-      2) brightness_click_middle ;;
-      3) brightness_click_right ;;
-      4) brightness_scroll_up ;;
-      5) brightness_scroll_down ;;
-      *) true ;;
-    esac
-  done
-}
 
 
 ###################################
@@ -596,7 +584,7 @@ keyboard_click_middle () { true ; }
 keyboard_click_right () { true ; }
 keyboard_scroll_up () {
   if [ -x '/usr/bin/light' ] ; then
-    device="$(/usr/bin/light -L | awk '/kbd_backlight/ {print $1}')"
+    device="$(/usr/bin/light -L 2>/dev/null | awk '/kbd_backlight/ {print $1}')"
     if [ -n "${device}" ] ; then
       /usr/bin/light -Ars "${device}" 1
     fi
@@ -604,7 +592,7 @@ keyboard_scroll_up () {
 }
 keyboard_scroll_down () {
   if [ -x '/usr/bin/light' ] ; then
-    device="$(/usr/bin/light -L | awk '/kbd_backlight/ {print $1}')"
+    device="$(/usr/bin/light -L 2>/dev/null | awk '/kbd_backlight/ {print $1}')"
     if [ -n "${device}" ] ; then
       /usr/bin/light -Urs "${device}" 1
     fi
@@ -630,7 +618,7 @@ keyboard_print () {
   layout="$(echo "${state}" | awk -F '[ ()]' '{print $2}')"
   # Start laying out text (with emoji if possible)
   case "${lang}" in
-    us) txt='🇺' ;;
+    us) txt='🇺🇸' ;;
     tr) txt='🇹🇷' ;;
     *)  txt="$(echo "${lang}" | awk '{print toupper($0)}')"
   esac
@@ -642,7 +630,7 @@ keyboard_print () {
     fi
   # Get the keyboard backlight if it is there
   if [ -x '/usr/bin/light' ] ; then
-    device="$(/usr/bin/light -L | awk '/kbd_backlight/ {print $1}')"
+    device="$(/usr/bin/light -L 2>/dev/null | awk '/kbd_backlight/ {print $1}')"
     if [ -n "${device}" ] ; then
       blevel="$(/usr/bin/light -Gs "${device}")"
       if   [ "${blevel}" -gt 66 ] ; then suf=" "
@@ -666,7 +654,7 @@ keyboard_wait() {
   # Check if kbd device exists to wait for it
   kbdlight_wait() {
     if [ -x '/usr/bin/light' ] && [ -x '/usr/bin/acpi_listen' ] ; then
-      device="$(/usr/bin/light -L | awk '/kbd_backlight/ {print $1}')"
+      device="$(/usr/bin/light -L 2>/dev/null | awk '/kbd_backlight/ {print $1}')"
       if [ -n "${device}" ] ; then
         /usr/bin/acpi_listen | while read -r event ; do
           if echo "${event}" | grep --quiet 'kbd' ; then
@@ -689,6 +677,7 @@ keyboard_wait() {
       done
     fi
   }
+  keyboard_print
   kbdlight_wait &
   keymap_wait
 }
@@ -760,11 +749,12 @@ memory_wait () {
 # MPD module;
 #  * Can take instance name of; default, consume, repeat, shuffle, single, toggle
 mpd_click_left   () {
-  if [ "${instance}" = 'default' ] ; then
-    /usr/bin/mpc toggle
-  else
-    /usr/bin/mpc "${instance}"
-  fi
+  case "${instance}" in
+    default|song)     /usr/bin/mpc toggle         >/dev/null 2>&1 ;;
+    rewind)           /usr/bin/mpc seek '-10'     >/dev/null 2>&1 ;;
+    fastforward)      /usr/bin/mpc seek '+10'     >/dev/null 2>&1 ;;
+    *)                /usr/bin/mpc "${instance}"  >/dev/null 2>&1 ;;
+  esac
 }
 mpd_click_middle () {
   /usr/bin/mpc stop
@@ -796,7 +786,15 @@ mpd_print () {
     ( [ "${lines}" = '1' ] && echo "${info}" | grep --quiet --invert-match 'error' )
     then
     # Buttons
-    if [ "${instance}" = 'random' ] ; then
+    if [ "${instance}" = 'next' ] ; then
+      txt='怜'
+    elif [ "${instance}" = 'prev' ] ; then
+      txt='玲'
+    elif [ "${instance}" = 'rewind' ] ; then
+      txt='丹'
+    elif [ "${instance}" = 'fastforward' ] ; then
+      txt=''
+    elif [ "${instance}" = 'random' ] ; then
       if echo "${info}" | grep --quiet "${instance}: on" ; then
         pre='咽'
       else
@@ -848,7 +846,7 @@ mpd_print () {
             | awk "{print substr(\$0, 1, ${SYSINFO_MPD_MAXLEN})}")…"
         fi
         if [ "$(echo "${art}" | wc --chars)" -gt "${SYSINFO_MPD_MAXLEN}" ] ; then
-          tit="$(echo "${art}" \
+          art="$(echo "${art}" \
             | awk "{print substr(\$0, 1, ${SYSINFO_MPD_MAXLEN})}")…"
         fi
         txt="${tit}${art}"
@@ -898,18 +896,6 @@ mpd_wait() {
       mpd_print
     done
     sleep "${SYSINFO_MPD_POLL}"
-  done
-}
-mpd_respond () { # Responder loop
-  while read -r _button ; do
-    case "$(echo "${_button}" | jq -r '.button')" in
-      1) mpd_click_left ;;
-      2) mpd_click_middle ;;
-      3) mpd_click_right ;;
-      4) mpd_scroll_up ;;
-      5) mpd_scroll_down ;;
-      *) true ;;
-    esac
   done
 }
 
@@ -1033,8 +1019,8 @@ pulseaudio_print () {   # Print text
       *hdmi*)                                         pre="﴿ " ;;
       *headset*)            [ "${d_mute}" = 'no' ] && pre=" "  || pre=" "  ;;
       *a2dp*)               [ "${d_mute}" = 'no' ] && pre="﫽 " || pre="﫾 " ;;
-      *hifi*)                                         pre="﫛 " ;;
-      *headphone*|*stereo*) [ "${d_mute}" = 'no' ] && pre=" "  || pre="ﳌ "  ;;
+      *hifi*|*stereo*)                                pre="﫛 " ;;
+      *headphone*|*lineout*)[ "${d_mute}" = 'no' ] && pre=" "  || pre="ﳌ "  ;;
       *speaker*)            [ "${d_mute}" = 'no' ] && pre="蓼 " || pre="遼 " ;;
       *network*)                                      pre="爵 " ;;
       *)                    [ "${d_mute}" = 'no' ] && pre="墳 " || pre="ﱝ "  ;;
@@ -1054,8 +1040,8 @@ pulseaudio_print () {   # Print text
     srces="$(/usr/bin/pactl list "${instance}s")"
     ssrcs="$(/usr/bin/pactl list "${instance}s" short)"
     # Get device.icon_name field
-    iconn="$(echo "${srces}" | awk -F ': ' \
-      '/device.icon_name/ {print substr($2, 2, length($2))}')"
+    iconn="$(echo "${srces}" | awk -F ' = ' \
+      '/device.icon_name/ {print substr($2, 2, length($2) - 2)}')"
     muted="$(echo "${srces}" | awk -F ': ' \
       '/Mute/ {print $2}')"
     volms="$(echo "${srces}" | awk '/^\sVolume/ {vol=0; n=0;
@@ -1138,8 +1124,9 @@ rss_click_right  () {
 }
 rss_print () {
   pre=' '
-  tmp="$(mktmp)"
+  tmp="$(mktemp)"
   new="$(/usr/bin/newsboat "--cache-file=${tmp}" -x print-unread | awk '{print $1}')"
+  rm "${tmp}"
   if [ "${new}" = '0' ] ; then
     mute='yes'
   else
@@ -1257,8 +1244,8 @@ else
 fi
 
 # Responde to inputs
-while read -r _button ; do
-  case "$(echo "${_button}" | jq -r '.button')" in
+while read -r input_button ; do
+  case "$(echo "${input_button}" | jq --raw-output '.button')" in
     1) "${name}_click_left"   || continue ;;
     2) "${name}_click_middle" || continue ;;
     3) "${name}_click_right"  || continue ;;
