@@ -260,7 +260,6 @@ bandwidth_print () {
     # Calculate byte/s transfer; and convert to KiB using byte shifting
     rx_rate=$(( ( ( rx_now - rx_old ) / ti_del ) >> 10 ))
     tx_rate=$(( ( ( tx_now - tx_old ) / ti_del ) >> 10 ))
-    echo "Rates are ${rx_rate} ${tx_rate}"
     # Start formatting; use MiB when appropriate
     if [ "${rx_rate}" -gt 1024 ] ; then
       rx_rate="$(echo "${rx_rate}" | awk '{printf("%.1f", $1 / (2^10));}')"
@@ -416,7 +415,7 @@ calendar_print () {
   fi
   # Get fields
   pre=' '
-  txt="$(/usr/bin/khal list | head -n 1)"
+  txt="$(/usr/bin/khal at | head -n 1)"
   # Mute if quiet
   if [ "${txt}" = 'No events' ] ; then
     mute='yes'
@@ -890,15 +889,15 @@ keyboard_print () {
   esac
   # Add the layout
   if [ -n "${layout}" ] ; then
-    txt="${txt} (${layout})"
+    txt="${txt}(${layout})"
   else
-    txt="${txt} (qwerty)"
+    txt="${txt}(qwerty)"
   fi
   # Get the keyboard backlight if it is there
   if [ -x '/usr/bin/light' ] ; then
     device="$(/usr/bin/light -L 2>/dev/null | awk '/kbd_backlight/ {print $1}')"
     if [ -n "${device}" ] ; then
-      blevel="$(/usr/bin/light -Gs "${device}")"
+      blevel="$(/usr/bin/light -Gs "${device}" | awk '{printf("%d", $1)}')"
       if   [ "${blevel}" -gt 66 ] ; then suf=" "
       elif [ "${blevel}" -gt 33 ] ; then suf=" "
       elif [ "${blevel}" -gt  0 ] ; then suf=" "
@@ -1150,7 +1149,7 @@ mpd_print () {
     echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
   elif [ "${markup}" = 'pango' ] ; then
     # Create pango formatted string
-    png="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
+    png="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
     if [ "${mute}" = 'yes' ] ; then
       echo "{\"full_text\":\"${png}\",\"color\":\"${dim}\"}"
     else
