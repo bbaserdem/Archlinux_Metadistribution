@@ -327,26 +327,26 @@ battery_print () {
   perc="$(echo "${bat}" | sed 's|.*, \([0-9]\+\)%.*|\1|')"
   # Change the front icon to capacity; with sign if it's charging
   if [ "${stat}" = 'Charging' ] ; then
-    if   [ "${perc}" -gt 99 ] ; then col='green'  ; pre=" "
-    elif [ "${perc}" -ge 90 ] ; then col='green'  ; pre=" "
-    elif [ "${perc}" -ge 80 ] ; then col='green'  ; pre=" "
-    elif [ "${perc}" -ge 60 ] ; then col='yellow' ; pre=" "
-    elif [ "${perc}" -ge 40 ] ; then col='yellow' ; pre=" "
-    elif [ "${perc}" -ge 30 ] ; then col='orange' ; pre=" "
-    elif [ "${perc}" -ge 20 ] ; then col='red'    ; pre=" "
-    else                             col='red'    ; pre=" "
+    if   [ "${perc}" -gt 99 ] ; then col="${base0B}" ; pre=" "
+    elif [ "${perc}" -ge 90 ] ; then col="${base0B}" ; pre=" "
+    elif [ "${perc}" -ge 80 ] ; then col="${base0B}" ; pre=" "
+    elif [ "${perc}" -ge 60 ] ; then col="${base0A}" ; pre=" "
+    elif [ "${perc}" -ge 40 ] ; then col="${base0A}" ; pre=" "
+    elif [ "${perc}" -ge 30 ] ; then col="${base09}" ; pre=" "
+    elif [ "${perc}" -ge 20 ] ; then col="${base08}" ; pre=" "
+    else                             col="${base08}" ; pre=" "
     fi
   else
-    if   [ "${perc}" -ge 95 ] ; then col='green'  ; pre=" "
-    elif [ "${perc}" -ge 90 ] ; then col='green'  ; pre=" "
-    elif [ "${perc}" -ge 80 ] ; then col='green'  ; pre=" "
-    elif [ "${perc}" -ge 70 ] ; then col='yellow' ; pre=" "
-    elif [ "${perc}" -ge 60 ] ; then col='yellow' ; pre=" "
-    elif [ "${perc}" -ge 50 ] ; then col='orange' ; pre=" "
-    elif [ "${perc}" -ge 40 ] ; then col='orange' ; pre=" "
-    elif [ "${perc}" -ge 30 ] ; then col='red'    ; pre=" "
-    elif [ "${perc}" -ge 20 ] ; then col='red'    ; pre=" "
-    else                             col='red'    ; pre=" "
+    if   [ "${perc}" -ge 95 ] ; then col="${base0B}" ; pre=" "
+    elif [ "${perc}" -ge 90 ] ; then col="${base0B}" ; pre=" "
+    elif [ "${perc}" -ge 80 ] ; then col="${base0B}" ; pre=" "
+    elif [ "${perc}" -ge 70 ] ; then col="${base0A}" ; pre=" "
+    elif [ "${perc}" -ge 60 ] ; then col="${base0A}" ; pre=" "
+    elif [ "${perc}" -ge 50 ] ; then col="${base09}" ; pre=" "
+    elif [ "${perc}" -ge 40 ] ; then col="${base09}" ; pre=" "
+    elif [ "${perc}" -ge 30 ] ; then col="${base08}" ; pre=" "
+    elif [ "${perc}" -ge 20 ] ; then col="${base08}" ; pre=" "
+    else                             col="${base08}" ; pre=" "
     fi
   fi
   txt="${perc}"
@@ -372,6 +372,7 @@ battery_print () {
   fi
 }
 battery_wait () { # Listener loop
+  battery_print || exit
   # Also poll every 30 seconds
   poll_loop () {
     while : ; do
