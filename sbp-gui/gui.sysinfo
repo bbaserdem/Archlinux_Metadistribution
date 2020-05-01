@@ -49,6 +49,9 @@ if [ -z "${SYSINFO_FLOCK_DIR}" ] ; then
     SYSINFO_FLOCK_DIR="${HOME}/.cache/sysinfo"
   fi
 fi
+if [ -z "${SYSINFO_BW_POLL}" ] ; then
+  SYSINFO_BW_POLL=10
+fi
 if [ -z "${SYSINFO_CAL_LOC}" ] ; then
   SYSINFO_CAL_LOC="${HOME}/Documents/Calendar"
 fi
@@ -193,6 +196,96 @@ backlight_wait () {
   done
 }
 
+#########################################
+#  _             _       _   _ _   _    #
+# | |_ ___ ___ _| |_ _ _|_|_| | |_| |_  #
+# | . | .'|   | . | | | | | . |  _|   | #
+# |___|__,|_|_|___|_____|_|___|_| |_|_| #
+#########################################
+# Bandwidth module;
+#  * Can specify interface; or left to default
+bandwidth_click_left ()   { true ; }
+bandwidth_click_middle () { true ; }
+bandwidth_click_right ()  { true ; }
+bandwidth_scroll_up ()    { true ; }
+bandwidth_scroll_down ()  { true ; }
+bandwidth_print () {
+  pre='龍 '
+  # Get the interface
+  if [ "${instance}" = 'default' ] ; then
+    intfc="$(ip route | awk '/^default via/ {print $5}')"
+  else
+    intfc="${instance}"
+    # Check if valid interface
+    int_list="$(ip addr | awk -F ': ' '/^[0-9]+/ {print $2}')"
+    echo "${int_list}" | grep --quiet "${intfc}" || exit 1
+  fi
+  # Exit if there is no interface
+  if [ -z "${intfc}" ] ; then
+    if   [ "${markup}" = 'lemonbar' ] ; then echo ""
+    elif [ "${markup}" = 'pango'    ] ; then echo "{\"full_text\":\"\"}"
+    fi
+    exit
+  fi
+  # Grab these quantities; rx is download and tx is upload
+  rx_now="$(cat "/sys/class/net/${intfc}/statistics/rx_bytes")"
+  tx_now="$(cat "/sys/class/net/${intfc}/statistics/tx_bytes")"
+  ti_now="$(date +%s)"
+  # Use reserved tmpfs for storing quantities
+  shmpath="/dev/shm/$(basename "$0")-${intfc}"
+  # If the cache file is not present; just print
+  if [ ! -f "${shmpath}" ] ; then
+    if   [ "${markup}" = 'lemonbar' ] ; then
+      echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}Calculating…%{-u u- -o o-}"
+    elif [ "${markup}" = 'pango'    ] ; then
+      echo "{\"full_text\":\"Calculating…\",\"color\":\"${dim}\"}"
+    fi
+  # If not; then calculate average upload/download
+  else
+    # Read old data
+    ti_old="$(awk '{print $1}' < "${shmpath}")"
+    rx_old="$(awk '{print $2}' < "${shmpath}")"
+    tx_old="$(awk '{print $3}' < "${shmpath}")"
+    # Sanity check
+    ti_del=$(( ti_now - ti_old ))
+    if [ "${ti_del}" -le 0 ] ; then
+      exit 1
+    fi
+    # Calculate byte/s transfer; and convert to KiB using byte shifting
+    rx_rate=$(( ( ( rx_now - rx_old ) / ti_del ) >> 10 ))
+    tx_rate=$(( ( ( tx_now - tx_old ) / ti_del ) >> 10 ))
+    echo "Rates are ${rx_rate} ${tx_rate}"
+    # Start formatting; use MiB when appropriate
+    if [ "${rx_rate}" -gt 1024 ] ; then
+      rx_rate="$(echo "${rx_rate}" | awk '{printf("%.1f", $1 / (2^10));}')"
+      rx_suf='MiB/s'
+    else
+      rx_suf='KiB/s'
+    fi
+    if [ "${tx_rate}" -gt 1024 ] ; then
+      tx_rate="$(echo "${tx_rate}" | awk '{printf("%.1f", $1 / (2^10));}')"
+      tx_suf='MiB/s'
+    else
+      tx_suf='KiB/s'
+    fi
+    # Format text
+    txt="${rx_rate} ${rx_suf}   ${tx_rate} ${tx_suf} "
+    # Print output
+    if [ "${markup}" = 'lemonbar' ] ; then
+      echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${txt}%{-u u- -o o-}"
+    elif [ "${markup}" = 'pango' ] ; then
+      echo "{\"full_text\":\"<span color='${col}'>${pre}</span>${txt}\"}"
+    fi
+  fi
+  # Write old quantities in the memory file
+  echo "${ti_now} ${rx_now} ${tx_now}" > "${shmpath}"
+}
+bandwidth_wait () {
+  while : ; do
+    bandwidth_print
+    sleep "${SYSINFO_BW_POLL}"
+  done
+}
 
 #################################
 #  _       _   _                #
@@ -265,11 +358,10 @@ battery_print () {
   # Formatting and printing
   if [ "${markup}" = 'lemonbar' ] ; then
     # Format by lemonbar tags
-    echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${txt}%{-u u- -o o-}"
+    out="%{F${col}}${pre}%{F-}${txt}%{F${col}}${suf}"
+    echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
   elif [ "${markup}" = 'pango' ] ; then
-    # Create pango formatted string
     png="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
-    # Start assemling the json string
     echo "{\"full_text\":\"${png}\"}"
   fi
 }
@@ -1076,6 +1168,8 @@ network_print () {
   # Get the interface
   if [ "${instance}" = 'default' ] ; then
     intfc="$(ip route | awk '/^default via/ {print $5}')"
+    # Exit if there isn't anything
+    if [ -z "${intfc}" ] ; then exit ; fi
   else
     intfc="${instance}"
     int_list="$(ip addr | awk -F ': ' '/^[0-9]+/ {print $2}')"
@@ -1095,9 +1189,13 @@ network_print () {
   txt="$(ip addr show "${intfc}" 2>/dev/null | awk '/inet/ {print $2}' | head -n 1)"
   if [ -z "${txt}" ] ; then
     txt='N/A'
+  fi
   # Get SSID if also wireless
-  elif [ "${txt}" = 'wifi' ] || echo "${txt}" | grep --quiet 'wl' ; then
-    txt="$(iwctl station "${intfc}" get-networks | awk '/>/ {print $0}')${txt}"
+  if [ "${txt}" = 'wifi' ] || echo "${txt}" | grep --quiet 'wl' ; then
+    ssid="$(iwctl station "${intfc}" get-networks | awk '/>/ {print $2}')"
+    if [ -n "${ssid}" ] ; then
+      txt="${ssid}${txt}"
+    fi
   fi
   # Print text
   if [ "${markup}" = 'lemonbar' ] ; then
