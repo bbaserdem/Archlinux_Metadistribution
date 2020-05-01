@@ -58,6 +58,9 @@ fi
 if [ -z "${SYSINFO_CAL_MAXLEN}" ] ; then
   SYSINFO_CAL_MAXLEN=30
 fi
+if [ -z "${SYSINFO_CORE_POLL}" ] ; then
+  SYSINFO_CORE_POLL=10
+fi
 if [ -z "${SYSINFO_CPU_POLL}" ] ; then
   SYSINFO_CPU_POLL=30
 fi
@@ -497,6 +500,103 @@ clock_wait () {
   done
 }
 
+#######################################
+#                  _                  #
+#  ___ ___ ___ ___| |_ ___ _____ ___  #
+# |  _| . |  _| -_|  _| -_|     | . | #
+# |___|___|_| |___|_| |___|_|_|_|  _| #
+#                               |_|   #
+#######################################
+# Coretemp module
+#  * Can specify chip with instance; or picks a sane default
+coretemp_click_left   () { true ; }
+coretemp_click_middle () { true ; }
+coretemp_scroll_up    () { true ; }
+coretemp_scroll_down  () { true ; }
+coretemp_click_right  () { true ; }
+coretemp_print () {
+  # Get chip; or a sane default one
+  if [ "${instance}" = 'default' ] ; then
+    chiplist="$(/usr/bin/sensors | awk '{if(NF==1){print $1}}')"
+    # Try some sane defaults
+    chip="$(echo "${chiplist}" | awk '/coretemp/ {print $1}' | head -n 1)"
+    if [ -z "${chip}" ] ; then
+      chip="$(echo "${chiplist}" | awk '/k10temp/ {print $1}' | head -n 1)"
+    fi
+    # Give up if cannot find
+    if [ -z "${chip}" ] ; then
+      exit 1
+    else
+      temp="$(/usr/bin/sensors "${chip}" 2>/dev/null)"
+    fi
+  else
+    chip="${instance}"
+    temp="$(/usr/bin/sensors "${chip}" 2>/dev/null)"
+    if echo "${temp}" | grep --quiet 'for more information' ; then
+      exit 1
+    fi
+  fi
+  # Try to read temperatures in a known chipset;
+  case "${chip}" in
+    coretemp*) # INTEL chipset
+      # If there is package id; get that
+      temp="$(echo "${temp}" | awk '/Package id 0:/
+        {print substr($4, 2, length($4)-3}')"
+      # If there was no package id; get average of the cores
+      if [ -z "${temp}" ] ; then
+        temp="$(echo "${temp}" | awk '/Core/ {sum+=substr($3, 2, length($3)-3)}
+          END {if(NR>0) printf("%.1f",sum/NR)}')"
+      fi
+      # Quit; cause i don't know how else to proceed
+      if [ -z "${temp}" ] ; then
+        exit 1
+      fi
+      ;;
+    k10temp*) # AMD chipset
+      # Tctl is the true temperature
+      temp="$(echo "${temp}" | awk '/Tctl/ {print substr($2, 2, length($2)-3)}')"
+      # If empty; quit I have no idea
+      if [ -z "${temp}" ] ; then
+        exit 1
+      fi
+      ;;
+  esac
+  # Check and adjust things to high temperature
+  urg='no'
+  suf=''
+  temp_int="$(echo "${temp}" | awk '{fprintf("%d", $1)}')"
+  if   [ "${temp_int}" -lt 30 ] ; then pre=' '
+  elif [ "${temp_int}" -lt 40 ] ; then pre=' '
+  elif [ "${temp_int}" -lt 50 ] ; then pre=' '
+  elif [ "${temp_int}" -lt 60 ] ; then pre=' '
+  elif [ "${temp_int}" -lt 70 ] ; then pre=' '
+  else urg='yes' ; suf=' ' ; pre=' ' ; fi
+  txt="${temp}°C"
+  # Print text
+  if [ "${markup}" = 'lemonbar' ] ; then
+    out="%{F${col}}${pre}%{F-}${txt}%{F${col}}${suf}%{F-}"
+    if [ "${urg}" = yes ] ; then
+      echo "%{u${col} +u o${col} +o}%{F${base09}}${out}%{F-}%{-u u- -o o-}"
+    else
+      echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
+    fi
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    out="<span color='${col}'>${pre}</span>${new}<span color='${col}'>${suf}</span>"
+    if [ "${urg}" = yes ] ; then
+      echo "{\"full_text\":\"${out}\",\"urgent\":true}"
+    else
+      echo "{\"full_text\":\"${out}\"}"
+    fi
+  fi
+}
+coretemp_wait () {
+  while : ; do
+    coretemp_print || break
+    sleep "${SYSINFO_CORE_POLL}"
+  done
+}
+
 #################
 #  ___ ___ _ _  #
 # |  _| . | | | #
@@ -875,7 +975,7 @@ keyboard_print () {
   esac
     # Add the layout
     if [ -n "${layout}" ] ; then
-      txt="${txt} ("${layout}")"
+      txt="${txt} (${layout})"
     else
       txt="${txt} (qwerty)"
     fi
@@ -968,7 +1068,7 @@ memory_print () {
   swap_perc="$(echo "${info_raw}" | awk '/Swap:/ {printf("%.0f", $3 / $2 * 100.0);}')"
   swap_amnt="$(echo "${info}"     | awk '/Swap:/ {print $3}')"
   if [ "${swap_perc}" -gt 0 ] ; then
-    txt="${_txt}樂${swap_amnt} (${swap_perc})"
+    txt="${txt}樂${swap_amnt} (${swap_perc})"
     suf=' 易'
   fi
   # Print text
@@ -1452,7 +1552,7 @@ rss_print () {
   else
     mute='no'
   fi
-    # Print text
+  # Print text
   if [ "${markup}" = 'lemonbar' ] ; then
     # Format by lemonbar tags
     out="%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}${new}%{-u u- -o o-}"
