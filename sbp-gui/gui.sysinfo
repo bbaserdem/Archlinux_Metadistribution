@@ -5,16 +5,6 @@
 trap 'exit' INT TERM
 trap 'kill 0' EXIT
 
-# Location for flocks
-if [ -z "${SYSINFO_FLOCK_DIR}" ] ; then
-  if [ -n "${XDG_CACHE_HOME}" ] ; then
-    SYSINFO_FLOCK_DIR="${XDG_CACHE_HOME}/sysinfo"
-  else
-    SYSINFO_FLOCK_DIR="${XDG_CACHE_HOME}/sysinfo"
-  fi
-fi
-
-
 #------------------------------------#
 #  _____           _        __       #
 # /  ___|         (_)      / _|      #
@@ -40,8 +30,7 @@ if [ -z "${accent}" ] ;   then accent='cyan'      ; fi
 #----------#
 #-DEFAULTS-#
 #----------#
-# If these variables are made available in the environment;
-#   they take over default values
+# Location for flocks; try sane defaults
 if [ -z "${SYSINFO_FLOCK_DIR}" ] ; then
   if [ -n "${XDG_CACHE_HOME}" ] ; then
     SYSINFO_FLOCK_DIR="${XDG_CACHE_HOME}/sysinfo"
@@ -49,8 +38,20 @@ if [ -z "${SYSINFO_FLOCK_DIR}" ] ; then
     SYSINFO_FLOCK_DIR="${HOME}/.cache/sysinfo"
   fi
 fi
+# Get a session identifier both for xorg and wayland
+if [ -n "${WAYLAND_DISPLAY}" ] ; then
+  IDENTIFIER="${WAYLAND_DISPLAY}"
+elif [ -n "${DISPLAY}" ] ; then
+  IDENTIFIER="${DISPLAY}"
+else
+  IDENTIFIER="$$"
+fi
+# These variables have good defaults; but can be overridden using environment
 if [ -z "${SYSINFO_BW_POLL}" ] ; then
   SYSINFO_BW_POLL=10
+fi
+if [ -z "${SYSINFO_BAT_POLL}" ] ; then
+  SYSINFO_BAT_POLL=60
 fi
 if [ -z "${SYSINFO_CAL_LOC}" ] ; then
   SYSINFO_CAL_LOC="${HOME}/Documents/Calendar"
@@ -97,19 +98,7 @@ fi
 if [ -z "${SYSINFO_UPDATE_POLL}" ] ; then
   SYSINFO_UPDATE_POLL=900
 fi
-# By default, DISPLAY is used to identify flags; translate this
-if [ -n "${WAYLAND_DISPLAY}" ] ; then
-  IDENTIFIER="${WAYLAND_DISPLAY}"
-elif [ -n "${DISPLAY}" ] ; then
-  IDENTIFIER="${DISPLAY}"
-else
-  IDENTIFIER="$$"
-fi
-
-#--------#
-#-COLORS-#
-#--------#
-# If there are no base16 set defined; do base16-default-dark
+# If there are no base16 set defined in environment; do base16-default-dark
 if [ -z "${base00}" ] ; then base00='#181818' ; fi
 if [ -z "${base01}" ] ; then base01='#282828' ; fi
 if [ -z "${base02}" ] ; then base02='#383838' ; fi
@@ -142,7 +131,7 @@ elif [ "${accent}" = 'orange' ] ; then
 elif [ "${accent}" = 'yellow' ] ; then
   col="${base0A}"
 elif [ "${accent}" = 'green' ]  ; then
-  col="${base0B}"nohup: ignoring input and appending output to 'nohup.out'
+  col="${base0B}"
 elif [ "${accent}" = 'cyan' ]   ; then
   col="${base0C}"
 elif [ "${accent}" = 'indigo' ] ; then
@@ -154,6 +143,17 @@ elif [ "${accent}" = 'brown' ]  ; then
 else # Invalid accent specification
   exit 1
 fi
+
+empty_output () {
+  # Remove a module from display
+  if [ "${markup}" = 'lemonbar' ] ; then
+    # Format by lemonbar tags
+    echo ""
+  elif [ "${markup}" = 'pango' ] ; then
+    # Create pango formatted string
+    echo "{\"full_text\":\"\"}"
+  fi
+}
 
 #####################################
 #  _           _   _ _     _   _    #
@@ -173,6 +173,7 @@ backlight_print () {
   # Get the current brigtness value; in whole percent
   val="$(/usr/bin/light -Gs 'sysfs/backlight/auto' | awk '{printf "%.0f", $1}')"
   if [ -z "${val}" ] ; then
+    empty_output
     exit 1
   fi
   # Determine the screen icon icon
@@ -191,9 +192,9 @@ backlight_print () {
   fi
 }
 backlight_wait () {
-  backlight_print
-  /usr/bin/acpi_listen | while read -r _line ; do
-    if echo "${_line}" | grep --quiet --ignore-case 'brightness' ; then
+  backlight_print || exit
+  /usr/bin/acpi_listen | while read -r line ; do
+    if echo "${line}" | grep --quiet --ignore-case 'brightness' ; then
       backlight_print
     fi
   done
@@ -217,18 +218,19 @@ bandwidth_print () {
   # Get the interface
   if [ "${instance}" = 'default' ] ; then
     intfc="$(ip route | awk '/^default via/ {print $5}')"
+    # If no interface is available; exit without breaking flow
+    if [ -z "${intfc}" ] ; then
+      empty_output
+      exit
+    fi
   else
     intfc="${instance}"
-    # Check if valid interface
+    # Check if valid interface; and quit if it's not
     int_list="$(ip addr | awk -F ': ' '/^[0-9]+/ {print $2}')"
-    echo "${int_list}" | grep --quiet "${intfc}" || exit 1
-  fi
-  # Exit if there is no interface
-  if [ -z "${intfc}" ] ; then
-    if   [ "${markup}" = 'lemonbar' ] ; then echo ""
-    elif [ "${markup}" = 'pango'    ] ; then echo "{\"full_text\":\"\"}"
+    if echo "${int_list}" | grep --quiet --invert-match "${intfc}" ; then
+      empty_output
+      exit 1
     fi
-    exit
   fi
   # Grab these quantities; rx is download and tx is upload
   rx_now="$(cat "/sys/class/net/${intfc}/statistics/rx_bytes")"
@@ -236,7 +238,7 @@ bandwidth_print () {
   ti_now="$(date +%s)"
   # Use reserved tmpfs for storing quantities
   shmpath="/dev/shm/$(basename "$0")-${intfc}"
-  # If the cache file is not present; just print
+  # If the cache file is not present; display some text
   if [ ! -f "${shmpath}" ] ; then
     if   [ "${markup}" = 'lemonbar' ] ; then
       echo "%{u${col} +u o${col} +o}%{F${col}}${pre}%{F-}Calculating…%{-u u- -o o-}"
@@ -252,7 +254,8 @@ bandwidth_print () {
     # Sanity check
     ti_del=$(( ti_now - ti_old ))
     if [ "${ti_del}" -le 0 ] ; then
-      exit 1
+      empty_output
+      exit
     fi
     # Calculate byte/s transfer; and convert to KiB using byte shifting
     rx_rate=$(( ( ( rx_now - rx_old ) / ti_del ) >> 10 ))
@@ -317,33 +320,34 @@ battery_print () {
   ada="$(acpi --ac-adapter | grep "Adapter ${bid}" | head -n 1)"
   # Return with error code early if there is no battery
   if [ -z "${bat}" ] ; then
-      exit 1
+    empty_output
+    exit 1
   fi
   # Write important info to variables
   stat="$(echo "${bat}" | sed 's|Battery [0-9]: \([ ,A-Z,a-z]*\),.*|\1|')"
   perc="$(echo "${bat}" | sed 's|.*, \([0-9]\+\)%.*|\1|')"
   # Change the front icon to capacity; with sign if it's charging
   if [ "${stat}" = 'Charging' ] ; then
-    if   [ "${perc}" -gt 99 ] ; then col='green'  ; pre=""
-    elif [ "${perc}" -ge 90 ] ; then col='green'  ; pre=""
-    elif [ "${perc}" -ge 80 ] ; then col='green'  ; pre=""
-    elif [ "${perc}" -ge 60 ] ; then col='yellow' ; pre=""
-    elif [ "${perc}" -ge 40 ] ; then col='yellow' ; pre=""
-    elif [ "${perc}" -ge 30 ] ; then col='orange' ; pre=""
-    elif [ "${perc}" -ge 20 ] ; then col='red'    ; pre=""
-    else                             col='red'    ; pre=""
+    if   [ "${perc}" -gt 99 ] ; then col='green'  ; pre=" "
+    elif [ "${perc}" -ge 90 ] ; then col='green'  ; pre=" "
+    elif [ "${perc}" -ge 80 ] ; then col='green'  ; pre=" "
+    elif [ "${perc}" -ge 60 ] ; then col='yellow' ; pre=" "
+    elif [ "${perc}" -ge 40 ] ; then col='yellow' ; pre=" "
+    elif [ "${perc}" -ge 30 ] ; then col='orange' ; pre=" "
+    elif [ "${perc}" -ge 20 ] ; then col='red'    ; pre=" "
+    else                             col='red'    ; pre=" "
     fi
   else
-    if   [ "${perc}" -ge 95 ] ; then col='green'  ; pre=""
-    elif [ "${perc}" -ge 90 ] ; then col='green'  ; pre=""
-    elif [ "${perc}" -ge 80 ] ; then col='green'  ; pre=""
-    elif [ "${perc}" -ge 70 ] ; then col='yellow' ; pre=""
-    elif [ "${perc}" -ge 60 ] ; then col='yellow' ; pre=""
-    elif [ "${perc}" -ge 50 ] ; then col='orange' ; pre=""
-    elif [ "${perc}" -ge 40 ] ; then col='orange' ; pre=""
-    elif [ "${perc}" -ge 30 ] ; then col='red'    ; pre=""
-    elif [ "${perc}" -ge 20 ] ; then col='red'    ; pre=""
-    else                             col='red'    ; pre=""
+    if   [ "${perc}" -ge 95 ] ; then col='green'  ; pre=" "
+    elif [ "${perc}" -ge 90 ] ; then col='green'  ; pre=" "
+    elif [ "${perc}" -ge 80 ] ; then col='green'  ; pre=" "
+    elif [ "${perc}" -ge 70 ] ; then col='yellow' ; pre=" "
+    elif [ "${perc}" -ge 60 ] ; then col='yellow' ; pre=" "
+    elif [ "${perc}" -ge 50 ] ; then col='orange' ; pre=" "
+    elif [ "${perc}" -ge 40 ] ; then col='orange' ; pre=" "
+    elif [ "${perc}" -ge 30 ] ; then col='red'    ; pre=" "
+    elif [ "${perc}" -ge 20 ] ; then col='red'    ; pre=" "
+    else                             col='red'    ; pre=" "
     fi
   fi
   txt="${perc}"
@@ -354,14 +358,14 @@ battery_print () {
   fi
   # Make the suffix into connected/not connected icon
   if [ "$(echo "${ada}" | awk '{print $3}')" = 'on-line' ] ; then
-    suf=""
+    suf=" ﮣ"
   else
-    suf="ﮤ"
+    suf=" ﮤ"
   fi
   # Formatting and printing
   if [ "${markup}" = 'lemonbar' ] ; then
     # Format by lemonbar tags
-    out="%{F${col}}${pre}%{F-}${txt}%{F${col}}${suf}"
+    out="%{F${col}}${pre}%{F-}${txt}%{F${col}}${suf}%{F-}"
     echo "%{u${col} +u o${col} +o}${out}%{-u u- -o o-}"
   elif [ "${markup}" = 'pango' ] ; then
     png="<span color='${col}'>${pre}</span>${txt}<span color='${col}'>${suf}</span>"
@@ -372,15 +376,15 @@ battery_wait () { # Listener loop
   # Also poll every 30 seconds
   poll_loop () {
     while : ; do
-      sleep 30
-      get_text || break
+      sleep "${SYSINFO_BAT_POLL}"
+      battery_print || exit
     done
   }
   poll_loop &
   # Subscribe to acpi_listen
   /usr/bin/acpi_listen | while read -r line ; do
     if echo "${line}" | grep --quiet --ignore-case 'battery\|ac_adapter' ; then
-      get_text
+      battery_print || exit
     fi 
   done
 }
@@ -405,8 +409,14 @@ calendar_click_right  () {
 calendar_scroll_up    () { true ; }
 calendar_scroll_down  () { true ; }
 calendar_print () {
+  # Disable module if calendar does not exist
+  if [ ! -d "${SYSINFO_CAL_LOC}" ] ; then
+    empty_output
+    exit 1
+  fi
+  # Get fields
   pre=' '
-  txt="$(khal list | head -n 1)"
+  txt="$(/usr/bin/khal list | head -n 1)"
   # Mute if quiet
   if [ "${txt}" = 'No events' ] ; then
     mute='yes'
@@ -437,13 +447,13 @@ calendar_print () {
   fi
 }
 calendar_wait () {
-  calendar_print
+  calendar_print || exit
   # Place inotify watch on the calendar directory, or exit gracefully
   while : ; do
     inotifywait --recursive --timeout -1 \
       --event modify --event move --event create --event delete \
       "${SYSINFO_CAL_LOC}" >/dev/null 2>&1 || exit 2
-    calendar_print
+    calendar_print || exit
     # Wait a while before trying to add watches again
     sleep 5
   done
@@ -521,6 +531,10 @@ cpu_click_right  () {
 cpu_scroll_up    () { true ; }
 cpu_scroll_down  () { true ; }
 cpu_print () {
+  # If there is no loadavg; exit
+  if [ ! -e '/proc/loadavg' ] ; then
+    exit 1
+  fi
   # Get data from /proc/loadavg
   data="$(cat /proc/loadavg || exit 1)"
   # Get average load for last minute
@@ -535,10 +549,10 @@ cpu_print () {
   fi
 }
 cpu_wait () {
-  cpu_print
+  cpu_print || exit
   while : ; do
     sleep "${SYSINFO_CPU_POLL}"
-    cpu_print || exit 2
+    cpu_print || exit
   done
 }
 
@@ -673,7 +687,7 @@ disk_wait () {
 # |___|_|_|_|__,|_|_| #
 #######################
 # Email module (depends on inotifp)
-#  * Can specify location using SYSINFO_MAIL_LOC
+#  * Can specify location using SYSINFO_EMAIL_LOC
 email_click_left   () { true ; }
 email_click_middle () { true ; }
 email_click_right  () {
@@ -688,6 +702,11 @@ email_click_right  () {
 email_scroll_up    () { true ; }
 email_scroll_down  () { true ; }
 email_print () {
+  # If there is no inbox; just exit
+  if [ ! -d "${SYSINFO_EMAIL_LOC}/Inbox/new" ] ; then
+    empty_output
+    exit 1
+  fi
   # Get number of new emails
   num="$(find "${SYSINFO_EMAIL_LOC}/Inbox/new" | wc -l)"
   # Set up prefix
@@ -718,15 +737,15 @@ email_print () {
   fi
 }
 email_wait () {
-  email_print
+  email_print || exit
   # Place inotify watch on the email directory, or exit gracefully
   while : ; do
     inotifywait --recursive --timeout -1 \
       --event modify --event move --event create --event delete \
       "${SYSINFO_EMAIL_LOC}" >/dev/null 2>&1 || exit 2
-    email_print
+    email_print || exit
     # Wait a while before trying to add watches again
-    sleep 5
+    sleep 2
   done
 }
 
@@ -753,6 +772,7 @@ fan_print () {
     int="${instance}"
   fi
   if [ ! -x '/usr/bin/sensors' ] ; then
+    empty_output
     exit 1
   fi
   txt="$(/usr/bin/sensors | awk "/${int}/ {print \$2}")"
@@ -765,23 +785,16 @@ fan_print () {
       # Create pango formatted string
       echo "{\"full_text\":\"<span color='${col}'>${pre}</span>${txt}\"}"
     fi
+  else
+    empty_output
+    exit 1
   fi
 }
 fan_wait () {
-  # Check first if there is an instance
-  if [ -x '/usr/bin/sensors' ] ; then
-    if [ "${instance}" = 'default' ] ; then
-      int='fan'
-    else
-      int="${instance}"
-    fi
-    if /usr/bin/sensors | grep --quiet "${int}" ; then
-      while : ; do
-        fan_print
-        sleep "${SYSINFO_FAN_POLL}"
-      done
-    fi
-  fi
+  while : ; do
+    fan_print || exit
+    sleep "${SYSINFO_FAN_POLL}"
+  done
 }
 
 ###########################
@@ -813,7 +826,6 @@ kernel_print () {
 }
 kernel_wait () {
   kernel_print
-  exit 0
 }
 
 #####################################
@@ -823,8 +835,7 @@ kernel_wait () {
 # |_,_|___|_  |___|___|__,|_| |___| #
 #         |___|                     #
 #####################################
-# Keyboard module;
-#  * For keyboard backlight; BRI_KBD needs to be in environment variables
+# Keyboard module
 keyboard_click_left () {
   if [ "${XDG_SESSION_TYPE}" = 'x11' ] ; then
     if [ -x '/usr/bin/xkb-switch' ] ; then
@@ -861,10 +872,11 @@ keyboard_print () {
     # Get keymap
     state="$(xkb-switch --print)"
   elif [ -n "${SWAYSOCK}" ] ; then
-    state="$(/usr/bin/swaymsg --type get_inputs | jq \
-      '.[] | select(.name | test(".*[K,k]eyboard.*")) | select(.type == "keyboard") | .xkb_active_layout_name' \
-      | tail -n 1)"
+    state="$(/usr/bin/swaymsg --type get_inputs | jq '.[] | 
+      select(.name | test(".*[K,k]eyboard.*")) | select(.type == "keyboard") |
+      .xkb_active_layout_name' | tail -n 1)"
   else
+    empty_output
     exit 1
   fi
   # Seperate language and layout
@@ -876,12 +888,12 @@ keyboard_print () {
     tr) txt='🇹🇷' ;;
     *)  txt="$(echo "${lang}" | awk '{print toupper($0)}')"
   esac
-    # Add the layout
-    if [ -n "${layout}" ] ; then
-      txt="${txt} (${layout})"
-    else
-      txt="${txt} (qwerty)"
-    fi
+  # Add the layout
+  if [ -n "${layout}" ] ; then
+    txt="${txt} (${layout})"
+  else
+    txt="${txt} (qwerty)"
+  fi
   # Get the keyboard backlight if it is there
   if [ -x '/usr/bin/light' ] ; then
     device="$(/usr/bin/light -L 2>/dev/null | awk '/kbd_backlight/ {print $1}')"
@@ -905,7 +917,7 @@ keyboard_print () {
   fi
 }
 keyboard_wait() {
-  # Check if kbd device exists to wait for it
+  # Check if kbd_backlight device exists to wait for changes
   kbdlight_wait() {
     if [ -x '/usr/bin/light' ] && [ -x '/usr/bin/acpi_listen' ] ; then
       device="$(/usr/bin/light -L 2>/dev/null | awk '/kbd_backlight/ {print $1}')"
@@ -915,9 +927,12 @@ keyboard_wait() {
             keyboard_print
           fi
         done
+      else
+        exit
       fi
     fi
   }
+  # Check if kbd_backlight device exists to wait for it
   keymap_wait() {
     if [ "${XDG_SESSION_TYPE}" = 'x11' ] && [ -x '/usr/bin/xkb-switch' ] ; then
       /usr/bin/xkb-switch -W | while read -r line ; do
@@ -929,6 +944,8 @@ keyboard_wait() {
           keyboard_print
         fi
       done
+    else
+      exit
     fi
   }
   keyboard_print
@@ -1172,12 +1189,17 @@ network_print () {
   if [ "${instance}" = 'default' ] ; then
     intfc="$(ip route | awk '/^default via/ {print $5}')"
     # Exit if there isn't anything
-    if [ -z "${intfc}" ] ; then exit ; fi
+    if [ -z "${intfc}" ] ; then
+      empty_output
+      exit
+    fi
   else
     intfc="${instance}"
     int_list="$(ip addr | awk -F ': ' '/^[0-9]+/ {print $2}')"
     # Check if valid interface
-    echo "${int_list}" | grep --quiet "${intfc}" || exit 1
+    if echo "${int_list}" | grep --quiet --invert-match "${intfc}" ; then
+      exit 1
+    fi
   fi
   # Get icon
   case "${intfc}" in
@@ -1211,7 +1233,7 @@ network_print () {
 }
 network_wait () {
   while : ; do
-    network_print
+    network_print || exit
     # Wait for one line; then chillax a bit
     ( ip monitor & echo "${!}" && wait ) | ( 
       trap 'kill "${thispid}"; trap - EXIT' EXIT
@@ -1450,6 +1472,10 @@ rss_print () {
   tmp="$(mktemp)"
   new="$(/usr/bin/newsboat "--cache-file=${tmp}" -x print-unread | awk '{print $1}')"
   rm "${tmp}"
+  if [ -z "${new}" ] ; then
+    empty_output
+    exit 1
+  fi
   if [ "${new}" = '0' ] ; then
     mute='yes'
   else
@@ -1508,6 +1534,7 @@ temperature_print () {
     fi
     # Give up if cannot find
     if [ -z "${chip}" ] ; then
+      empty_output
       exit 1
     else
       temp="$(/usr/bin/sensors "${chip}" 2>/dev/null)"
@@ -1518,6 +1545,7 @@ temperature_print () {
     chip="$(echo "${chiplist}" | awk '/amdgpu/ {print $1}' | head -n 1)"
     # Give up if cannot find
     if [ -z "${chip}" ] ; then
+      empty_output
       exit 1
     else
       temp="$(/usr/bin/sensors "${chip}" 2>/dev/null)"
@@ -1526,6 +1554,7 @@ temperature_print () {
     chip="${instance}"
     temp="$(/usr/bin/sensors "${chip}" 2>/dev/null)"
     if echo "${temp}" | grep --quiet 'for more information' ; then
+      empty_output
       exit 1
     fi
   fi
@@ -1535,7 +1564,7 @@ temperature_print () {
       suf=' ﬙'
       # If there is package id; get that
       temp="$(echo "${temp}" | awk '/Package id 0:/
-        {print substr($4, 2, length($4)-3}')"
+        {print substr($4, 2, length($4)-3)}')"
       # If there was no package id; get average of the cores
       if [ -z "${temp}" ] ; then
         temp="$(echo "${temp}" | awk '/Core/ {sum+=substr($3, 2, length($3)-3)}
@@ -1543,6 +1572,7 @@ temperature_print () {
       fi
       # Quit; cause i don't know how else to proceed
       if [ -z "${temp}" ] ; then
+        empty_output
         exit 1
       fi
       ;;
@@ -1552,6 +1582,7 @@ temperature_print () {
       temp="$(echo "${temp}" | awk '/Tctl/ {print substr($2, 2, length($2)-3)}')"
       # If empty; quit I have no idea
       if [ -z "${temp}" ] ; then
+        empty_output
         exit 1
       fi
       ;;
@@ -1565,6 +1596,7 @@ temperature_print () {
       fi
       # If still empty; i don't know what to do
       if [ -z "${temp}" ] ; then
+        empty_output
         exit 1
       fi
       ;;
