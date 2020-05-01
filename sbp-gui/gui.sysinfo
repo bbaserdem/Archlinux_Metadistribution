@@ -1559,6 +1559,11 @@ temperature_print () {
       suf=' '
       # If there is junction temperature; get that
       temp="$(echo "${temp}" | awk '/junction/ {print substr($2, 2, length($2)-3)}')"
+      # Try the edge temperature next
+      if [ -z "${temp}" ] ; then
+        temp="$(echo "${temp}" | awk '/edge/ {print substr($2, 2, length($2)-3)}')"
+      fi
+      # If still empty; i don't know what to do
       if [ -z "${temp}" ] ; then
         exit 1
       fi
