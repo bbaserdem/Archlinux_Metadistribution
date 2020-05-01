@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-network
 pkgver=4.0
-pkgrel=4
+pkgrel=5
 pkgdesc="SBP Meta Package: Networking packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -31,9 +31,11 @@ package() {
     #---Encrypted stuff
     depends+=(
         'gnupg'
+        'openfortivpn'
         'openssh'
         'qrencode'
-        'tor')
+        'tor'
+        'wireguard-tools')
     #---Network Applications
     depends+=(
         'aria2'

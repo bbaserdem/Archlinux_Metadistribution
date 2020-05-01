@@ -1727,6 +1727,15 @@ update_wait () {
   done
 }
 
+#################
+#  _ _ ___ ___  #
+# | | | . |   | #
+#  \_/|  _|_|_| #
+#     |_|       #
+#################
+# VPN module
+#  * This module will eventually cover wireguard and openfortivpn
+
 ##########################
 # ___  ___      _        #
 # |  \/  |     (_)       #
