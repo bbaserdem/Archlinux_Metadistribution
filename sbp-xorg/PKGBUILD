@@ -2,20 +2,16 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-xorg
 pkgver=4.0
-pkgrel=3
+pkgrel=4
 pkgdesc="SBP Meta Package: X11 server and utils"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=('xorg.locker' 'xorg.wallpaper')
-sha256sums=(SKIP SKIP)
+source=( )
+sha256sums=( )
 package() {
     depends=('sbp-gui')
-    # Install user scripts
-    install -dm 0755 "${pkgdir}/usr/bin"
-    install -Dm 0755 xorg.locker    "${pkgdir}/usr/bin/sbp-xlocker"
-    install -Dm 0755 xorg.wallpaper "${pkgdir}/usr/bin/sbp-xpaper"
     #---Xorg stuff
     depends+=(
         'xdo'
