@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-themes
 pkgver=4.0
-pkgrel=5
+pkgrel=6
 pkgdesc="SBP Meta Package: Themeing"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -25,8 +25,9 @@ package() {
     #---Icons
     depends+=(
         'papirus-icon-theme'
-        'xcursor-comix'
-        'breeze-hacked-cursor-theme')
+        'breeze-hacked-cursor-theme'
+        'vimix-cursors'
+    )
     #---Login manager
     depends+=('chili-sddm-theme')
     #---GTK and QT themes
