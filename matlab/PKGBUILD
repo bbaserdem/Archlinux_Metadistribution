@@ -1,9 +1,10 @@
 #!/bin/bash
 # Matlab packaging for archlinux
 
-instdir="/opt/tmw/${pkgname}"
 pkgname=matlab
 pkgver=9.8.0.1323502
+version='2020a'
+instdir="/opt/tmw/${pkgname}-${version}"
 pkgrel=1
 pkgdesc='A high-level language for numerical computation and visualization'
 arch=('x86_64')
@@ -74,10 +75,9 @@ depends+=(
 provides=('matlab-licenses' 'matlab-engine-for-python' 'matlab-bin')
 source=("matlab.tar.gz"
         "matlab.fik"
-        "matlab.lic")
-md5sums=("SKIP"
-         "SKIP"
-         "SKIP")
+        "matlab.lic"
+        "matlab.script")
+md5sums=(SKIP SKIP SKIP SKIP)
 
 # Limit products to lower size
 partialinstall=true
@@ -250,4 +250,7 @@ package() {
 
     # https://bbs.archlinux.org/viewtopic.php?id=236821
     # These steps were deleted cause matlab switched to new freetype
+
+    # Install the script file
+    install -Dm 0755 matlab.script "${pkgdir}/usr/bin/matscript"
 }
