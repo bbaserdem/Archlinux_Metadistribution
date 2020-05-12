@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-apps
 pkgver=4.0
-pkgrel=4
+pkgrel=5
 pkgdesc="SBP Meta Package: Applications (GUI)"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -29,7 +29,7 @@ package() {
         'picard'
         'qutebrowser'
         'ristretto'
-        'smplayer'
+        'smplayer' 'smtube'
         'spyder'
         'thunar' 'tumbler' 'ffmpegthumbnailer' 'thunar-media-tags-plugin'
         'thunar-archive-plugin' 'raw-thumbnailer'
