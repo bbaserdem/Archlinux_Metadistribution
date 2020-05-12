@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-utils
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: Client utilities"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -47,7 +47,7 @@ package() {
         'zsh' 'spaceship-prompt')
     #---Compression
     depends+=(
-        'atool'
+        'patool' # For unarchiving
         'bzip2' 'cpio' 'gzip' 'lhasa' 'lzop' 'p7zip' 'tar' 'unace' 'unrar'
         'unzip' 'xz' 'zip' 'rpm-tools')
 }
