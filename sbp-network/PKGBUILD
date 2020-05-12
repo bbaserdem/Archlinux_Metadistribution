@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-network
 pkgver=4.0
-pkgrel=5
+pkgrel=6
 pkgdesc="SBP Meta Package: Networking packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -41,9 +41,8 @@ package() {
         'aria2'
         'isync'
         'msmtp'
-        'neomutt'
+        'neomutt' 'urlscan' 'notmuch'
         'newsboat'
-        'notmuch'
         's3cmd'
         'syncthing'
         'transmission-cli'

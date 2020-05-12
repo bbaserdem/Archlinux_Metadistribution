@@ -1,16 +1,16 @@
-# Maintainer: Jeremy Asuncion <jeremyasuncion808@gmail.com>
+# Maintainer: Batuhan Baserdem <lastname dot firsname [at] gmail>
  
 _name='refind-theme-regular'
-pkgname="${_name}-git"
-pkgver=r43.fad648f
-pkgrel=2
+pkgname="${_name}-vcs"
+pkgver=r49.f77de31
+pkgrel=1
 pkgdesc="A simplistic clean and minimal theme for rEFInd"
 arch=('any')
 url="https://github.com/bobafetthotmail/refind-theme-regular"
 license=('AGPL3' 'custom:OFL' 'custom:Ubuntu Font License 1.0')
 depends=('refind')
 provides=('refind-theme-regular')
-conflicts=('refind-theme-regular')
+conflicts=('refind-theme-regular' 'refind-theme-regular-git')
 makedepends=('git')
 source=("git+https://github.com/bobafetthotmail/${_name}" 'os_grub.png')
 md5sums=('SKIP' '892117fe965e2acd21ed06ccb2d15240')
@@ -26,14 +26,18 @@ package() {
 
     # Fix theme info
     _config="${srcdir}/${_name}/theme.conf"
-    sed -i 's|128|placeholder|g'                            "${_config}"
-    sed -i 's|384|128|g'                                    "${_config}"
-    sed -i 's|placeholder|384|g'                            "${_config}"
-    sed -i 's|48|placeholder|g'                             "${_config}"
-    sed -i 's|144|48|g'                                     "${_config}"
-    sed -i 's|placeholder|144|g'                            "${_config}"
-    sed -i 's|\(fonts/[a-z,A-Z,-]*\)[0-9]*\.png|\118.png|g' "${_config}"
-    sed -i 's|bg\.png|bg_dark.png|g' "${_config}"
+    # Comment all the lines that are not commented
+    sed -i 's|^\([^#]\)|#\1|' "${_config}"
+    # Fix the font line, and remodify the font size
+    sed -i '/font / s|^#||' "${_config}"
+    sed -i '/font / s|\([0-9]\+\)|18|g' "${_config}"
+    # Uncomment all lines with 384-144
+    sed -i '/384-144/ s|^#||' "${_config}"
+    # Uncomment all lines with proper icon sizes
+    sed -i '/big_icon_size 384/ s|^#||' "${_config}"
+    sed -i '/small_icon_size 144/ s|^#||' "${_config}"
+    # Comment all the dark lines
+    sed -i '/dark/ s|^[^#]|#|' "${_config}"
 
     # Install to directory
     install -D "${_config}" "${_refind_home}/${_name}/theme.conf"
