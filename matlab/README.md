@@ -57,5 +57,4 @@ To transport large files in fat32 media; use split and cat;
 ## Modules
 
 Matlab comes with a [lot of products](https://www.mathworks.com/products.html).
-Most are not needed.
-The installer will have a 
+Most are not needed; check PKGBUILD to pick and choose appropriately.
