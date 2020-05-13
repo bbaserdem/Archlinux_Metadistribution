@@ -85,28 +85,28 @@ partialinstall=true
 products=(
   "MATLAB"
   #---MATLAB Product Family---#
-  "Parallel_Computing_Toolbox"        # Parallel computing
   "Curve_Fitting_Toolbox"           # Math and Optimization
-  "Optimization_Toolbox"
-  "Global_Optimization_Toolbox"
-  "Symbolic_Math_Toolbox"
-  "Partial_Differential_Equation_Toolbox"
-  "Statistics_and_Machine_Learning_Toolbox"   # AI, Data Science, Statistics
+  "Database_Toolbox"              # Database Access and Reporting
   "Deep_Learning_Toolbox"
-  "Reinforcement_Learning_Toolbox"
-  "Text_Analytics_Toolbox"
-  "MATLAB_Coder"                # Code Generation
+  "Global_Optimization_Toolbox"
   "GPU_Coder"
+  "MATLAB_Coder"                # Code Generation
   "MATLAB_Compiler"               # Application Deployement
   "MATLAB_Compiler_SDK"
-  "Database_Toolbox"              # Database Access and Reporting
+  "Optimization_Toolbox"
+  "Parallel_Computing_Toolbox"        # Parallel computing
+  "Partial_Differential_Equation_Toolbox"
+  "Reinforcement_Learning_Toolbox"
+  "Statistics_and_Machine_Learning_Toolbox"   # AI, Data Science, Statistics
+  "Symbolic_Math_Toolbox"
+  "Text_Analytics_Toolbox"
   #---Application Products---#
-  "Signal_Processing_Toolbox"         # Signal Processing
   "Audio_Toolbox"
-  "Wavelet_Toolbox"
-  "Image_Processing_Toolbox"          # Image Processing and Computer Vision
-  "Computer_Vision_Toolbox"
   "Bioinformatics_Toolbox"          # Computational Biology
+  "Computer_Vision_Toolbox"
+  "Image_Processing_Toolbox"          # Image Processing and Computer Vision
+  "Signal_Processing_Toolbox"         # Signal Processing
+  "Wavelet_Toolbox"
 )
 
 prepare() {
