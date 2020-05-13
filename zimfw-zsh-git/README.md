@@ -2,9 +2,7 @@
 
 I'll document what is happening in the install script when run with the 
 'manual' installation instructions; to try to package things.
-
-Auto installation is not an option as it FUCKING MODIFIES existing zconf files,
-without user knowledge.
+Auto installation is not an option as it MODIFIES existing zconf files, without user knowledge.
 
 # Notes
 
