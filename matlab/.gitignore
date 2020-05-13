@@ -1,6 +1,7 @@
-matlab.fik
-matlab.tar.gz
-matlab.lic
-matlab*.zst
-pkg
-src
+# Ignore all
+/*
+# Except these files
+!/PKGBUILD
+!/.SRCINFO
+!/README.md
+!/matlab.script
