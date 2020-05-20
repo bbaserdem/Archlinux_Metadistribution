@@ -2,13 +2,13 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-audio
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: Audio/media files management"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=('audio.mpc-prev')
+source=('audio.mpc-prev' 'audio.install')
 sha256sums=(SKIP)
 package() {
     install -Dm 0755 audio.mpc-prev "${pkgdir}/usr/bin/mpc-prev"
@@ -23,9 +23,11 @@ package() {
         'abcde'
         'cdparanoia'
         'fluidsynth' 'lib32-fluidsynth'
+        'libcanberra' 'libcanberra-pulse'
         'mpc'
         'mpd'
         'mpdscribble'
         'ncmpcpp'
-        'soundfont-fluid')
+        'soundfont-fluid'
+        'sound-theme)
 }

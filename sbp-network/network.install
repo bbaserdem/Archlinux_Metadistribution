@@ -1,52 +1,54 @@
 # Maintained by sbp
+prestr='sbp-network'
+
+systemd_services() {
+  if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
+  elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
+  elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
+  else
+    echo "Invalid action type"
+    exit 1
+  fi
+  echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+  # Services
+  echo '['"${prestr}"']==> '"Enabling"' CUPS daemon.'
+  /usr/bin/systemctl "${prstrn}" org.cups.cupsd.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' Bluetooth daemon.'
+  /usr/bin/systemctl "${action}" bluetooth.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' network service.'
+  /usr/bin/systemctl "${action}" dhcpcd.service
+  /usr/bin/systemctl "${action}" unbound.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' firewall.'
+  /usr/bin/systemctl "${action}" firewalld.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' VPN service'
+  /usr/bin/systemctl "${action}" mullvad-daemon.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
 
 post_install() {
-    echo '[sbp-network]==> Installing meta package...'
-
-    # Services
-    echo '[sbp-network]==> Enabling CUPS daemon.'
-    /usr/bin/systemctl enable org.cups.cupsd.service
-
-    echo '[sbp-network]==> Enabling Bluetooth daemon.'
-    /usr/bin/systemctl enable bluetooth.service
-
-    echo '[sbp-network]==> Enabling network service.'
-    /usr/bin/systemctl enable dhcpcd.service
-    /usr/bin/systemctl enable unbound.service
-
-    echo '[sbp-network]==> Enabling firewall.'
-    /usr/bin/systemctl enable firewalld.service
-
-    echo '[sbp-network]==> Installation done!'
-    post_ugrade
+  echo '['"${prestr}"']==> Installing meta package...'
+  systemd_services enable
+  echo '['"${prestr}"']==> Installation done!'
+  post_ugrade
 }
 
 post_upgrade() {
-    echo '[sbp-network]==> Upgrading meta package...'
-
-    # Resolvconf
-    echo '[sbp-network]==> Updating resolvconf'
-    /usr/bin/resolvconf -u
-
-    echo '[sbp-network]==> Upgrade done!'
+  echo '['"${prestr}"']==> Upgrading meta package...'
+  systemd_services enable
+  # Resolvconf
+  echo '['"${prestr}"']==> Updating resolvconf'
+  /usr/bin/resolvconf -u
+  echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_remove() {
-    echo '[sbp-network]==> Uninstalling meta package...'
+  echo '['"${prestr}"']==> Uninstalling meta package...'
+  systemd_services disable
 
-    # Services
-    echo '[sbp-network]==> Disabling CUPS daemon.'
-    /usr/bin/systemctl disable org.cups.cupsd.service
-
-    echo '[sbp-network]==> Disabling Bluetooth daemon.'
-    /usr/bin/systemctl disable bluetooth.service
-
-    echo '[sbp-network]==> Disabling network service.'
-    /usr/bin/systemctl disable dhcpcd.service
-    /usr/bin/systemctl disable unbound.service
-
-    echo '[sbp-network]==> Disabling firewall.'
-    /usr/bin/systemctl disable firewalld.service
-
-    echo '[sbp-network]==> Uninstallation done!'
+  echo '['"${prestr}"']==> Uninstallation done!'
 }

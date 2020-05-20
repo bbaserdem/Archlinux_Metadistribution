@@ -41,6 +41,7 @@ package() {
         'aria2'
         'isync'
         'msmtp'
+        'mullvad-vpn'
         'neomutt' 'urlscan' 'notmuch'
         'newsboat'
         's3cmd'
