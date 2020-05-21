@@ -9,10 +9,10 @@ systemd_services() {
     echo "Invalid action type"
     exit 1
   fi
-  echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services!'
   # Services
-  echo '['"${prestr}"']==> '"Enabling"' CUPS daemon.'
-  /usr/bin/systemctl "${prstrn}" org.cups.cupsd.service
+  echo '['"${prestr}"']==> '"${prstrn}"' CUPS daemon.'
+  /usr/bin/systemctl "${action}" org.cups.cupsd.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' Bluetooth daemon.'
   /usr/bin/systemctl "${action}" bluetooth.service

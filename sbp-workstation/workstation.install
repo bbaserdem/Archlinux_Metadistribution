@@ -1,4 +1,23 @@
 # Maintained by sbp
+prestr='sbp-workstation'
+
+systemd_services() {
+  if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
+  elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
+  elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
+  else
+    echo "Invalid action type"
+    exit 1
+  fi
+  echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+  # Services
+  echo '['"${prestr}"']==> '"${prstrn}"' Network UPS tools'
+  /usr/bin/systemctl "${action}" nut-driver.service
+  /usr/bin/systemctl "${action}" nut-monitor.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
+
 pre_install() {
     echo '[sbp-cmp]==> Preparing for meta package...'
     if [ -e '/etc/fstab' ] ; then
@@ -17,28 +36,20 @@ pre_install() {
 }
 
 post_install() {
-
-    echo '[sbp-workstation]==> Installing meta package...'
-
-    echo '[sbp-workstation]==> Enabling UPS power daemon.'
-    /usr/bin/systemctl enable pwrstatd.service
-
-    echo '[sbp-workstation]==> Installation done!'
+    echo '['"${prestr}"']==> Installing meta package...'
+    systemd_services enable
+    echo '['"${prestr}"']==> Installation done!'
     post_upgrade
 }
 
 post_upgrade() {
-    echo '[sbp-workstation]==> Upgrading...'
-    echo '[sbp-workstation]==> Upgrade done!'
+    echo '['"${prestr}"']==> Upgrading meta package ...'
+    systemd_services enable
+    echo '['"${prestr}"']==> Upgrade done!'
 }
 
-post_install() {
-
-    echo '[sbp-workstation]==> Installing meta package...'
-
-    echo '[sbp-workstation]==> Enabling UPS power daemon.'
-    /usr/bin/systemctl disable pwrstatd.service
-
-    echo '[sbp-workstation]==> Installation done!'
-    post_upgrade
+post_remove() {
+    echo '['"${prestr}"']==> Uninstalling meta package...'
+    systemd_services disable
+    echo '['"${prestr}"']==> Uninstallation done!'
 }
