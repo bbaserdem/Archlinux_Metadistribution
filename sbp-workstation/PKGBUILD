@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-workstation
 pkgver=4.0
-pkgrel=5
+pkgrel=6
 pkgdesc="SBP Meta Package: Workstation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -69,7 +69,7 @@ package() {
         'vulkan-radeon')
     # Workstation usespace
     depends+=(
-        'maestral' 'maestral-qt'            # File synching
-        'network-ups-tools' 'nut-monitor'   # UPS response
+        'maestral' 'maestral-qt'    # File synching
+        'nut' 'nut-monitor'         # UPS response
         )
 }
