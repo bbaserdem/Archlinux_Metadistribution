@@ -1,33 +1,40 @@
 # Maintained by sbp
+prestr='sbp-hardware'
+
+systemd_services() {
+  if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
+  elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
+  elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
+  else
+    echo "Invalid action type"
+    exit 1
+  fi
+  echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+  # Services
+  echo '['"${prestr}"']==> '"${prstrn}"' ACPI daemon.'
+  /usr/bin/systemctl "${action}" acpid.service
+  echo '['"${prestr}"']==> '"${prstrn}"' CPU scaling manager.'
+  /bin/systemctl "${action}" cpupower.service
+  echo '['"${prestr}"']==> '"${prstrn}"' RNG daemon.'
+  /bin/systemctl "${action}" rngd.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
 
 post_install() {
-    echo '[sbp-hardware]==> Installing meta package...'
-
-    # Services
-    echo '[sbp-hardware]==> Enabling ACPID daemon.'
-    /usr/bin/systemctl enable acpid.service
-
-    echo '[sbp-admin]==> Enabling CPU scaling manager.'
-    /usr/bin/systemctl enable cpupower.service
-
-    echo '[sbp-hardware]==> Installation done!'
-    post_upgrade
+    echo '['"${prestr}"']==> Installing meta package...'
+    systemd_services enable
+    echo '['"${prestr}"']==> Installation done!'
 }
 
 post_upgrade() {
-    echo '[sbp-hardware]==> Upgrading meta package...'
-    echo '[sbp-hardware]==> Upgrade done!'
+    echo '['"${prestr}"']==> Upgrading meta package...'
+    systemd_services enable
+    echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_remove() {
-    echo '[sbp-hardware]==> Uninstalling meta package...'
-
-    # Services
-    echo '[sbp-hardware]==> Disabling ACPID daemon.'
-    /usr/bin/systemctl disable acpid.service
-
-    echo '[sbp-admin]==> Disabling CPU scaling manager.'
-    /usr/bin/systemctl disable cpupower.service
-
-    echo '[sbp-hardware]==> Uninstallation done!'
+    echo '['"${prestr}"']==> Uninstalling meta package...'
+    systemd_services disable
+    echo '['"${prestr}"']==> Uninstallation done!'
 }

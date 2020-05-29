@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-homestation
 pkgver=4.0
-pkgrel=3
+pkgrel=4
 pkgdesc="SBP Meta Package: Homestation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -11,6 +11,7 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
     'homestation.cmdline'
     'homestation.crypttab'
+    'homestation.exports'
     'homestation.fstab'
     'homestation.hostname'
     'homestation.initrdtab'
@@ -25,7 +26,7 @@ backup=(
     'etc/hostname'
     'etc/mkinitcpio'
     'boot/efi/EFI/Arch/refind_linux.conf')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server')
 package() {
@@ -33,6 +34,7 @@ package() {
     # Create local config files
     install -dm 0755 "${pkgdir}/etc"
     install -Dm 0644 homestation.crypttab   "${pkgdir}/etc/crypttab"
+    install -Dm 0644 homestation.exports    "${pkgdir}/etc/exports"
     install -Dm 0644 homestation.fstab      "${pkgdir}/etc/fstab"
     install -Dm 0644 homestation.hostname   "${pkgdir}/etc/hostname"
     install -Dm 0644 homestation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
@@ -73,4 +75,6 @@ package() {
         'tlp')
     # Need this for managing windows
     depends+=('mtools' 'ntfs-3g')
+    # Need this for hosting media files using kodi
+    depends+=('mariadb')
 }

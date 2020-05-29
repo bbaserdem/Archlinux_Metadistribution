@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-apps
 pkgver=4.0
-pkgrel=5
+pkgrel=6
 pkgdesc="SBP Meta Package: Applications (GUI)"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -24,6 +24,7 @@ package() {
         'imv'
         'inkscape'
         'kitty'
+        'kodi' 'kodi-wayland'
         'libreoffice-fresh'
         'pdfsam'
         'picard'

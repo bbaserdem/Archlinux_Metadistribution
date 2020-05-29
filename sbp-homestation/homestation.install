@@ -1,4 +1,29 @@
 # Maintained by sbp
+prestr='sbp-workstation'
+
+systemd_services() {
+  if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
+  elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
+  elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
+  else
+    echo "Invalid action type"
+    exit 1
+  fi
+  echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+  # Services
+  echo '['"${prestr}"']==> '"${prstrn}"' wifi.'
+  /usr/bin/systemctl "${action}" iwd.service
+  echo '['"${prestr}"']==> '"${prstrn}"' NBFC fan control.'
+  /bin/systemctl "${action}" nbfc.service
+  /bin/systemctl "${action}" nbfc-sleep.service
+  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
+  /bin/systemctl "${action}" nfs-server.service
+  echo '['"${prestr}"']==> '"${prstrn}"' MariaDB.'
+  /bin/systemctl "${action}" mariadb.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
+
 pre_install() {
     echo '[sbp-cmp]==> Preparing for meta package...'
     if [ -e '/etc/fstab' ] ; then
@@ -17,48 +42,52 @@ pre_install() {
 }
 
 post_install() {
-    echo '[sbp-homestation]==> Installing meta package...'
-
-    # Wifi connection
-    echo '[sbp-homestation]==> Enabling wifi.'
-    /bin/systemctl enable iwd.service
-
-    # Enable fan control using NBFC
-    echo '[sbp-homestation]==> Enabling fan control using nbfc.'
-    /bin/systemctl enable nbfc
-    /bin/systemctl enable nbfc-sleep
+    echo '['"${prestr}"']==> Installing meta package...'
+    systemd_services enable
     if [ -f '/opt/nbfc/Configs/Asus ROG GL702ZC.xml' ] ; then
-        echo '[sbp-homestation]==> Setting fan profile to Asus ROG GL702ZC . . .'
+        echo '['"${prestr}"']==> Setting fan profile to Asus ROG GL702ZC . . .'
         nbfc config --apply 'Asus ROG GL702ZC'
     fi
+    if [ -e '/opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll' ] ; then
+        echo '['"${prestr}"']==> Applying nbfc ECSysLinux.dll fix'
+        mv /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll \
+            /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll.bak
+    fi
+    if [ -d '/var/lib/mariadb' ] ; then
+      echo '['"${prestr}"']==> Disabling CoW on MariaDB...'
+      chattr +C '/var/lib/mariadb'
+    fi
 
-    echo '[sbp-homestation]==> Installation done!'
+    echo '['"${prestr}"']==> Installation done!'
     post_upgrade
 }
 
 post_upgrade() {
-    echo '[sbp-homestation]==> Upgrading meta package...'
-
+    echo '['"${prestr}"']==> Upgrading meta package...'
+    systemd_services enable
+    if [ -f '/opt/nbfc/Configs/Asus ROG GL702ZC.xml' ] ; then
+        echo '['"${prestr}"']==> Setting fan profile to Asus ROG GL702ZC . . .'
+        nbfc config --apply 'Asus ROG GL702ZC'
+    fi
     if [ -e '/opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll' ] ; then
-        echo '[sbp-homestation]==> Applying nbfc ECSysLinux.dll fix'
+        echo '['"${prestr}"']==> Applying nbfc ECSysLinux.dll fix'
         mv /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll \
             /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll.bak
     fi
-
-    echo '[sbp-homestation]==> Upgrade done!'
+    if [ -d '/var/lib/mariadb' ] ; then
+      echo '['"${prestr}"']==> Disabling CoW on MariaDB...'
+      chattr +C '/var/lib/mariadb'
+    fi
+    echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_remove() {
-    echo '[sbp-homestation]==> Uninstalling meta package...'
-
-    # Wifi connection
-    echo '[sbp-homestation]==> Disabling wifi.'
-    /bin/systemctl disable iwd.service
-
-    # Enable fan control using NBFC
-    echo '[sbp-homestation]==> Disabling fan control using nbfc.'
-    /bin/systemctl disable nbfc
-    /bin/systemctl disable nbfc-sleep
-
-    echo '[sbp-homestation]==> Uninstallation done!'
+    echo '['"${prestr}"']==> Uninstalling meta package...'
+    systemd_services disable
+    if [ -e '/opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll.bak' ] ; then
+        echo '['"${prestr}"']==> Undoing nbfc ECSysLinux.dll fix'
+        mv /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll.bak \
+            /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll
+    fi
+    echo '['"${prestr}"']==> Uninstallation done!'
 }

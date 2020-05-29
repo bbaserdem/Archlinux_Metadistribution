@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-fs
 pkgver=4.0
-pkgrel=2
+pkgrel=3
 pkgdesc="SBP Meta Package: File-systems"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -30,6 +30,7 @@ package() {
     #---Related utilities
     depends+=(
         'inotify-tools'
+        'nfs-utils'
         'parted'
         'snapper'
         'udisks2')

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-hardware
 pkgver=4.0
-pkgrel=3
+pkgrel=4
 pkgdesc="SBP Meta Package: Common hardware stuff"
 arch=('any')
 url='https://github.com/bbaserdem/Arch'
@@ -28,4 +28,6 @@ package() {
         'cpupower' )
     #---Input methods
     depends+=('libinput')
+    #---RNG
+    depends+=('rng-tools')
 }
