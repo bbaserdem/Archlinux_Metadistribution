@@ -24,7 +24,7 @@ systemd_services() {
   echo '['"${prestr}"']==> '"${prstrn}"' firewall.'
   /usr/bin/systemctl "${action}" firewalld.service
 
-  echo '['"${prestr}"']==> '"${prstrn}"' VPN service'
+  echo '['"${prestr}"']==> '"${prstrn}"' VPN service on demand'
   /usr/bin/systemctl "${action}" mullvad-daemon.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
