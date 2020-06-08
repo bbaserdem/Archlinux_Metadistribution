@@ -21,7 +21,9 @@ LABEL=Windows10                 /media/windows  ntfs-3g defaults,nls=utf8,umask=
 /opt                            /media/gentoo/opt           none    defaults,bind                                                                                   0       0
 /media/archive                  /media/gentoo/media/archive none    defaults,bind                                                                                   0       0
 # NFS for Kodi
-/home/sbp/Music         /srv/nfs/music          none    bind    0   0
-/home/sbp/Videos        /srv/nfs/videos         none    bind    0   0
-/media/archive/Music    /srv/nfs/music-archive  none    bind    0   0
-/media/archive/Videos   /srv/nfs/videos-archive none    bind    0   0
+/home/sbp/Music         /srv/nfs/music              none    bind    0   0
+/home/sbp/Videos        /srv/nfs/videos             none    bind    0   0
+/home/sbp/Pictures      /srv/nfs/pictures           none    bind    0   0
+/media/archive/Music    /srv/nfs/music-archive      none    bind    0   0
+/media/archive/Videos   /srv/nfs/videos-archive     none    bind    0   0
+/media/archive/Pictures /srv/nfs/pictures-archive   none    bind    0   0

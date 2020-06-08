@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-network
 pkgver=4.0
-pkgrel=7
+pkgrel=9
 pkgdesc="SBP Meta Package: Networking packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -14,7 +14,7 @@ package() {
     install=network.install
     #---System info
     depends=(
-        'avahi'
+        'avahi' 'nss-mdns'
         'bind-tools'
         'bluez' 'bluez-libs' 'bluez-utils'
         'bridge-utils' 'hostapd'

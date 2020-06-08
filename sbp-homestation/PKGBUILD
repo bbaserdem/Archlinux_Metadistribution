@@ -11,7 +11,6 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
     'homestation.cmdline'
     'homestation.crypttab'
-    'homestation.exports'
     'homestation.fstab'
     'homestation.hostname'
     'homestation.initrdtab'
@@ -34,7 +33,6 @@ package() {
     # Create local config files
     install -dm 0755 "${pkgdir}/etc"
     install -Dm 0644 homestation.crypttab   "${pkgdir}/etc/crypttab"
-    install -Dm 0644 homestation.exports    "${pkgdir}/etc/exports"
     install -Dm 0644 homestation.fstab      "${pkgdir}/etc/fstab"
     install -Dm 0644 homestation.hostname   "${pkgdir}/etc/hostname"
     install -Dm 0644 homestation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
