@@ -27,6 +27,9 @@ systemd_services() {
   echo '['"${prestr}"']==> '"${prstrn}"' VPN service on demand'
   /usr/bin/systemctl "${action}" mullvad-daemon.service
 
+  echo '['"${prestr}"']==> '"${prstrn}"' Avahi zeroconf networking'
+  /usr/bin/systemctl "${action}" avahi-daemon.service
+
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }
 
