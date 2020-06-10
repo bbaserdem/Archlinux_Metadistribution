@@ -17,6 +17,8 @@ systemd_services() {
   /bin/systemctl "${action}" cpupower.service
   echo '['"${prestr}"']==> '"${prstrn}"' RNG daemon.'
   /bin/systemctl "${action}" rngd.service
+  echo '['"${prestr}"']==> '"${prstrn}"' Network Time Protocol daemon'
+  /bin/systemctl "${action}" ntpd.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }
