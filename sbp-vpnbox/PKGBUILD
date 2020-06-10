@@ -1,0 +1,39 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-vpnbox
+pkgver=1.0
+pkgrel=1
+pkgdesc="SBP Meta Package: Virtual box for VPN"
+arch=('any')
+url="https://github.com/bbaserdem/Arch"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=(
+    'vpnbox.fstab'
+    'vpnbox.hostname'
+    'vpnbox.hosts'
+    'vpnbox.install'
+    'vpnbox.mkinitcpio')
+sha256sums=(SKIP SKIP SKIP SKIP)
+provides=('sbp-cmp')
+conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server' 'sbp-homestation')
+package() {
+    install=vpnbox.install
+    # Create local config files
+    install -dm 0755 "${pkgdir}/etc"
+    install -Dm 0644 homestation.fstab      "${pkgdir}/etc/fstab"
+    install -Dm 0644 homestation.hostname   "${pkgdir}/etc/hostname"
+    install -Dm 0644 homestation.hosts      "${pkgdir}/etc/hosts"
+    install -Dm 0644 homestation.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
+    # Needed applications
+    depends=(
+        'base'
+        'linux' 'linux-firmware'
+        'grub'
+        'neovim'
+        'qemu-guest-agent'
+        'networkmanager' 'dnsmasq'
+        'mullvad-vpn-cli'
+        'transmission-cli'
+    )
+}

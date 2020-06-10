@@ -1,8 +1,0 @@
-# Managed by sbp
-
-# Share NFS to host media files
-/srv/nfs                192.168.1.0/24(rw,fsid=0,no_subtree_check)
-/srv/nfs/music          192.168.1.0/24(rw,no_subtree_check,insecure,no_root_squash)
-/srv/nfs/videos         192.168.1.0/24(rw,no_subtree_check,insecure,no_root_squash)
-/srv/nfs/music-archive  192.168.1.0/24(rw,no_subtree_check,insecure,no_root_squash)
-/srv/nfs/videos-archive 192.168.1.0/24(rw,no_subtree_check,insecure,no_root_squash)

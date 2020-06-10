@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-homestation
 pkgver=4.0
-pkgrel=4
+pkgrel=5
 pkgdesc="SBP Meta Package: Homestation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -11,7 +11,6 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
     'homestation.cmdline'
     'homestation.crypttab'
-    'homestation.exports'
     'homestation.fstab'
     'homestation.hostname'
     'homestation.initrdtab'
@@ -24,9 +23,9 @@ backup=(
     'etc/crypttab.initrd'
     'etc/fstab'
     'etc/hostname'
-    'etc/mkinitcpio'
+    'etc/mkinitcpio.conf'
     'boot/efi/EFI/Arch/refind_linux.conf')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server')
 package() {
@@ -34,15 +33,14 @@ package() {
     # Create local config files
     install -dm 0755 "${pkgdir}/etc"
     install -Dm 0644 homestation.crypttab   "${pkgdir}/etc/crypttab"
-    install -Dm 0644 homestation.exports    "${pkgdir}/etc/exports"
+    install -Dm 0644 homestation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
     install -Dm 0644 homestation.fstab      "${pkgdir}/etc/fstab"
     install -Dm 0644 homestation.hostname   "${pkgdir}/etc/hostname"
-    install -Dm 0644 homestation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
     install -Dm 0644 homestation.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
     install -Dm 0644 homestation.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
     # Put in commandline kernel parameters
-    install -dm 0755 "${pkgdir}/etc/cmdline.d"
-    install -Dm 0644 homestation.cmdline    "${pkgdir}/etc/cmdline.d/sbp.conf"
+    install -dm 0755 "${pkgdir}/etc/dracut.conf.d"
+    install -Dm 0644 homestation.cmdline    "${pkgdir}/etc/dracut.conf.d/sbp-local.conf"
     # Create boot options
     install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
     install -Dm 0755 homestation.refind \
