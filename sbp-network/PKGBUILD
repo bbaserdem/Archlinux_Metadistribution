@@ -14,7 +14,6 @@ package() {
     install=network.install
     #---System info
     depends=(
-        'avahi' 'nss-mdns'
         'bind-tools'
         'bluez' 'bluez-libs' 'bluez-utils'
         'bridge-utils' 'hostapd'
@@ -29,6 +28,10 @@ package() {
         'openbsd-netcat'
         'openresolv'
         'unbound')
+    # Zeroconf networking
+    depends+=(
+        'avahi'
+        'nss-mdns')
     #---Encrypted stuff
     depends+=(
         'gnupg'
