@@ -8,7 +8,7 @@ post_install() {
     echo '[sbp-base]==> Creating user sbp.'
     /bin/useradd --comment "Batuhan Başerdem" --create-home \
       --user-group --shell /usr/bin/zsh \
-      --groups ftp,games,http,rfkill,sys,uucp,wheel,locate,lp.video \ sbp
+      --groups disk,ftp,games,http,rfkill,sys,uucp,wheel,locate,lp,video \ sbp
   else
     echo '[sbp-base]==> User sbp exists!'
   fi

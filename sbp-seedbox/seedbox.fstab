@@ -1,0 +1,4 @@
+# Managed by sbp
+# <file system>     <dir>           <type>  <options>   <dump>  <pass>
+LABEL=SeedboxRoot   /               ext4    rw,relatime 0       2
+LABEL=SeedboxShare  /media/torrents ext4    rw,relatime 0       2

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-apps
 pkgver=4.0
-pkgrel=6
+pkgrel=8
 pkgdesc="SBP Meta Package: Applications (GUI)"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -34,7 +34,7 @@ package() {
         'spyder'
         'thunar' 'tumbler' 'ffmpegthumbnailer' 'thunar-media-tags-plugin'
         'thunar-archive-plugin' 'raw-thumbnailer'
-        'tuxguitar'
+        'musescore'
         'zathura' 'zathura-cb' 'zathura-djvu' 'zathura-pdf-mupdf' 'zathura-ps'
         'zoom'
         'zotero')
@@ -43,7 +43,7 @@ package() {
         'blueman'
         'remmina' 'remmina-plugin-rdesktop' 'freerdp'
         'syncthing-gtk'
-        'transmission-remote-gtk'
+        'deluge-gtk'
         'udiskie'
         'uget')
     #---Tools

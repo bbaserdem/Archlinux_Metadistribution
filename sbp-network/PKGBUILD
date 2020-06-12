@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-network
 pkgver=4.0
-pkgrel=7
+pkgrel=10
 pkgdesc="SBP Meta Package: Networking packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -14,7 +14,6 @@ package() {
     install=network.install
     #---System info
     depends=(
-        'avahi'
         'bind-tools'
         'bluez' 'bluez-libs' 'bluez-utils'
         'bridge-utils' 'hostapd'
@@ -29,6 +28,10 @@ package() {
         'openbsd-netcat'
         'openresolv'
         'unbound')
+    # Zeroconf networking
+    depends+=(
+        'avahi'
+        'nss-mdns')
     #---Encrypted stuff
     depends+=(
         'gnupg'
@@ -42,12 +45,10 @@ package() {
         'aria2'
         'isync'
         'msmtp'
-        'mullvad-vpn'
         'neomutt' 'urlscan' 'notmuch'
         'newsboat'
         's3cmd'
         'syncthing'
-        'transmission-cli'
         'vdirsyncer'
         'w3m'
         'weechat'
