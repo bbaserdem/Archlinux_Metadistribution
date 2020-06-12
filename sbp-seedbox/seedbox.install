@@ -17,10 +17,8 @@ systemd_services() {
   /usr/bin/systemctl "${action}" qemu-ga.service
   echo '['"${prestr}"']==> '"${prstrn}"' Mullvad VPN.'
   /usr/bin/systemctl "${action}" mullvad-daemon.service
-  echo '['"${prestr}"']==> '"${prstrn}"' Transmission BitTorrent daemon.'
-  /usr/bin/systemctl "${action}" transmission.service
-
-
+  echo '['"${prestr}"']==> '"${prstrn}"' Deluge BitTorrent daemon.'
+  /usr/bin/systemctl "${action}" deluged.service
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }
 

@@ -1,4 +1,0 @@
-# Managed by sbp
-# <file system>                             <dir>                   <type>  <options>   <dump>  <pass>
-UUID=9f4d5fe9-8e6a-42de-93e2-302eb370c39b   /                       ext4    defaults    0       2
-UUID=dbe3508d-8b2f-41a9-bf45-43da5a37f03c   /var/lib/transmission/  ext4    defaults    0       2

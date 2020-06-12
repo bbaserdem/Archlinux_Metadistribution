@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-apps
 pkgver=4.0
-pkgrel=7
+pkgrel=8
 pkgdesc="SBP Meta Package: Applications (GUI)"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -43,7 +43,7 @@ package() {
         'blueman'
         'remmina' 'remmina-plugin-rdesktop' 'freerdp'
         'syncthing-gtk'
-        'transmission-remote-gtk'
+        'deluge-gtk'
         'udiskie'
         'uget')
     #---Tools

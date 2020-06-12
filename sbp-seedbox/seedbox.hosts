@@ -1,4 +1,4 @@
 # Maintained by sbp
 127.0.0.1   localhost
 ::1         localhost
-127.0.1.1   sbp-vpnbox.localdomain  sbp-vpnbox
+127.0.1.1   sbp-seedbox.localdomain sbp-seedbox
