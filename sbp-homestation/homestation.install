@@ -16,10 +16,6 @@ systemd_services() {
   echo '['"${prestr}"']==> '"${prstrn}"' NBFC fan control.'
   /bin/systemctl "${action}" nbfc.service
   /bin/systemctl "${action}" nbfc-sleep.service
-  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
-  /bin/systemctl "${action}" nfs-server.service
-  echo '['"${prestr}"']==> '"${prstrn}"' MariaDB.'
-  /bin/systemctl "${action}" mariadb.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }

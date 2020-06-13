@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-homestation
 pkgver=4.0
-pkgrel=6
+pkgrel=7
 pkgdesc="SBP Meta Package: Homestation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -67,12 +67,8 @@ package() {
         'vulkan-icd-loader' 
         'vulkan-mesa-layers'
         'vulkan-radeon')
-    # Power management
-    depends+=(
-        'nbfc'  # Don't have better options for this laptop
-        'tlp')
+    # Power management: fans and laptop tools
+    depends+=('nbfc' 'tlp')
     # Need this for managing windows
     depends+=('mtools' 'ntfs-3g')
-    # Need this for hosting media files using kodi
-    depends+=('mariadb')
 }
