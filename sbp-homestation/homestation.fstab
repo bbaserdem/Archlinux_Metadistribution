@@ -8,9 +8,10 @@
 /dev/mapper/Homestation-Arch    /.snapshots     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@snapshots                                        0       0
 /dev/mapper/Homestation-Home    /home           xfs     rw,relatime,attr2,inode64,noquota                                                                           0       2
 /dev/mapper/Homestation-Opt     /opt            ext4    defaults                                                                                                    0       0
-/dev/mapper/Homedata-Archive    /home/archive   ext4    defaults                                                                                                    0       2
 UUID=7653-3DB8                  /boot/efi       vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
 /swap/swapfile                  none            swap    defaults                                                                                                    0       0
+# The hard-drive partitions
+/dev/mapper/Homedata-Archive    /home/archive   ext4    defaults                                                                                                    0       2
 # Windows
 LABEL=Windows10                 /media/windows  ntfs-3g defaults,nls=utf8,umask=000,dmask=027,fmask=137,uid=1000,gid=1000,windows_names                             0       0
 # Gentoo
