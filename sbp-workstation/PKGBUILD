@@ -2,74 +2,78 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-workstation
 pkgver=4.0
-pkgrel=6
+pkgrel=8
 pkgdesc="SBP Meta Package: Workstation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
-    'workstation.cmdline'
-    'workstation.crypttab'
-    'workstation.fstab'
-    'workstation.hostname'
-    'workstation.initrdtab'
-    'workstation.install'
-    'workstation.mkinitcpio'
-    'workstation.refind'
-    'workstation.sbupdate')
+  'workstation.cmdline'
+  'workstation.crypttab'
+  'workstation.fstab'
+  'workstation.hostname'
+  'workstation.initrdtab'
+  'workstation.install'
+  'workstation.mkinitcpio'
+  'workstation.refind'
+  'workstation.sbupdate')
 backup=(
-    'etc/crypttab'
-    'etc/crypttab.initrd'
-    'etc/fstab'
-    'etc/hostname'
-    'etc/mkinitcpio'
-    'boot/efi/EFI/Arch/refind_linux.conf')
+  'etc/crypttab'
+  'etc/crypttab.initrd'
+  'etc/fstab'
+  'etc/hostname'
+  'etc/mkinitcpio'
+  'boot/efi/EFI/Arch/refind_linux.conf')
 sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-homestation' 'sbp-laptop' 'sbp-server')
 package() {
-    install=workstation.install
-    # Create local config files
-    install -dm 0755 "${pkgdir}/etc"
-    install -Dm 0644 workstation.crypttab   "${pkgdir}/etc/crypttab"
-    install -Dm 0644 workstation.fstab      "${pkgdir}/etc/fstab"
-    install -Dm 0644 workstation.hostname   "${pkgdir}/etc/hostname"
-    install -Dm 0644 workstation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
-    install -Dm 0644 workstation.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
-    install -Dm 0644 workstation.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
-    # Install command line booting arguments
-    install -dm 0755 "${pkgdir}/etc/cmdline.d"
-    install -Dm 0644 workstation.cmdline    "${pkgdir}/etc/cmdline.d/sbp.conf"
-    # Create boot options
-    install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
-    install -Dm 0755 workstation.refind \
-        "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
-    # Early initrd ucode
-    depends=('amd-ucode')
-    # Graphics
-    depends+=(
-        'mesa' 'mesa-demos' 'lib32-mesa' 'lib32-mesa-demos'
-        'mesa-vdpau' 'lib32-mesa-vdpau'
-        'libva-mesa-driver' 'lib32-libva-mesa-driver'
-        'libdrm' 'lib32-libdrm'
-        'xf86-video-amdgpu')
-    # OpenCL
-    depends+=(
-        'libclc'
-        'opencl-mesa' 'lib32-opencl-mesa'
-    )
-    # Vulkan
-    depends+=(
-        'amdvlk'
-        'lib32-vulkan-icd-loader'
-        'lib32-vulkan-radeon'
-        'vulkan-icd-loader' 
-        'vulkan-mesa-layer'
-        'vulkan-radeon')
-    # Workstation usespace
-    depends+=(
-        'maestral' 'maestral-qt'    # File synching
-        'nut' 'nut-monitor'         # UPS response
-        )
+  install=workstation.install
+  # Create local config files
+  install -dm 0755 "${pkgdir}/etc"
+  install -Dm 0644 workstation.crypttab   "${pkgdir}/etc/crypttab"
+  install -Dm 0644 workstation.fstab    "${pkgdir}/etc/fstab"
+  install -Dm 0644 workstation.hostname   "${pkgdir}/etc/hostname"
+  install -Dm 0644 workstation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
+  install -Dm 0644 workstation.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
+  install -Dm 0644 workstation.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
+  # Install command line booting arguments
+  install -dm 0755 "${pkgdir}/etc/dracut.conf.d"
+  install -Dm 0644 workstation.cmdline  "${pkgdir}/etc/dracut.conf.d/sbp-local.conf"
+  # Create boot options
+  install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
+  install -Dm 0755 workstation.refind \
+    "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
+  # Early initrd ucode
+  depends=('amd-ucode')
+  # Graphics
+  depends+=(
+    'mesa' 'mesa-demos' 'lib32-mesa' 'lib32-mesa-demos'
+    'mesa-vdpau' 'lib32-mesa-vdpau'
+    'libva-mesa-driver' 'lib32-libva-mesa-driver'
+    'libdrm' 'lib32-libdrm'
+    'xf86-video-amdgpu')
+  # OpenCL
+  depends+=(
+    'libclc'
+    'opencl-mesa' 'lib32-opencl-mesa'
+  )
+  # Vulkan
+  depends+=(
+    'amdvlk'
+    'lib32-vulkan-icd-loader'
+    'lib32-vulkan-radeon'
+    'vulkan-icd-loader' 
+    'vulkan-mesa-layers'
+    'vulkan-radeon')
+  # Workstation usespace
+  depends+=(
+    'maestral' 'maestral-qt'            # File synching
+    'nut' 'nut-monitor'                 # UPS response
+    'cups' 'cups-pdf' 'cups-pk-helper'  # Printing stuff
+    'remmina' 'remmina-plugin-rdesktop' # Remote desktop
+    'freerdp')
+  # Need this for managing windows
+  depends+=('mtools' 'ntfs-3g')
 }

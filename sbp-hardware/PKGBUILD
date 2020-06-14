@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-hardware
 pkgver=4.0
-pkgrel=5
+pkgrel=6
 pkgdesc="SBP Meta Package: Common hardware stuff"
 arch=('any')
 url='https://github.com/bbaserdem/Arch'

@@ -1,19 +1,67 @@
 # Maintained by sbp
+prestr='sbp-server'
+
+systemd_services() {
+  if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
+  elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
+  elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
+  else
+    echo "Invalid action type"
+    exit 1
+  fi
+  echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+  # Services
+  echo '['"${prestr}"']==> '"${prstrn}"' wifi.'
+  /usr/bin/systemctl "${action}" iwd.service
+  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
+  /bin/systemctl "${action}" nfs-server.service
+  echo '['"${prestr}"']==> '"${prstrn}"' MariaDB.'
+  /bin/systemctl "${action}" mariadb.service
+  echo '['"${prestr}"']==> '"${prstrn}"' SSH access.'
+  /bin/systemctl "${action}" sshd.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
+
+pre_install() {
+    echo '[sbp-cmp]==> Preparing for meta package...'
+    if [ -e '/etc/fstab' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/fstab away.'
+        mv '/etc/fstab' '/etc/fstab.system'
+    fi
+    if [ -e '/etc/crypttab' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/crypttab away.'
+        mv '/etc/crypttab' '/etc/crypttab.system'
+    fi
+    if [ -e '/etc/mkinitcpio.conf' ] ; then
+        echo '[sbp-cmp]==> Moving /etc/mkinitcpio.conf away.'
+        mv '/etc/mkinitcpio.conf' '/etc/mkinitcpio.system'
+    fi
+    echo '[sbp-cmp]==> Preperations done!'
+}
+
 post_install() {
-
-    echo '[sbp-cmp-server]==> Installing meta package . . .'
-
-    # Do hostname
-    echo '[sbp-cmp-server]==> Doing hosts . . .'
-    echo '127.0.0.1 localhost' >  /etc/hosts
-    echo '::1       localhost' >> /etc/hosts
-    echo '127.0.1.1 sbp-server.localdomain sbp-server' >> /etc/hosts
-
-    echo '[sbp-cmp-server]==> Installation done! Check log for errors.'
-    post_upgrade
+    echo '['"${prestr}"']==> Installing meta package . . .'
+    systemd_services enable
+    if [ -d '/var/lib/mariadb' ] ; then
+      echo '['"${prestr}"']==> Disabling CoW on MariaDB...'
+      chattr +C '/var/lib/mariadb'
+    fi
+    echo '['"${prestr}"']==> Installation done!'
 }
 
 post_upgrade() {
-    echo '[sbp-cmp-server]==> Upgrading . . .'
-    echo '[sbp-cmp-server]==> Nothing to do.'
+    echo '['"${prestr}"']==> Upgrading meta package...'
+    systemd_services enable
+    if [ -d '/var/lib/mariadb' ] ; then
+      echo '['"${prestr}"']==> Disabling CoW on MariaDB...'
+      chattr +C '/var/lib/mariadb'
+    fi
+    echo '['"${prestr}"']==> Upgrade done!'
+}
+
+post_remove() {
+    echo '['"${prestr}"']==> Uninstalling meta package...'
+    systemd_services disable
+    echo '['"${prestr}"']==> Uninstallation done!'
 }

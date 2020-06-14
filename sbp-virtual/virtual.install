@@ -1,38 +1,59 @@
 # Maintained by sbp
+pkggroups=('kvm' 'libvirt')
+prestr='sbp-virtual'
+
+systemd_services() {
+  if [ "${1}" = 'enable' ] ; then   action='enable'  ; prstrn='Enabling'
+  elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
+  elif [ -z "${1}" ] ; then       action='enable'  ; prstrn='Enabling'
+  else
+  echo "Invalid action type"
+  exit 1
+  fi
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services!'
+  # Services
+  echo '['"${prestr}"']==> Enabling libvirt services.'
+  /usr/bin/systemctl enable libvirtd.service
+  /usr/bin/systemctl enable virtlogd.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
 
 post_install() {
-    echo '[sbp-virtual]==> Installing meta package...'
-
-    # Add user to kvm
-    echo '[sbp-virtual]==> Adding user to kvm group'
-    if [ "$(getent passwd | grep -c '^sbp')" == "0" ] ; then
-        gpasswd --add sbp kvm
-        gpasswd --add sbp libvirt
-    else
-        echo '[sbp-virtual]==> User sbp is missing!'
-    fi
-
-    # Services
-    echo '[sbp-virtual]==> Enabling libvirt services.'
-    /usr/bin/systemctl enable libvirtd.service
-    /usr/bin/systemctl enable virtlogd.service
-
-    echo '[sbp-virtual]==> Installation done!'
+  echo '['"${prestr}"']==> Installing meta package...'
+  # Enabling systemd services
+  systemd_services enable
+  # Adding user to the groups
+  echo '['"${prestr}"']==> Adding user sbp to sys group (cups).'
+  for grp in "${pkggroups[@]}" ; do
+    /bin/gpasswd --add sbp "${grp}"
+  done
+  
+  echo '['"${prestr}"']==> Installation done!'
 }
 
 post_upgrade() {
-    echo '[sbp-virtual]==> Upgrading meta package...'
-    echo '[sbp-virtual]==> Upgrade done!'
+  echo '['"${prestr}"']==> Upgrading meta package...'
+  # Enabling systemd services
+  systemd_services enable
+  # Adding user to the groups
+  echo '['"${prestr}"']==> Adding user sbp to sys group (cups).'
+  for grp in "${pkggroups[@]}" ; do
+    /bin/gpasswd --add sbp "${grp}"
+  done
+  echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_uninstall() {
-    echo '[sbp-virtual]==> Uninstalling meta package...'
+  echo '['"${prestr}"']==> Uninstalling meta package...'
+  # Enabling systemd services
+  systemd_services disable
+  # Adding user to the groups
+  echo '['"${prestr}"']==> Adding user sbp to sys group (cups).'
+  for grp in "${pkggroups[@]}" ; do
+    /bin/gpasswd --delete sbp "${grp}"
+  done
 
-    # Services
-    echo '[sbp-virtual]==> Disabling required services'
-    /usr/bin/systemctl disable libvirtd.service
-    /usr/bin/systemctl disable virtlogd.service
-
-    echo '[sbp-virtual]==> Uninstallation done!'
+  echo '['"${prestr}"']==> Uninstallation done!'
 }
 

@@ -2,40 +2,43 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-seedbox
 replaces=('sbp-vpnbox')
-pkgver=1.0
-pkgrel=2
+pkgver=2.0
+pkgrel=1
 pkgdesc="SBP Meta Package: Packages for running torrents in a VM"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
-    'seedbox.fstab'
-    'seedbox.hostname'
-    'seedbox.hosts'
-    'seedbox.install'
-    'seedbox.mkinitcpio')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP)
+  'seedbox.defaults'
+  'seedbox.fstab'
+  'seedbox.hostname'
+  'seedbox.hosts'
+  'seedbox.install'
+  'seedbox.mkinitcpio')
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server' 'sbp-homestation')
 package() {
-    install=seedbox.install
-    # Create local config files
-    install -dm 0755 "${pkgdir}/etc"
-    install -Dm 0644 seedbox.fstab      "${pkgdir}/etc/fstab"
-    install -Dm 0644 seedbox.hostname   "${pkgdir}/etc/hostname"
-    install -Dm 0644 seedbox.hosts      "${pkgdir}/etc/hosts"
-    install -Dm 0644 seedbox.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
-    # Needed applications
-    depends=(
-        'base'
-        'linux' 'linux-firmware'
-        'zsh' 'grml-zsh-config'
-        'grub'
-        'neovim'
-        'qemu-guest-agent'
-        'networkmanager' 'dnsmasq'
-        'mullvad-vpn-cli'
-        'deluge'
-    )
+  install=seedbox.install
+  # Create local config files
+  install -dm 0755 "${pkgdir}/etc"
+  install -Dm 0644 seedbox.fstab        "${pkgdir}/etc/fstab"
+  install -Dm 0644 seedbox.hostname     "${pkgdir}/etc/hostname"
+  install -Dm 0644 seedbox.hosts        "${pkgdir}/etc/hosts"
+  install -Dm 0644 seedbox.mkinitcpio   "${pkgdir}/etc/mkinitcpio.conf"
+  install -dm 0755 "${pkgdir}/etc/profile.d"
+  install -Dm 0644 seedbox.defaults     "${pkgdir}/etc/profile.d/defaults.sh"
+  # Needed applications
+  depends=(
+    'base'
+    'linux' 'linux-firmware'
+    'zsh' 'grml-zsh-config'
+    'grub'
+    'neovim'
+    'qemu-guest-agent'
+    'networkmanager' 'dnsmasq'
+    'mullvad-vpn-cli'
+    'deluge'
+  )
 }

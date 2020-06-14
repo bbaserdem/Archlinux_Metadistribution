@@ -11,19 +11,13 @@ systemd_services() {
   fi
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services!'
   # Services
-  echo '['"${prestr}"']==> '"${prstrn}"' CUPS daemon.'
-  /usr/bin/systemctl "${action}" org.cups.cupsd.service
-
   echo '['"${prestr}"']==> '"${prstrn}"' Bluetooth daemon.'
   /usr/bin/systemctl "${action}" bluetooth.service
-
   echo '['"${prestr}"']==> '"${prstrn}"' network service.'
   /usr/bin/systemctl "${action}" dhcpcd.service
   /usr/bin/systemctl "${action}" unbound.service
-
   echo '['"${prestr}"']==> '"${prstrn}"' firewall.'
   /usr/bin/systemctl "${action}" firewalld.service
-
   echo '['"${prestr}"']==> '"${prstrn}"' Zeroconf networking'
   /usr/bin/systemctl "${action}" avahi-daemon.service
 
@@ -33,8 +27,10 @@ systemd_services() {
 post_install() {
   echo '['"${prestr}"']==> Installing meta package...'
   systemd_services enable
+  # Resolvconf
+  echo '['"${prestr}"']==> Updating resolvconf'
+  /usr/bin/resolvconf -u
   echo '['"${prestr}"']==> Installation done!'
-  post_ugrade
 }
 
 post_upgrade() {
@@ -49,6 +45,5 @@ post_upgrade() {
 post_remove() {
   echo '['"${prestr}"']==> Uninstalling meta package...'
   systemd_services disable
-
   echo '['"${prestr}"']==> Uninstallation done!'
 }

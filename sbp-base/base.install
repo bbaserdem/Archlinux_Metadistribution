@@ -1,36 +1,66 @@
 # Maintained by sbp
+pkggroups=(
+  'disk'
+  'ftp'
+  'http'
+  'rfkill'
+  'uucp'
+  'wheel'
+  'locate'
+  'lp'
+  'video')
+prestr='sbp-base'
 
 post_install() {
-  echo '[sbp-base]==> Installing meta package...'
+  echo '['"${prestr}"']==> Installing meta package...'
 
-  # Create main user
-  if [ "$(getent passwd | grep -c '^sbp')" == "0" ] ; then
-    echo '[sbp-base]==> Creating user sbp.'
-    /bin/useradd --comment "Batuhan Başerdem" --create-home \
-      --user-group --shell /usr/bin/zsh \
-      --groups disk,ftp,games,http,rfkill,sys,uucp,wheel,locate,lp,video \ sbp
-  else
-    echo '[sbp-base]==> User sbp exists!'
+  # Make a user account
+  if /bin/getent passwd sbp ; then
+    echo '['"${prestr}"']==> Creating user sbp.'
+    /bin/useradd --comment "Batuhan Başerdem" --create-home --user-group \
+      --shell /usr/bin/zsh sbp
   fi
 
-  echo '[sbp-base]==> Installation done!'
+  # Adding user to the groups
+  echo '['"${prestr}"']==> Adding user sbp to groups.'
+  for grp in "${pkggroups[@]}" ; do
+    /bin/gpasswd --add sbp "${grp}"
+  done
+
+  # Change root shell to zsh
+  echo '['"${prestr}"']==> Changing shell for root user.'
+  /bin/chsh --shell /bin/zsh root
+
+  echo '['"${prestr}"']==> Installation done!'
   post_ugrade
 }
 
 post_upgrade() {
-  echo '[sbp-base]==> Upgrading meta package...'
+  echo '['"${prestr}"']==> Upgrading meta package...'
 
   # Locale
-  echo '[sbp-base]==> Generating locale'
+  echo '['"${prestr}"']==> Generating locale'
   /usr/bin/locale-gen
 
-  echo '[sbp-base]==> Upgrade done!'
+  # Adding user to the groups
+  echo '['"${prestr}"']==> Adding user sbp to groups.'
+  for grp in "${pkggroups[@]}" ; do
+    /bin/gpasswd --add sbp "${grp}"
+  done
+
+  echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_remove() {
-  echo '[sbp-base]==> Uninstalling meta package...'
+  echo '['"${prestr}"']==> Uninstalling meta package...'
 
-  echo '[sbp-base]==> User "sbp" created by this package will remain!'
+  # Adding user to the groups
+  echo '['"${prestr}"']==> Removing user sbp from groups.'
+  for grp in "${pkggroups[@]}" ; do
+    /bin/gpasswd --remove sbp "${grp}"
+  done
 
-  echo '[sbp-base]==> Uninstallation done!'
+  echo '['"${prestr}"']==> User "sbp" created by this package will remain!'
+
+  echo '['"${prestr}"']==> Uninstallation done!'
 }

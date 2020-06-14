@@ -6,8 +6,8 @@ systemd_services() {
   elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
   elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
   else
-    echo "Invalid action type"
-    exit 1
+  echo "Invalid action type"
+  exit 1
   fi
   echo '['"${prestr}"']==> '${prstrn}' systemd services!'
   # Services
@@ -24,19 +24,19 @@ systemd_services() {
 }
 
 post_install() {
-    echo '['"${prestr}"']==> Installing meta package...'
-    systemd_services enable
-    echo '['"${prestr}"']==> Installation done!'
+  echo '['"${prestr}"']==> Installing meta package...'
+  systemd_services enable
+  echo '['"${prestr}"']==> Installation done!'
 }
 
 post_upgrade() {
-    echo '['"${prestr}"']==> Upgrading meta package...'
-    systemd_services enable
-    echo '['"${prestr}"']==> Upgrade done!'
+  echo '['"${prestr}"']==> Upgrading meta package...'
+  systemd_services enable
+  echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_remove() {
-    echo '['"${prestr}"']==> Uninstalling meta package...'
-    systemd_services disable
-    echo '['"${prestr}"']==> Uninstallation done!'
+  echo '['"${prestr}"']==> Uninstalling meta package...'
+  systemd_services disable
+  echo '['"${prestr}"']==> Uninstallation done!'
 }

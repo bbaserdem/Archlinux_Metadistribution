@@ -16,50 +16,44 @@ systemd_services() {
   echo '['"${prestr}"']==> '"${prstrn}"' NBFC fan control.'
   /bin/systemctl "${action}" nbfc.service
   /bin/systemctl "${action}" nbfc-sleep.service
-  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
-  /bin/systemctl "${action}" nfs-server.service
-  echo '['"${prestr}"']==> '"${prstrn}"' MariaDB.'
-  /bin/systemctl "${action}" mariadb.service
+  echo '['"${prestr}"']==> '"${prstrn}"' Laptop power control.'
+  /bin/systemctl "${action}" tlp.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }
 
 pre_install() {
-    echo '[sbp-cmp]==> Preparing for meta package...'
-    if [ -e '/etc/fstab' ] ; then
-        echo '[sbp-cmp]==> Moving /etc/fstab away.'
-        mv '/etc/fstab' '/etc/fstab.system'
-    fi
-    if [ -e '/etc/crypttab' ] ; then
-        echo '[sbp-cmp]==> Moving /etc/crypttab away.'
-        mv '/etc/crypttab' '/etc/crypttab.system'
-    fi
-    if [ -e '/etc/mkinitcpio.conf' ] ; then
-        echo '[sbp-cmp]==> Moving /etc/mkinitcpio.conf away.'
-        mv '/etc/mkinitcpio.conf' '/etc/mkinitcpio.system'
-    fi
-    echo '[sbp-cmp]==> Preperations done!'
+  echo '[sbp-cmp]==> Preparing for meta package...'
+  if [ -e '/etc/fstab' ] ; then
+    echo '[sbp-cmp]==> Moving /etc/fstab away.'
+    mv '/etc/fstab' '/etc/fstab.system'
+  fi
+  if [ -e '/etc/crypttab' ] ; then
+    echo '[sbp-cmp]==> Moving /etc/crypttab away.'
+    mv '/etc/crypttab' '/etc/crypttab.system'
+  fi
+  if [ -e '/etc/mkinitcpio.conf' ] ; then
+    echo '[sbp-cmp]==> Moving /etc/mkinitcpio.conf away.'
+    mv '/etc/mkinitcpio.conf' '/etc/mkinitcpio.system'
+  fi
+  echo '[sbp-cmp]==> Preperations done!'
 }
 
 post_install() {
-    echo '['"${prestr}"']==> Installing meta package...'
-    systemd_services enable
-    if [ -f '/opt/nbfc/Configs/Asus ROG GL702ZC.xml' ] ; then
-        echo '['"${prestr}"']==> Setting fan profile to Asus ROG GL702ZC . . .'
-        nbfc config --apply 'Asus ROG GL702ZC'
-    fi
-    if [ -e '/opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll' ] ; then
-        echo '['"${prestr}"']==> Applying nbfc ECSysLinux.dll fix'
-        mv /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll \
-            /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll.bak
-    fi
-    if [ -d '/var/lib/mariadb' ] ; then
-      echo '['"${prestr}"']==> Disabling CoW on MariaDB...'
-      chattr +C '/var/lib/mariadb'
-    fi
+  echo '['"${prestr}"']==> Installing meta package...'
+  systemd_services enable
+  if [ -f '/opt/nbfc/Configs/Asus ROG GL702ZC.xml' ] ; then
+    echo '['"${prestr}"']==> Setting fan profile to Asus ROG GL702ZC . . .'
+    nbfc config --apply 'Asus ROG GL702ZC'
+  fi
+  if [ -e '/opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll' ] ; then
+    echo '['"${prestr}"']==> Applying nbfc ECSysLinux.dll fix'
+    mv /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll \
+      /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll.bak
+  fi
 
-    echo '['"${prestr}"']==> Installation done!'
-    post_upgrade
+  echo '['"${prestr}"']==> Installation done!'
+  post_upgrade
 }
 
 post_upgrade() {
@@ -73,10 +67,6 @@ post_upgrade() {
         echo '['"${prestr}"']==> Applying nbfc ECSysLinux.dll fix'
         mv /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll \
             /opt/nbfc/Plugins/StagWare.Plugins.ECSysLinux.dll.bak
-    fi
-    if [ -d '/var/lib/mariadb' ] ; then
-      echo '['"${prestr}"']==> Disabling CoW on MariaDB...'
-      chattr +C '/var/lib/mariadb'
     fi
     echo '['"${prestr}"']==> Upgrade done!'
 }

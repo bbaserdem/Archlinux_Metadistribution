@@ -1,27 +1,37 @@
 # Maintained by sbp
+prestr='sbp-workstation'
+
+systemd_services() {
+  if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
+  elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
+  elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
+  else
+  echo "Invalid action type"
+  exit 1
+  fi
+  echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+  # Services
+  echo '['"${prestr}"']==> '"${prstrn}"' Network UPS tools'
+  /usr/bin/systemctl "${action}" sddm.service
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
 
 post_install() {
-    echo '[sbp-gui]==> Installing meta package...'
-
-    # Services
-    echo '[sbp-gui]==> Enabling graphical login. (SDDM)'
-    /usr/bin/systemctl enable sddm.service
-
-    echo '[sbp-gui]==> Installation done!'
-    post_upgrade
+  echo '['"${prestr}"']==> Installing meta package...'
+  # Services
+  systemd_services enable
+  echo '['"${prestr}"']==> Installation done!'
+  post_upgrade
 }
 
 post_upgrade() {
-    echo '[sbp-gui]==> Upgrading meta package...'
-    echo '[sbp-gui]==> Upgrade done!'
+  echo '['"${prestr}"']==> Upgrading meta package...'
+  systemd_services enable
+  echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_remove() {
-    echo '[sbp-gui]==> Uninstalling meta package...'
-
-    # Services
-    echo '[sbp-gui]==> Disabling graphical login. (SDDM)'
-    /usr/bin/systemctl disable sddm.service
-    
-    echo '[sbp-gui]==> Uninstallation done!'
+  echo '['"${prestr}"']==> Uninstalling meta package...'
+  systemd_services disable 
+  echo '['"${prestr}"']==> Uninstallation done!'
 }
