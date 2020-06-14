@@ -31,13 +31,13 @@ post_install() {
   # Services
   systemd_services enable
 
-
   echo '['"${prestr}"']==> Installation done!'
   post_upgrade
 }
 
 post_upgrade() {
   echo '['"${prestr}"']==> Upgrading meta package...'
+  systemd_services enable
   echo '['"${prestr}"']==> Upgrade done!'
 }
 
@@ -45,15 +45,8 @@ post_remove() {
   echo '['"${prestr}"']==> Uninstalling meta package...'
 
   # Services
-  echo '['"${prestr}"']==> Disabling CPU scaling manager.'
-  /usr/bin/systemctl disable cpupower.service
+  systemd_services disable
 
-  echo '['"${prestr}"']==> Disbling cron.'
-  /usr/bin/systemctl disable fcron.service
-
-  echo '['"${prestr}"']==> Disbling MCE monitoring'
-  /usr/bin/systemctl disable rasdaemon.service
-  /usr/bin/systemctl disable ras-mc-ctl.service
 
   echo '['"${prestr}"']==> Unistallation done!'
 }

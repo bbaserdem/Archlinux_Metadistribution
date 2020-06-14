@@ -29,10 +29,14 @@ package() {
   install -Dm 0644 seedbox.mkinitcpio   "${pkgdir}/etc/mkinitcpio.conf"
   install -dm 0755 "${pkgdir}/etc/profile.d"
   install -Dm 0644 seedbox.defaults     "${pkgdir}/etc/profile.d/defaults.sh"
+  # Create mount directory
+  install -dm 0755 "${pkgdir}/media/torrents"
   # Needed applications
   depends=(
     'base'
     'linux' 'linux-firmware'
+    'mkinitcpio'
+    'powerline-console-fonts'
     'zsh' 'grml-zsh-config'
     'grub'
     'neovim'
@@ -40,5 +44,7 @@ package() {
     'networkmanager' 'dnsmasq'
     'mullvad-vpn-cli'
     'deluge'
+    'nfs'
+    'avahi'
   )
 }

@@ -1,13 +1,13 @@
 # Maintained by sbp
-prestr='sbp-vpnbox'
+prestr='sbp-seedbox'
 
 systemd_services() {
-  if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
+  if [ "${1}" = 'enable' ] ; then   action='enable'  ; prstrn='Enabling'
   elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
-  elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
+  elif [ -z "${1}" ] ; then       action='enable'  ; prstrn='Enabling'
   else
-    echo "Invalid action type"
-    exit 1
+  echo "Invalid action type"
+  exit 1
   fi
   echo '['"${prestr}"']==> '${prstrn}' systemd services!'
   # Services
@@ -19,24 +19,38 @@ systemd_services() {
   /usr/bin/systemctl "${action}" mullvad-daemon.service
   echo '['"${prestr}"']==> '"${prstrn}"' Deluge BitTorrent daemon.'
   /usr/bin/systemctl "${action}" deluged.service
+  echo '['"${prestr}"']==> '"${prstrn}"' Zeroconf networking'
+  /usr/bin/systemctl "${action}" avahi-daemon.service
+  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
+  /bin/systemctl "${action}" nfs-server.service
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }
 
 post_install() {
-    echo '['"${prestr}"']==> Installing meta package...'
-    systemd_services enable 
-    echo '['"${prestr}"']==> Installation done!'
-    post_upgrade
+  echo '['"${prestr}"']==> Installing meta package...'
+  # Make a user account
+  if /bin/getent passwd seedbox ; then
+  echo '['"${prestr}"']==> Creating user seedbox.'
+  /bin/useradd --comment "Guybrush Threepwood" --create-home --user-group \
+    --shell /usr/bin/zsh seedbox
+  fi
+  # Change root shell to zsh
+  echo '['"${prestr}"']==> Changing shell for root user.'
+  /bin/chsh --shell /bin/zsh root
+
+  systemd_services enable 
+  echo '['"${prestr}"']==> Installation done!'
+  post_upgrade
 }
 
 post_upgrade() {
-    echo '['"${prestr}"']==> Upgrading meta package...'
-    systemd_services enable
-    echo '['"${prestr}"']==> Upgrade done!'
+  echo '['"${prestr}"']==> Upgrading meta package...'
+  systemd_services enable
+  echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_remove() {
-    echo '['"${prestr}"']==> Uninstalling meta package...'
-    systemd_services disable
-    echo '['"${prestr}"']==> Uninstallation done!'
+  echo '['"${prestr}"']==> Uninstalling meta package...'
+  systemd_services disable
+  echo '['"${prestr}"']==> Uninstallation done!'
 }
