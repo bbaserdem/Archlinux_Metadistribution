@@ -29,6 +29,7 @@ sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server')
 package() {
+<<<<<<< HEAD
   install=homestation.install
   # Create local config files
   install -dm 0755 "${pkgdir}/etc"
