@@ -13,6 +13,7 @@ systemd_services() {
   echo '['"${prestr}"']==> '${prstrn}' systemd services!'
   # Services
   echo '['"${prestr}"']==> '"${prstrn}"' Network UPS tools'
+  /usr/bin/systemctl "${action}" nut-server.service
   /usr/bin/systemctl "${action}" nut-monitor.service
   echo '['"${prestr}"']==> '"${prstrn}"' CUPS daemon.'
   /usr/bin/systemctl "${action}" org.cups.cupsd.service
