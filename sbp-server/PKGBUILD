@@ -11,6 +11,7 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
     'server.cmdline'
     'server.crypttab'
+    'server.exports'
     'server.fstab'
     'server.hostname'
     'server.initrdtab'
@@ -18,9 +19,9 @@ source=(
     'server.mkinitcpio'
     'server.refind'
     'server.sbupdate')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
-conflicts=('sbp-homestation' 'sbp-laptop' 'sbp-workstation')
+conflicts=('sbp-homestation' 'sbp-laptop' 'sbp-workstation' 'sbp-seedbox')
 package() {
     install=server.install
     # Create local config files
@@ -33,6 +34,8 @@ package() {
     install -Dm 0644 server.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
     install -dm 0755 "${pkgdir}/etc/cmdline.d"
     install -Dm 0644 server.cmdline    "${pkgdir}/etc/cmdline.d/sbp.conf"
+    install -dm 0755 "${pkgdir}/etc/exports.d"
+    install -Dm 0644 server.exports    "${pkgdir}/etc/exports.d/sbp.exports"
     # Create boot options
     install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
     install -Dm 0755 server.refind \
@@ -45,9 +48,9 @@ package() {
         'mesa' 'mesa-demos'
         'vulkan-intel')
     depends=(
-        'apache'            # Web server
+        'apache'            # Zeroconf server
         'kodi'              # Media file server
         'mariadb'           # Database management
-        'radicale'          # CalDAV and CardDAV server
+        'nfs-utils'         # Network file share
     )
 }

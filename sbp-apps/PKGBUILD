@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-apps
 pkgver=4.0
-pkgrel=10
+pkgrel=11
 pkgdesc="SBP Meta Package: Applications (GUI)"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -41,8 +41,6 @@ package() {
   #---Tray applications
   depends+=(
     'blueman'
-    'remmina' 'remmina-plugin-rdesktop' 'freerdp'
-    'syncthing-gtk'
     'deluge-gtk'
     'udiskie'
     'uget')
@@ -54,7 +52,6 @@ package() {
     'gucharmap'
     'pavucontrol'
     'polkit-gnome'
-    'projectm' 'projectm-pulseaudio'
     'snapper-gui'
     'system-config-printer')
   #---Video

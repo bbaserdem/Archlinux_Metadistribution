@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-themes
 pkgver=4.0
-pkgrel=6
+pkgrel=7
 pkgdesc="SBP Meta Package: Themeing"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -18,7 +18,7 @@ package() {
         'ttf-carlito'                   # Georgia alternative
         'ttf-croscore'                  # Helvetica, Times and courier alternative
         'ttf-inconsolata'               # Status font   (statusbar)
-        'otf-fira-code'                 # Ligature font (monospace)
+        'ttf-fira-code'                 # Ligature font (monospace)
         'ttf-droid'                     # Font for sans (sans-serif|sans)
         'adobe-source-serif-pro-fonts'  # Serif font    (serif)
         )

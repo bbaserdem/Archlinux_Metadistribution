@@ -1,1 +1,31 @@
+# Managed by sbp
+# vim: ft=fstab
+
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system>                 <dir>           <type>  <options>                                                                                                   <dump>  <pass>
+/dev/mapper/Server-Arch         /               btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvolid=256,subvol=@root                                0       0
+/dev/mapper/Server-Arch         /.snapshots     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvolid=258,subvol=@snapshots                           0       0
+/dev/mapper/Server-Home	        /home           xfs     rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota                                                    0       2
 UUID=CD80-E558                  /boot/efi       vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
+/swap/swapfile                  none            swap    defaults                                                                                                    0       0
+/dev/mapper/Serverdata-Archive  /home/archive   ext4    defaults                                                                                                    0       0
+
+# Gentoo
+/dev/mapper/Server-Gentoo       /media/gentoo               btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvolid=256,subvol=/@root,subvol=@root      0       0
+/dev/mapper/Server-Gentoo       /media/gentoo/.snapshots    btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvolid=258,subvol=@snapshots               0       0
+/home                           /media/gentoo/home          none    defaults,rbind                                                                                  0       0
+/boot/efi                       /media/gentoo/boot/efi      none    defaults,bind                                                                                   0       0
+
+# NFS to outside
+/home                   /srv/nfs/home                   none    defaults,rbind 0 0
+/home/sbp/Music         /srv/nfs/media/Music-Home       none    defaults,rbind 0 0
+/home/sbp/Videos        /srv/nfs/media/Videos-Home      none    defaults,rbind 0 0
+/home/sbp/Pictures      /srv/nfs/media/Pictures-Home    none    defaults,rbind 0 0
+/home/archive/Music     /srv/nfs/media/Music-Archive    none    defaults,rbind 0 0
+/home/archive/Videos    /srv/nfs/media/Videos-Archive   none    defaults,rbind 0 0
+/home/archive/Pictures  /srv/nfs/media/Videos-Archive   none    defaults,rbind 0 0
+
+# Mount seedbox torrents here
+sbp-seedbox:/torrents   /media/seedbox  nfs _netdev,noauto,x-systemd.automount,x-systemd.mount-timeout=10,timeo=14,x-systemd.idle-timeout=1min  0   0

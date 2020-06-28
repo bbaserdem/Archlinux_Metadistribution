@@ -1,5 +1,5 @@
 # Maintained by sbp
-prestr='sbp-workstation'
+prestr='sbp-gui'
 
 systemd_services() {
   if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'

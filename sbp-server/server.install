@@ -19,6 +19,8 @@ systemd_services() {
   /bin/systemctl "${action}" mariadb.service
   echo '['"${prestr}"']==> '"${prstrn}"' SSH access.'
   /bin/systemctl "${action}" sshd.service
+  echo '['"${prestr}"']==> '"${prstrn}"' Syncthing'
+  /bin/systemctl "${action}" syncthing@sbp.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }

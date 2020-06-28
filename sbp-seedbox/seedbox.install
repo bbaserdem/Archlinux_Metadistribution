@@ -28,12 +28,6 @@ systemd_services() {
 
 post_install() {
   echo '['"${prestr}"']==> Installing meta package...'
-  # Make a user account
-  if /bin/getent passwd seedbox ; then
-  echo '['"${prestr}"']==> Creating user seedbox.'
-  /bin/useradd --comment "Guybrush Threepwood" --create-home --user-group \
-    --shell /usr/bin/zsh seedbox
-  fi
   # Change root shell to zsh
   echo '['"${prestr}"']==> Changing shell for root user.'
   /bin/chsh --shell /bin/zsh root

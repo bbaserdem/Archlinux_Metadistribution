@@ -1,0 +1,6 @@
+# Maintained by sbp
+# Home folder: Make available to edit to homestation and laptop
+/srv/nfs/home sbp-homestation(rw,sync,all_squash,anonuid=1000,anongid=1000)
+/srv/nfs/home sbp-laptop(rw,sync,all_squash,anonuid=1000,anongid=1000)
+# Media share; Allow all local connections to view files
+/srv/nfs/media 192.168.1.0/24(ro,all_squash,insecure)
