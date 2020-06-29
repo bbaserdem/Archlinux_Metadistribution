@@ -1,0 +1,13 @@
+[Unit]
+Description=Time zone update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart="/usr/bin/tzupdate && pk -f datetime"
+RestartSec = 30
+Restart = on-failure
+
+[Install]
+WantedBy = default.target

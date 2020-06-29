@@ -12,6 +12,8 @@ UUID=7653-3DB8                  /boot/efi       vfat    rw,relatime,fmask=0022,d
 /swap/swapfile                  none            swap    defaults                                                                                                    0       0
 # The hard-drive partitions
 /dev/mapper/Homedata-Archive    /home/archive   ext4    defaults                                                                                                    0       2
+# NFS shares
+/home/sbp/Share                 /srv/nfs/sbp    none    bind,nofail                                                                                                 0       0
 # Windows
 LABEL=Windows10                 /media/windows  ntfs-3g defaults,nls=utf8,umask=000,dmask=027,fmask=137,uid=1000,gid=1000,windows_names                             0       0
 # Gentoo
@@ -20,10 +22,3 @@ LABEL=Windows10                 /media/windows  ntfs-3g defaults,nls=utf8,umask=
 /boot/efi                       /media/gentoo/boot/efi      none    defaults,bind                                                                                   0       0
 /home                           /media/gentoo/home          none    defaults,rbind                                                                                  0       0
 /opt                            /media/gentoo/opt           none    defaults,bind                                                                                   0       0
-# NFS shares
-#/home/sbp/Music         /srv/nfs/media/music            none    bind    0   0
-#/home/archive/Music     /srv/nfs/media/music-archive    none    bind    0   0
-#/home/sbp/Videos        /srv/nfs/media/videos           none    bind    0   0
-#/home/archive/Videos    /srv/nfs/media/videos-archive   none    bind    0   0
-#/home/sbp/Pictures      /srv/nfs/media/pictures         none    bind    0   0
-#/home/archive/Pictures  /srv/nfs/media/pictures-archive none    bind    0   0

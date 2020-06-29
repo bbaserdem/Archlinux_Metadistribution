@@ -8,13 +8,25 @@ arch=('any')
 url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=('base.install' 'base.root-ssh' )
-sha256sums=(SKIP SKIP)
+source=(
+    'base.install'
+    'base.root-ssh'
+    'admin.etckeeper'
+    'admin.install'
+    'admin.reflect-service'
+    'admin.reflect-timer'
+    'admin.repo-build'
+    'admin.repo-remove'
+    'admin.repo-sync'
+    'admin.tzupdate')
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 package() {
     install=base.install
     provides=('vim')
     conflicts=('vim')
     depends=('base')
+
+    # BASE stuff
     # Configure root account a bit
     install -dm 0750 "${pkgdir}/root/"
     install -dm 0700 "${pkgdir}/root/.ssh"
@@ -27,9 +39,59 @@ package() {
         'groff' 'libtool' 'm4' 'make' 'patch' 'pkgconf' 'sudo' 'texinfo' 'which'
         'man-db' 'perl' 's-nail' 'texinfo' 'usbutils' 'flex' 'groff' 'libtool'
         'm4' 'pkgconf' )
+    #---Expose shares using nfs
+    install -dm 0755 "${pkgdir}/srv/nfs/sbp"
+
+    #---ADMINISTRATION
+    # Create reflector timers
+    install -dm 0755 "${pkgdir}/usr/lib/systemd"
+    install -dm 0755 "${pkgdir}/usr/lib/systemd/system"
+    install -Dm 0644 admin.reflect-service \
+        "${pkgdir}/usr/lib/systemd/system/reflector.service"
+    install -Dm 0644 admin.reflect-timer \
+        "${pkgdir}/usr/lib/systemd/system/reflector.timer"
+    # Install tzupdate service
+    install -Dm 0644 admin.tzupdate \
+        "${pkgdir}/usr/lib/systemd/system/tzupdate.service"
+    # Install aur management scripts
+    install -dm 0755 "${pkgdir}/usr/bin"
+    install -Dm 0755 admin.repo-remove  "${pkgdir}/usr/bin/archrepo-remove"
+    install -Dm 0755 admin.repo-sync    "${pkgdir}/usr/bin/archrepo-sync"
+    install -Dm 0755 admin.repo-build   "${pkgdir}/usr/bin/archrepo-build"
+    # Put etckeeper override to select pacman
+    install -dm 0755 "${pkgdir}/etc/etckeeper"
+    install -Dm 0755 admin.etckeeper    "${pkgdir}/etc/etckeeper/local.conf"
+    #---Sys-admin
+    depends=(
+        'dbus'
+        'etckeeper'
+        'fcron'
+        'htop'
+        'logrotate'
+        'lsb-release'
+        'mlocate'
+        'neofetch'
+        'rasdaemon'
+        'supervisor'
+        'tzupdate')         # Updates timezone
+    #---Permissions
+    depends+=(
+        'pam'
+        'polkit'
+        'sudo')
+    #---Packaging
+    depends+=(
+        'aurutils'
+        'devtools'
+        'reflector'
+        'pacman-contrib' 'pacman-cleanup-hook'
+        'archlinux-appstream-data'
+        'archlinux-keyring')
+
+    #---BOOT: UEFI
+
     #---SBP modules needed for base installation
     depends+=(
-        'sbp-admin'         # Administration apps
         'sbp-audio'         # For audio related stuff
         'sbp-boot'          # Booting (uefi or bios)
         'sbp-devices'       # General device communications
@@ -39,4 +101,5 @@ package() {
         'sbp-network'       # Networking
         'sbp-utils'         # (Console) only applications
     )
+
 }

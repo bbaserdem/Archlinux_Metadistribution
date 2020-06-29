@@ -11,14 +11,46 @@ pkggroups=(
   'video')
 prestr='sbp-base'
 
+systemd_services() {
+  if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
+  elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
+  elif [ -z "${1}" ] ; then           action='enable'  ; prstrn='Enabling'
+  else
+    echo "Invalid action type"
+    exit 1
+  fi
+  echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+  # Services
+  echo '['"${prestr}"']==> Enabling cron.'
+  /usr/bin/systemctl "${action}" fcron.service
+  echo '['"${prestr}"']==> Enabling MCE monitoring'
+  /usr/bin/systemctl enable rasdaemon.service
+  /usr/bin/systemctl enable ras-mc-ctl.service
+
+  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
+
 post_install() {
   echo '['"${prestr}"']==> Installing meta package...'
 
   # Make a user account
-  if /bin/getent passwd sbp ; then
+  if /bin/getent passwd sbp >/dev/null 2>&1 ; then
+    echo '['"${prestr}"']==> User sbp exists!'
+  elif [ -e '/home/sbp' ] ; then
+    echo '['"${prestr}"']==> Creating user sbp (home directory exists).'
+    /bin/useradd \
+      --comment "Batuhan Başerdem" \
+      --user-group \
+      --shell /usr/bin/zsh \
+      sbp
+  else
     echo '['"${prestr}"']==> Creating user sbp.'
-    /bin/useradd --comment "Batuhan Başerdem" --create-home --user-group \
-      --shell /usr/bin/zsh sbp
+    /bin/useradd \
+      --create-home \
+      --comment "Batuhan Başerdem" \
+      --user-group \
+      --shell /usr/bin/zsh \
+      sbp
   fi
 
   # Adding user to the groups
@@ -31,6 +63,14 @@ post_install() {
   echo '['"${prestr}"']==> Changing shell for root user.'
   /bin/chsh --shell /bin/zsh root
 
+  # Timezone
+  echo '['"${prestr}"']==> Setting local time settings.'
+  /usr/bin/timedatectl set-ntp true
+  /usr/bin/hwclock --systohc
+
+  # Services
+  systemd_services enable
+
   echo '['"${prestr}"']==> Installation done!'
   post_ugrade
 }
@@ -41,6 +81,11 @@ post_upgrade() {
   # Locale
   echo '['"${prestr}"']==> Generating locale'
   /usr/bin/locale-gen
+
+  # Timezone
+  echo '['"${prestr}"']==> Setting local time settings.'
+  /usr/bin/timedatectl set-ntp true
+  /usr/bin/hwclock --systohc
 
   # Adding user to the groups
   echo '['"${prestr}"']==> Adding user sbp to groups.'

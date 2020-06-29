@@ -49,7 +49,7 @@ package() {
         'neofetch'
         'rasdaemon'
         'supervisor'
-        'tzupdate')
+        'tzupdate')         # Updates timezone
     #---Permissions
     depends+=(
         'pam'
