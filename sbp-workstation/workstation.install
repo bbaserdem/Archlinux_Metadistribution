@@ -1,23 +1,20 @@
 # Maintained by sbp
-pkggroups=('sys')
 prestr='sbp-workstation'
 
 systemd_services() {
-  if [ "${1}" = 'enable' ] ; then   action='enable'  ; prstrn='Enabling'
+  if [ "${1}" = 'enable' ] ;    then  action='enable'  ; prstrn='Enabling'
   elif [ "${1}" = 'disable' ] ; then  action='disable' ; prstrn='Disabling'
-  elif [ -z "${1}" ] ; then       action='enable'  ; prstrn='Enabling'
+  elif [ -z "${1}" ] ;          then  action='enable'  ; prstrn='Enabling'
   else
-  echo "Invalid action type"
-  exit 1
+    echo "Invalid action type"
+    exit 1
   fi
   echo '['"${prestr}"']==> '${prstrn}' systemd services!'
   # Services
   echo '['"${prestr}"']==> '"${prstrn}"' Network UPS tools'
   /usr/bin/systemctl "${action}" nut-server.service
   /usr/bin/systemctl "${action}" nut-monitor.service
-  echo '['"${prestr}"']==> '"${prstrn}"' CUPS daemon.'
-  /usr/bin/systemctl "${action}" org.cups.cupsd.service
-  echo '['"${prestr}"']==> '"${prstrn}"' SSH access'
+  echo '['"${prestr}"']==> '"${prstrn}"' Enable SSH access'
   /usr/bin/systemctl "${action}" sshd.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
@@ -43,11 +40,6 @@ pre_install() {
 post_install() {
   echo '['"${prestr}"']==> Installing meta package...'
   systemd_services enable
-  # Adding user to the groups
-  echo '['"${prestr}"']==> Adding user sbp to sys group (cups).'
-  for grp in "${pkggroups[@]}" ; do
-    /bin/gpasswd --add sbp "${grp}"
-  done
   echo '['"${prestr}"']==> Installation done!'
   post_upgrade
 }
@@ -55,21 +47,11 @@ post_install() {
 post_upgrade() {
   echo '['"${prestr}"']==> Upgrading meta package ...'
   systemd_services enable
-  # Adding user to the groups
-  echo '['"${prestr}"']==> Adding user sbp to sys group (cups).'
-  for grp in "${pkggroups[@]}" ; do
-    /bin/gpasswd --add sbp "${grp}"
-  done
   echo '['"${prestr}"']==> Upgrade done!'
 }
 
 post_remove() {
   echo '['"${prestr}"']==> Uninstalling meta package...'
   systemd_services disable
-  # Adding user to the groups
-  echo '['"${prestr}"']==> Adding user sbp to sys group (cups).'
-  for grp in "${pkggroups[@]}" ; do
-    /bin/gpasswd --delete sbp "${grp}"
-  done
   echo '['"${prestr}"']==> Uninstallation done!'
 }

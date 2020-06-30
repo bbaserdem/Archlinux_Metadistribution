@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-base
 pkgver=5.0
-pkgrel=1
+pkgrel=3
 pkgdesc="SBP Meta Package: base system"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -24,7 +24,9 @@ source=(
   'programming.jupyter-notebook'
   'uefi.refind-config'
   'uefi.refind-hook')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP
+            SKIP SKIP SKIP SKIP SKIP
+            SKIP SKIP SKIP SKIP SKIP)
 package() {
   install=base.install
   provides=('vim')
@@ -35,7 +37,7 @@ package() {
   # Configure root account a bit
   install -dm 0750 "${pkgdir}/root/"
   install -dm 0700 "${pkgdir}/root/.ssh"
-  install -Dm 0600 base.root-ssh "${pkgdir}/root/.ssh/config"
+  install -Dm 0600 base.root-ssh            "${pkgdir}/root/.ssh/config"
   #---Packages in gentoo base group
   depends+=('rsync' 'diffutils' 'wget' 'man-pages' 'device-mapper' 'less'
     'openssh' 'inetutils' 'busybox' 'kbd' )
@@ -60,12 +62,12 @@ package() {
     "${pkgdir}/usr/lib/systemd/system/tzupdate.service"
   # Install aur management scripts
   install -dm 0755 "${pkgdir}/usr/bin"
-  install -Dm 0755 admin.repo-remove  "${pkgdir}/usr/bin/archrepo-remove"
-  install -Dm 0755 admin.repo-sync  "${pkgdir}/usr/bin/archrepo-sync"
-  install -Dm 0755 admin.repo-build   "${pkgdir}/usr/bin/archrepo-build"
+  install -Dm 0755 admin.repo-remove        "${pkgdir}/usr/bin/archrepo-remove"
+  install -Dm 0755 admin.repo-sync          "${pkgdir}/usr/bin/archrepo-sync"
+  install -Dm 0755 admin.repo-build         "${pkgdir}/usr/bin/archrepo-build"
   # Put etckeeper override to select pacman
   install -dm 0755 "${pkgdir}/etc/etckeeper"
-  install -Dm 0755 admin.etckeeper  "${pkgdir}/etc/etckeeper/local.conf"
+  install -Dm 0755 admin.etckeeper          "${pkgdir}/etc/etckeeper/local.conf"
   #---Sys-admin
   depends+=(
     'dbus'
@@ -94,21 +96,17 @@ package() {
     'archlinux-keyring')
 
   #---AUDIO
-  install -Dm 0755 audio.firewalld "${pkgdir}/usr/lib/firewalld/services/mpd.xml"
-  install -Dm 0755 audio.mpc-prev "${pkgdir}/usr/bin/mpc-prev"
+  install -Dm 0755 audio.firewalld  "${pkgdir}/usr/lib/firewalld/services/mpd.xml"
+  install -Dm 0755 audio.mpc-prev   "${pkgdir}/usr/bin/mpc-prev"
   #---Pulseaudio
   depends+=(
     'alsa-utils' 'lib32-alsa-plugins'
     'pulseaudio' 'lib32-libpulse' 'pulseaudio-alsa' 'pulseaudio-bluetooth'
     'pamixer' 'pulsemixer')
   #---Jack
-  depends+=(
-    'jack2' 'lib32-jack2'
+  depends+=('jack2' 'lib32-jack2')
   #---MIDI
-  depends+=(
-    'fluidsynth' 'lib32-fluidsynth'
-    'soundfont-fluid'
-    )
+  depends+=('fluidsynth' 'lib32-fluidsynth' 'soundfont-fluid')
   #---MPD and music utilities
   depends+=(
     'abcde'
@@ -181,8 +179,6 @@ package() {
     'linux'
     'linux-firmware'
     'linux-headers'
-    'amd-ucode'
-    'intel-ucode'
     'mkinitcpio'
     'dracut'
     'powerline-console-fonts')
@@ -226,6 +222,7 @@ package() {
   #---Network Applications
   depends+=(
     'aria2'
+    'deluge'
     'isync'
     'msmtp'
     'neomutt' 'urlscan' 'notmuch'
@@ -304,7 +301,7 @@ package() {
     'unzip' 'xz' 'zip' 'rpm-tools')
 
   #---VIRTUAL
-    depends+=(
+  depends+=(
     'docker'
     'qemu'
     'vde2'
@@ -312,37 +309,31 @@ package() {
     'libvirt'
     'ebtables'
     'dnsmasq'
-    'bridge-utils')
+    'bridge-utils'
+    )
 
   #---BOOT
-  # Install refind config
-  install -dm 0755 "${pkgdir}/boot/efi/EFI/rEFInd"
-  install -Dm 0755 uefi.refind-config \
-    "${pkgdir}/boot/efi/EFI/rEFInd/refind.conf"
-
-  # Install update hooks
-  install -dm 0755 "${pkgdir}/usr/share/libalpm/hooks"
-  install -Dm 0755 uefi.refind-hook \
-    "${pkgdir}/usr/share/libalpm/hooks/99-refind-sb.hook"
-
-  # Create directory for storing secure-boot keys, and symlink with names
+  # Make sure mount points exist, along with secure boot keys location
+  install -dm 0755 "${pkgdir}/efi"
+  install -dm 0755 "${pkgdir}/boot"
   install -dm 0755 "${pkgdir}/etc"
   install -dm 0700 "${pkgdir}/etc/sbkeys"
   install -dm 0755 "${pkgdir}/etc/refind.d"
   install -dm 0700 "${pkgdir}/etc/refind.d/keys"
+  # Insert refind configuration
+  install -dm 0755 "${pkgdir}/efi/EFI/rEFInd"
+  install -Dm 0755 uefi.refind-config   "${pkgdir}/efi/EFI/rEFInd/refind.conf"
+  install -dm 0755 "${pkgdir}/usr/share/libalpm/hooks"
+  install -Dm 0755 uefi.refind-hook     "${pkgdir}/usr/share/libalpm/hooks/99-refind-sb.hook"
   ln -sf "/etc/sbkeys/db.key" "${pkgdir}/etc/refind.d/keys/refind_local.key"
   ln -sf "/etc/sbkeys/db.esl" "${pkgdir}/etc/refind.d/keys/refind_local.esl"
   ln -sf "/etc/sbkeys/db.crt" "${pkgdir}/etc/refind.d/keys/refind_local.crt"
   ln -sf "/etc/sbkeys/db.cer" "${pkgdir}/etc/refind.d/keys/refind_local.cer"
-  # Create mount targets for ESP and boot directory
-  install -dm 0755 "${pkgdir}/efi"
-  install -dm 0755 "${pkgdir}/boot"
-  depends=(
+  depends+=(
     'efibootmgr'            # Write to bios
     'efitools'              # EFI manip tools
     'sbsigntools'           # To sign kernels
     'openssl'               # For signing
-    'sbupdate'              # Signs kernel automatically
     'refind'                # Refind loader
     'refind-theme-regular'  # Theming refind
   )

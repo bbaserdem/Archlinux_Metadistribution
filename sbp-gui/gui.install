@@ -11,7 +11,7 @@ systemd_services() {
   fi
   echo '['"${prestr}"']==> '${prstrn}' systemd services!'
   # Services
-  echo '['"${prestr}"']==> '"${prstrn}"' Network UPS tools'
+  echo '['"${prestr}"']==> '"${prstrn}"' Simple Desktop Display Manager (SDDM)'
   /usr/bin/systemctl "${action}" sddm.service
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }

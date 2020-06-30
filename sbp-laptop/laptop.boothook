@@ -7,4 +7,4 @@ Target = systemd
 [Action]
 Description = Updating systemd-boot
 When = PostTransaction
-Exec = /usr/bin/bootctl --path=/boot/efi update
+Exec = /usr/bin/bootctl --path=/efi update

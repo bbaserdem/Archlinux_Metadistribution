@@ -9,7 +9,8 @@
 /dev/mapper/Workstation-Arch    /.snapshots     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvolid=258,subvol=/@snapshots,subvol=@snapshots        0       0
 /dev/mapper/Workdata-Home	/home           xfs     rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota                                                    0       2
 /dev/mapper/Workstation-Opt     /opt            ext4    defaults                                                                                                    0       0
-UUID=585A-EF43                  /boot/efi       vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
+UUID=585A-EF43                  /efi            vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
+/efi/EFI/Arch                   /boot           none    defaults,bind                                                                                               0       2
 /swap/swapfile                  none            swap    defaults                                                                                                    0       0
 # NFS shares
 /home/sbp/Share                 /srv/nfs/sbp    none    bind,nofail                                                                                                 0       0

@@ -1,8 +1,8 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
 pkgname=sbp-workstation
-pkgver=4.0
-pkgrel=8
+pkgver=4.1
+pkgrel=1
 pkgdesc="SBP Meta Package: Workstation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -16,35 +16,26 @@ source=(
   'workstation.initrdtab'
   'workstation.install'
   'workstation.mkinitcpio'
-  'workstation.refind'
-  'workstation.sbupdate')
-backup=(
-  'etc/crypttab'
-  'etc/crypttab.initrd'
-  'etc/fstab'
-  'etc/hostname'
-  'etc/mkinitcpio'
-  'boot/efi/EFI/Arch/refind_linux.conf')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+  'workstation.refind')
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-homestation' 'sbp-laptop' 'sbp-server')
 package() {
   install=workstation.install
   # Create local config files
   install -dm 0755 "${pkgdir}/etc"
-  install -Dm 0644 workstation.crypttab   "${pkgdir}/etc/crypttab"
-  install -Dm 0644 workstation.fstab    "${pkgdir}/etc/fstab"
-  install -Dm 0644 workstation.hostname   "${pkgdir}/etc/hostname"
-  install -Dm 0644 workstation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
-  install -Dm 0644 workstation.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
-  install -Dm 0644 workstation.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
+  install -Dm 0644 workstation.crypttab     "${pkgdir}/etc/crypttab"
+  install -Dm 0644 workstation.initrdtab    "${pkgdir}/etc/crypttab.initrd"
+  install -Dm 0644 workstation.fstab        "${pkgdir}/etc/fstab"
+  install -Dm 0644 workstation.hostname     "${pkgdir}/etc/hostname"
+  install -Dm 0644 workstation.mkinitcpio   "${pkgdir}/etc/mkinitcpio.conf"
   # Install command line booting arguments
-  install -dm 0755 "${pkgdir}/etc/dracut.conf.d"
-  install -Dm 0644 workstation.cmdline  "${pkgdir}/etc/dracut.conf.d/sbp-local.conf"
-  # Create boot options
-  install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
-  install -Dm 0755 workstation.refind \
-    "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
+  install -dm 0755 "${pkgdir}/etc/cmdline.d"
+  install -Dm 0644 workstation.cmdline      "${pkgdir}/etc/cmdline.d/workstation.conf"
+  # Create boot menu options
+  install -Dm 0755 workstation.refind       "${pkgdir}/boot/refind_linux.conf"
+  
+  #---SPECIFIC HARDWARE
   # Early initrd ucode
   depends=('amd-ucode')
   # Graphics
@@ -55,10 +46,7 @@ package() {
     'libdrm' 'lib32-libdrm'
     'xf86-video-amdgpu')
   # OpenCL
-  depends+=(
-    'libclc'
-    'opencl-mesa' 'lib32-opencl-mesa'
-  )
+  depends+=('libclc' 'opencl-mesa' 'lib32-opencl-mesa')
   # Vulkan
   depends+=(
     'amdvlk'
@@ -66,14 +54,15 @@ package() {
     'lib32-vulkan-radeon'
     'vulkan-icd-loader' 
     'vulkan-mesa-layers'
-    'vulkan-radeon')
+    'vulkan-radeon'
+    )
   # Workstation usespace
   depends+=(
     'maestral' 'maestral-qt'            # File synching
     'nut' 'nut-monitor'                 # UPS response
     'cups' 'cups-pdf' 'cups-pk-helper'  # Printing stuff
-    'remmina' 'remmina-plugin-rdesktop' # Remote desktop
-    'freerdp')
-  # Need this for managing windows
+    'remmina' 'freerdp'                 # Remotes management
+    )
+  # Need this for managing windows (In virtual machine)
   depends+=('mtools' 'ntfs-3g')
 }

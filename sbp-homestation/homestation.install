@@ -1,5 +1,5 @@
 # Maintained by sbp
-prestr='sbp-workstation'
+prestr='sbp-homestation'
 
 systemd_services() {
   if [ "${1}" = 'enable' ] ; then     action='enable'  ; prstrn='Enabling'
@@ -18,6 +18,8 @@ systemd_services() {
   /bin/systemctl "${action}" nbfc-sleep.service
   echo '['"${prestr}"']==> '"${prstrn}"' Laptop power control.'
   /bin/systemctl "${action}" tlp.service
+  echo '['"${prestr}"']==> Enabling Trezor for bitcoin wallet.'
+  /usr/bin/systemctl enable trezord.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }

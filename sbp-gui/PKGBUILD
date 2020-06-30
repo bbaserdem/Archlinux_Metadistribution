@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gui
 pkgver=5.0
-pkgrel=1
+pkgrel=4
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -17,14 +17,6 @@ package() {
   depends+=('sddm')
   #---Input methods
   depends+=('ibus' 'ibus-m17n')
-  #---Generic needs
-  depends+=(
-    'sbp-apps'      # General use applications
-    'sbp-latex'     # Texlive distribution
-    'sbp-programming'   # Applications to use for programming
-    'sbp-themes'    # Desktop themeing in general
-    'sbp-virtual'     # Virtualizing other OS's
-  )
   #---GUI applications
   depends+=(
     'audacity'                  # Sound editing
@@ -88,7 +80,7 @@ package() {
 
   #---THEMING
   #---Fonts
-  depends=(
+  depends+=(
     'noto-fonts-emoji'        # Emoji fonts
     'ttf-nerd-fonts-symbols-mono'   # Glyphs
     'ttf-liberation'        # Windows compatibility font

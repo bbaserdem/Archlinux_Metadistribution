@@ -3,7 +3,7 @@
 _name='refind-theme-regular'
 pkgname="${_name}-vcs"
 pkgver=r49.f77de31
-pkgrel=2
+pkgrel=3
 pkgdesc="A simplistic clean and minimal theme for rEFInd"
 arch=('any')
 url="https://github.com/bobafetthotmail/refind-theme-regular"
@@ -22,7 +22,7 @@ pkgver() {
 
 package() {
   # Specify path to the refind directory
-  _refind_home="${pkgdir}/boot/efi/EFI/rEFInd"
+  _refind_home="${pkgdir}/efi/EFI/rEFInd"
 
   # Fix theme info
   _config="${srcdir}/${_name}/theme.conf"

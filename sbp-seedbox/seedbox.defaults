@@ -1,1 +1,3 @@
+# Managed by sbp
+# vim:ft=sh
 export EDITOR='/usr/bin/nvim'

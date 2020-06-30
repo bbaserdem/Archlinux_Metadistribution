@@ -1,8 +1,8 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
 pkgname=sbp-laptop
-pkgver=4.0
-pkgrel=7
+pkgver=4.1
+pkgrel=1
 pkgdesc="SBP Meta Package: Laptop setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -11,6 +11,7 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
   'laptop.bootconf'
   'laptop.boothook'
+  'laptop.loader'
   'laptop.cmdline'
   'laptop.crypttab'
   'laptop.fstab'
@@ -18,55 +19,43 @@ source=(
   'laptop.initrdtab'
   'laptop.install'
   'laptop.mkinitcpio'
-  'laptop.loader'
-  'laptop.refind'
-  'laptop.sbupdate')
-backup=(
-  'etc/crypttab'
-  'etc/crypttab.initrd'
-  'etc/fstab'
-  'etc/hostname'
-  'etc/mkinitcpio'
-  'boot/efi/EFI/Arch/refind_linux.conf'
-  'boot/efi/loader/loader.conf'
-  'boot/efi/loader/entries/arch.conf')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+  'laptop.refind')
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-homestation' 'sbp-server' 'sbp-workstation')
 package() {
   install=laptop.install
   # Create local config files
   install -dm 0755 "${pkgdir}/etc"
-  install -Dm 0644 laptop.crypttab   "${pkgdir}/etc/crypttab"
-  install -Dm 0644 laptop.fstab    "${pkgdir}/etc/fstab"
-  install -Dm 0644 laptop.hostname   "${pkgdir}/etc/hostname"
-  install -Dm 0644 laptop.initrdtab  "${pkgdir}/etc/crypttab.initrd"
-  install -Dm 0644 laptop.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
-  install -Dm 0644 laptop.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
+  install -Dm 0644 laptop.crypttab      "${pkgdir}/etc/crypttab"
+  install -Dm 0644 laptop.initrdtab     "${pkgdir}/etc/crypttab.initrd"
+  install -Dm 0644 laptop.fstab         "${pkgdir}/etc/fstab"
+  install -Dm 0644 laptop.hostname      "${pkgdir}/etc/hostname"
+  install -Dm 0644 laptop.mkinitcpio    "${pkgdir}/etc/mkinitcpio.conf"
   # Put in commandline kernel parameters
-  install -dm 0755 "${pkgdir}/etc/dracut.conf.d"
-  install -Dm 0644 laptop.cmdline  "${pkgdir}/etc/dracut.conf.d/sbp-local.conf"
+  install -dm 0755 "${pkgdir}/etc/cmdline.d"
+  install -Dm 0644 laptop.cmdline       "${pkgdir}/etc/cmdline.d/laptop.conf"
   # Create boot options
-  install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
-  install -Dm 0755 laptop.refind \
-    "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
+  install -dm 0755 "${pkgdir}/efi/EFI/Arch"
+  install -Dm 0755 laptop.refind        "${pkgdir}/efi/EFI/Arch/refind_linux.conf"
   # Currently; refind does not work; drop systemd-boot files
-  install -dm 0755 "${pkgdir}/boot/efi/loader/entries"
-  install -Dm 0755 laptop.loader   "${pkgdir}/boot/efi/loader/loader.conf"
-  install -Dm 0755 laptop.bootconf \
-    "${pkgdir}/boot/efi/loader/entries/arch.conf"
+  install -dm 0755 "${pkgdir}/efi/loader/entries"
+  install -Dm 0755 laptop.loader        "${pkgdir}/efi/loader/loader.conf"
+  install -Dm 0755 laptop.bootconf      "${pkgdir}/efi/loader/entries/arch.conf"
   install -dm 0755 "${pkgdir}/etc/pacman.d/hooks"
-  install -Dm 0755 laptop.boothook   "${pkgdir}/etc/pacman.d/hooks/10-sd.hook"
+  install -Dm 0755 laptop.boothook      "${pkgdir}/etc/pacman.d/hooks/10-sd.hook"
 
+  #---SPECIFIC HARDWARE
   # Early initrd ucode
-  depends=('intel-ucode')  # Graphics
+  depends=('intel-ucode')
+  # Graphics (intel)
   depends+=(
     'intel-media-driver'
     'mesa' 'mesa-demos' 'lib32-mesa' 'lib32-mesa-demos'
     'vulkan-intel' 'lib32-vulkan-intel')
-  # Power management
+  # Power management (fans are hardware)
   depends+=('tlp')
-  # System76 software
+  # Userspace stuff
   depends+=(
     'firmware-manager'
     'system76-acpi-dkms'
@@ -74,6 +63,5 @@ package() {
     'system76-driver'
     'system76-firmware-daemon')
   # Userspace stuff
-  depends+=('trezor-bridge-bin'         # Bitcoin wallet stuff
-    'cups' 'cups-pdf' 'cups-pk-helper') # Printing
+  depends+=('trezor-bridge-bin')
 }

@@ -11,7 +11,9 @@ pkggroups=(
   'video'
   'audio'
   'kvm'
-  'libvirt')
+  'libvirt'
+  'sys'
+  'deluge')
 prestr='sbp-base'
 
 systemd_services() {
@@ -24,18 +26,18 @@ systemd_services() {
   fi
   echo '['"${prestr}"']==> '${prstrn}' systemd services!'
   # Services
-  echo '['"${prestr}"']==> Enabling cron.'
+  echo '['"${prestr}"']==> '"${prstrn}"' cron.'
   /usr/bin/systemctl "${action}" fcron.service
-  echo '['"${prestr}"']==> Enabling MCE monitoring'
-  /usr/bin/systemctl enable rasdaemon.service
-  /usr/bin/systemctl enable ras-mc-ctl.service
-  echo '['"${prestr}"']==> '"${prstrn}"' bootup sounds.'
+  echo '['"${prestr}"']==> '"${prstrn}"' MCE monitoring'
+  /usr/bin/systemctl "${action}" rasdaemon.service
+  /usr/bin/systemctl "${action}" ras-mc-ctl.service
+  echo '['"${prestr}"']==> '"${prstrn}"' bootup sound effects.'
   /usr/bin/systemctl "${action}" canberra-system-bootup.service
-  echo '['"${prestr}"']==> Enabling periodic trimming.'
-  /usr/bin/systemctl enable fstrim.timer
-  echo '['"${prestr}"']==> Enabling snapper snapshots.'
-  /usr/bin/systemctl enable snapper-cleanup.timer
-  /usr/bin/systemctl enable snapper-timeline.timer
+  echo '['"${prestr}"']==> '"${prstrn}"' periodic trimming.'
+  /usr/bin/systemctl "${action}" fstrim.timer
+  echo '['"${prestr}"']==> '"${prstrn}"' snapper snapshots.'
+  /usr/bin/systemctl "${action}" snapper-cleanup.timer
+  /usr/bin/systemctl "${action}" snapper-timeline.timer
   echo '['"${prestr}"']==> '"${prstrn}"' ACPI daemon.'
   /usr/bin/systemctl "${action}" acpid.service
   echo '['"${prestr}"']==> '"${prstrn}"' CPU scaling manager.'
@@ -55,9 +57,11 @@ systemd_services() {
   /usr/bin/systemctl "${action}" avahi-daemon.service
   echo '['"${prestr}"']==> '"${prstrn}"' Network file share protocol'
   /usr/bin/systemctl "${action}" nfs-server.service
-  echo '['"${prestr}"']==> Enabling libvirt services.'
-  /usr/bin/systemctl enable libvirtd.service
-  /usr/bin/systemctl enable virtlogd.service
+  echo '['"${prestr}"']==> '"${prstrn}"' libvirt services.'
+  /usr/bin/systemctl "${action}" libvirtd.service
+  /usr/bin/systemctl "${action}" virtlogd.service
+  echo '['"${prestr}"']==> '"${prstrn}"' CUPS daemon.'
+  /usr/bin/systemctl "${action}" org.cups.cupsd.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }
@@ -132,6 +136,9 @@ post_upgrade() {
   # Resolvconf
   echo '['"${prestr}"']==> Updating resolvconf'
   /usr/bin/resolvconf -u
+
+  # Services
+  systemd_services enable
 
   echo '['"${prestr}"']==> Upgrade done!'
 }

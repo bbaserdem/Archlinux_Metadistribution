@@ -38,7 +38,7 @@ package() {
   #---SPECIFIC HARDWARE
   # Early initrd ucode
   depends=('amd-ucode')
-  # Graphics
+  # Graphics (AMD)
   depends=(
     'mesa' 'mesa-demos' 'lib32-mesa' 'lib32-mesa-demos'
     'mesa-vdpau' 'lib32-mesa-vdpau'
@@ -46,10 +46,7 @@ package() {
     'libdrm' 'lib32-libdrm'
     'xf86-video-amdgpu')
   # OpenCL
-  depends+=(
-    'libclc'
-    'opencl-mesa' 'lib32-opencl-mesa'
-  )
+  depends+=('libclc' 'opencl-mesa' 'lib32-opencl-mesa')
   # Vulkan
   depends+=(
     'amdvlk'
@@ -64,4 +61,6 @@ package() {
     'tlp')          # Power management
   # Need this for managing windows (in dual boot mode
   depends+=('mtools' 'ntfs-3g')
+  # Userspace stuff
+  depends+=('trezor-bridge-bin')
 }

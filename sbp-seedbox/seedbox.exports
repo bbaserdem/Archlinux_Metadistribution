@@ -1,0 +1,9 @@
+# Managed by sbp
+# vim:ft=exports
+# Allow access to main folder
+/srv/nfs            192.168.1.0/24(rw,sync,crossmnt,fsid=0)
+/srv/nfs/seedbox    192.168.1.0/24(ro,sync,insecure)
+/srv/nfs/seedbox    sbp-homestation(rw,sync,insecure)
+/srv/nfs/seedbox    sbp-workstation(rw,sync,insecure)
+/srv/nfs/seedbox    sbp-laptop(rw,sync,insecure)
+/srv/nfs/seedbox    sbp-server(rw,sync,insecure)
