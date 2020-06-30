@@ -24,3 +24,5 @@ LABEL=Windows10                 /media/windows  ntfs-3g defaults,nls=utf8,umask=
 /efi/EFI/Gentoo                 /media/gentoo/boot          none    defaults,bind                                                                                   0       0
 /home                           /media/gentoo/home          none    defaults,rbind                                                                                  0       0
 /opt                            /media/gentoo/opt           none    defaults,bind                                                                                   0       0
+# External NFS shares
+sbp-seedbox:/seedbox            /media/Seedbox              nfs     noauto,user,_netdev,bg,nofail                                                                   0       0
