@@ -1,8 +1,8 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
 pkgname=sbp-homestation
-pkgver=4.0
-pkgrel=7
+pkgver=4.1
+pkgrel=1
 pkgdesc="SBP Meta Package: Homestation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -16,16 +16,8 @@ source=(
   'homestation.initrdtab'
   'homestation.install'
   'homestation.mkinitcpio'
-  'homestation.refind'
-  'homestation.sbupdate')
-backup=(
-  'etc/crypttab'
-  'etc/crypttab.initrd'
-  'etc/fstab'
-  'etc/hostname'
-  'etc/mkinitcpio.conf'
-  'boot/efi/EFI/Arch/refind_linux.conf')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+  'homestation.refind')
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server')
 package() {
@@ -37,14 +29,13 @@ package() {
   install -Dm 0644 homestation.fstab        "${pkgdir}/etc/fstab"
   install -Dm 0644 homestation.hostname     "${pkgdir}/etc/hostname"
   install -Dm 0644 homestation.mkinitcpio   "${pkgdir}/etc/mkinitcpio.conf"
-  install -Dm 0644 homestation.sbupdate     "${pkgdir}/etc/sbupdate.local.conf"
   # Put in commandline kernel parameters
-  install -dm 0755 "${pkgdir}/etc/dracut.conf.d"
-  install -Dm 0644 homestation.cmdline      "${pkgdir}/etc/dracut.conf.d/sbp-local.conf"
-  # Create boot options
-  install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
-  install -Dm 0755 homestation.refind \
-    "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
+  install -dm 0755 "${pkgdir}/etc/cmdline.d"
+  install -Dm 0644 homestation.cmdline      "${pkgdir}/etc/cmdline.d/homestation.conf"
+  # Create boot menu options
+  install -Dm 0755 homestation.refind       "${pkgdir}/boot/refind_linux.conf"
+
+  #---SPECIFIC HARDWARE
   # Early initrd ucode
   depends=('amd-ucode')
   # Graphics
@@ -68,8 +59,9 @@ package() {
     'vulkan-mesa-layers'
     'vulkan-radeon')
   # Power management
-  depends+=('nbfc'  # Don't have better options for this laptop
+  depends+=(
+    'nbfc'  # Don't have better options for this laptop
     'tlp')          # Power management
-  # Need this for managing windows
+  # Need this for managing windows (in dual boot mode
   depends+=('mtools' 'ntfs-3g')
 }

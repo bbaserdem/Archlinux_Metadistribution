@@ -1,8 +1,8 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
 pkgname=sbp-gui
-pkgver=4.0
-pkgrel=9
+pkgver=5.0
+pkgrel=1
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -11,18 +11,188 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=('gui.install')
 sha256sums=(SKIP)
 package() {
-    depends=('sbp-base')
-    install=gui.install
-    #---Login manager
-    depends+=('sddm')
-    #---Input methods
-    depends+=('ibus' 'ibus-m17n')
-    #---Generic needs
-    depends+=(
-        'sbp-apps'          # General use applications
-        'sbp-latex'         # Texlive distribution
-        'sbp-programming'   # Applications to use for programming
-        'sbp-themes'        # Desktop themeing in general
-        'sbp-virtual'       # Virtualizing other OS's
+  depends=('sbp-base')
+  install=gui.install
+  #---Login manager
+  depends+=('sddm')
+  #---Input methods
+  depends+=('ibus' 'ibus-m17n')
+  #---Generic needs
+  depends+=(
+    'sbp-apps'      # General use applications
+    'sbp-latex'     # Texlive distribution
+    'sbp-programming'   # Applications to use for programming
+    'sbp-themes'    # Desktop themeing in general
+    'sbp-virtual'     # Virtualizing other OS's
+  )
+  #---GUI applications
+  depends+=(
+    'audacity'                  # Sound editing
+    'blender'                   # 3D modelling
+    'darktable'                 # RAW editing
+    'firefox' 'qutebrowser'     # Browser
+    'gimp'                      # Image editing
+    'hamsket'                   # Login aggregator
+    'imv'  'ristretto'          # Image viewer
+    'inkscape'                  # Vector image editor
+    'kitty'                     # Terminal emulator
+    'kodi' 'kodi-wayland'       # Media center
+    'libreoffice-fresh'         # Office suite
+    'pdfsam'                    # Document editor
+    'picard'                    # Music tagger
+    'smplayer' 'smtube' 'mpv'   # Video player
+    'spyder'                    # Python coding
+    'musescore'                 # Tab editor
+    'virt-manager'              # Virtual machine viewer (libvirt)
+    'zoom' 'zoom-firejail'      # Conferance call
+    'zotero'                    # Annotation manager
     )
+  # PDF viewer
+  depends+=(
+    'zathura'
+    'zathura-cb'
+    'zathura-djvu'
+    'zathura-pdf-mupdf'
+    'zathura-ps')
+  # File browser
+  depends+=(
+    'thunar'
+    'tumbler'
+    'ffmpegthumbnailer'
+    'thunar-media-tags-plugin'
+    'thunar-archive-plugin'
+    'raw-thumbnailer'
+    'gvfs')
+  #---Tray applications
+  depends+=(
+    'blueman'                   # Bluetooth management
+    'deluge-gtk'                # Torrent client
+    'udiskie'                   # Mount manager
+    'uget'                      # Download manager
+    'syncthing-gtk'             # Syncthing status
+    )
+  #---System tools
+  depends+=(
+    'baobab'                    # Disk space analyser
+    'gparted'                   # Partition editor
+    'gtk2fontsel'               # Font viewer
+    'gucharmap'                 # Character viewer
+    'pavucontrol'               # Pulse audio control
+    'polkit-gnome'              # PolicyKit prompt
+    'snapper-gui'               # Snapshot management
+    'system-config-printer'     # Print manager
+    'imagemagick'               # Commandline image editor
+    'dex'                       # Autostart launcher
+    'light'                     # Brightness controls
+    )
+
+  #---THEMING
+  #---Fonts
+  depends=(
+    'noto-fonts-emoji'        # Emoji fonts
+    'ttf-nerd-fonts-symbols-mono'   # Glyphs
+    'ttf-liberation'        # Windows compatibility font
+    'ttf-caladea'           # Office fonts alternative
+    'ttf-carlito'           # Georgia alternative
+    'ttf-croscore'          # Helvetica, Times and courier alternative
+    'ttf-inconsolata'         # Status font   (statusbar)
+    'ttf-fira-code'         # Ligature font (monospace)
+    'ttf-droid'           # Font for sans (sans-serif|sans)
+    'adobe-source-serif-pro-fonts'  # Serif font  (serif)
+    )
+  #---Icons
+  depends+=(
+    'papirus-icon-theme'
+    'breeze-hacked-cursor-theme'
+    'vimix-cursors'
+  )
+  #---Login manager
+  depends+=('chili-sddm-theme')
+  #---GTK and QT themes
+  depends+=(
+    'arc-gtk-theme'
+    'kvantum-qt5'
+    'kvantum-theme-arc')
+  
+  #---BSPWM
+  depends+=(
+    'autorandr'                 # Monitor management
+    'bspwm'                     # Binary split partitioning WM
+    'dunst'                     # Notification daemon
+    'feh'                       # Wallpaper management
+    'unclutter'                 # Hide mouse when idle
+    'i3lock-color'              # Screen locker
+    'maim'                      # Screenshot utility
+    'polybar'                   # AUR: Status bar
+    'redshift'                  # Screen dimmer
+    'rofi' 'rofi-pass'          # Application launcher
+    'rofi-file-browser-extended'
+    'sxhkd'                     # Simple X hotkey daemon
+    'xfce4-power-manager'       # Battery notifications
+    'xss-lock'                  # Locks screen to power & DPMS events
+    'picom'                     # Compositor for window effects
+    )
+
+  #---SWAY
+  depends+=(
+    'dex'                       # Autostart launcher
+    'grim'                      # Screenshot taking
+    'i3blocks'                  # Swaybar info parsing
+    'kanshi'                    # Hotplug screen manager
+    'mako'                      # Notification daemon
+    'slurp'                     # Region selector, to aid screenshots
+    'sway'                      # Wayland compositor
+    'swaybg'                    # Background setter
+    'swaylock'                  # Screen-locker
+    'swayidle'                  # Idle handler
+    'libappindicator-gtk3'      # System-tray
+    'waybar'                    # Info-bar
+    'wf-recorder'               # Screen video grabbing
+    'wl-clipboard'              # Clipboard utility
+    'wofi'                      # App launcher
+    )
+
+  #---XORG
+  depends+=(
+    'xdo'
+    'xdotool'
+    'xf86-input-libinput'
+    'xf86-video-vesa'
+    'xkb-switch'
+    'xorg-font-util'
+    'xorg-fonts-misc'
+    'xorg-mkfontdir'
+    'xorg-server'
+    'xorg-server-common'
+    'xorg-setxkbmap'
+    'xorg-xcursorgen'
+    'xorg-xdpyinfo'
+    'xorg-xdriinfo'
+    'xorg-xev'
+    'xorg-xgamma'
+    'xorg-xinput'
+    'xorg-xkbcomp'
+    'xorg-xkbutils'
+    'xorg-xkill'
+    'xorg-xmodmap'
+    'xorg-xprop'
+    'xorg-xrandr'
+    'xorg-xrdb'
+    'xorg-xrefresh'
+    'xorg-xset'
+    'xorg-xsetroot'
+    'xorg-xvinfo'
+    'xorg-xwininfo'
+    'xorgproto'
+    'xsel'
+    )
+
+  #---WAYLAND
+  depends+=(
+    'wayland'
+    'wlroots'
+    'xorg-server-xwayland'
+    'ydotool'
+    )
+
 }

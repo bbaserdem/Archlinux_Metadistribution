@@ -1,8 +1,8 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
 pkgname=sbp-base
-pkgver=4.0
-pkgrel=6
+pkgver=5.0
+pkgrel=1
 pkgdesc="SBP Meta Package: base system"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -334,7 +334,9 @@ package() {
   ln -sf "/etc/sbkeys/db.esl" "${pkgdir}/etc/refind.d/keys/refind_local.esl"
   ln -sf "/etc/sbkeys/db.crt" "${pkgdir}/etc/refind.d/keys/refind_local.crt"
   ln -sf "/etc/sbkeys/db.cer" "${pkgdir}/etc/refind.d/keys/refind_local.cer"
-
+  # Create mount targets for ESP and boot directory
+  install -dm 0755 "${pkgdir}/efi"
+  install -dm 0755 "${pkgdir}/boot"
   depends=(
     'efibootmgr'            # Write to bios
     'efitools'              # EFI manip tools

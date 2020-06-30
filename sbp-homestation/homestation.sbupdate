@@ -1,6 +1,0 @@
-#!/bin/bash
-# Managed by sbp
-CMDLINE_DEFAULT="${CMDLINE_DEFAULT} mem_encrypt=off i8042.reset"
-CMDLINE_DEFAULT="${CMDLINE_DEFAULT} rd.luks.name=da9c7226-d355-4dcd-a40a-32418f052f9b=cryptlvm"
-CMDLINE_DEFAULT="${CMDLINE_DEFAULT} root=/dev/Homestation/Arch rootflags=subvol=@root"
-CMDLINE_DEFAULT="${CMDLINE_DEFAULT} resume=/dev/Homestation/Arch resume_offset=10880182"
