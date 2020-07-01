@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-workstation
 pkgver=4.1
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Workstation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -60,8 +60,7 @@ package() {
   depends+=(
     'maestral' 'maestral-qt'            # File synching
     'nut' 'nut-monitor'                 # UPS response
-    'cups' 'cups-pdf' 'cups-pk-helper'  # Printing stuff
-    'remmina' 'freerdp'                 # Remotes management
+    'remmina' 'freerdp'                 # Remote management
     )
   # Need this for managing windows (In virtual machine)
   depends+=('mtools' 'ntfs-3g')

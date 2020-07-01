@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-base
 pkgver=5.0
-pkgrel=4
+pkgrel=6
 pkgdesc="SBP Meta Package: base system"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -11,6 +11,7 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
   'base.install'
   'base.root-ssh'
+  'base.root-git'
   'admin.etckeeper'
   'admin.reflect-service'
   'admin.reflect-timer'
@@ -26,7 +27,8 @@ source=(
   'uefi.refind-hook')
 sha256sums=(SKIP SKIP SKIP SKIP SKIP
             SKIP SKIP SKIP SKIP SKIP
-            SKIP SKIP SKIP SKIP SKIP)
+            SKIP SKIP SKIP SKIP SKIP
+            SKIP)
 package() {
   install=base.install
   provides=('vim')
@@ -38,6 +40,7 @@ package() {
   install -dm 0750 "${pkgdir}/root/"
   install -dm 0700 "${pkgdir}/root/.ssh"
   install -Dm 0600 base.root-ssh            "${pkgdir}/root/.ssh/config"
+  install -Dm 0600 base.root-git            "${pkgdir}/root/.gitconfig"
   #---Packages in gentoo base group
   depends+=('rsync' 'diffutils' 'wget' 'man-pages' 'device-mapper' 'less'
     'openssh' 'inetutils' 'busybox' 'kbd' )
@@ -225,6 +228,7 @@ package() {
   #---Network Applications
   depends+=(
     'aria2'
+    'cups' 'cups-pdf' 'cups-pk-helper'
     'deluge'
     'isync'
     'msmtp'
