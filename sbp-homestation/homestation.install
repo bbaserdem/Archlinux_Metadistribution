@@ -55,7 +55,6 @@ post_install() {
   fi
 
   echo '['"${prestr}"']==> Installation done!'
-  post_upgrade
 }
 
 post_upgrade() {

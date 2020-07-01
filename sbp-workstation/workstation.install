@@ -41,7 +41,6 @@ post_install() {
   echo '['"${prestr}"']==> Installing meta package...'
   systemd_services enable
   echo '['"${prestr}"']==> Installation done!'
-  post_upgrade
 }
 
 post_upgrade() {

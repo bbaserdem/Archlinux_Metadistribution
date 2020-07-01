@@ -21,7 +21,6 @@ post_install() {
   # Services
   systemd_services enable
   echo '['"${prestr}"']==> Installation done!'
-  post_upgrade
 }
 
 post_upgrade() {

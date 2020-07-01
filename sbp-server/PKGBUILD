@@ -26,20 +26,17 @@ package() {
     install=server.install
     # Create local config files
     install -dm 0755 "${pkgdir}/etc"
-    install -Dm 0644 server.crypttab   "${pkgdir}/etc/crypttab"
-    install -Dm 0644 server.fstab      "${pkgdir}/etc/fstab"
-    install -Dm 0644 server.hostname   "${pkgdir}/etc/hostname"
-    install -Dm 0644 server.initrdtab  "${pkgdir}/etc/crypttab.initrd"
-    install -Dm 0644 server.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
-    install -Dm 0644 server.sbupdate   "${pkgdir}/etc/sbupdate.local.conf"
     install -dm 0755 "${pkgdir}/etc/cmdline.d"
-    install -Dm 0644 server.cmdline    "${pkgdir}/etc/cmdline.d/sbp.conf"
     install -dm 0755 "${pkgdir}/etc/exports.d"
-    install -Dm 0644 server.exports    "${pkgdir}/etc/exports.d/sbp.exports"
-    # Create boot options
-    install -dm 0755 "${pkgdir}/boot/efi/EFI/Arch"
-    install -Dm 0755 server.refind \
-        "${pkgdir}/boot/efi/EFI/Arch/refind_linux.conf"
+    install -dm 0755 "${pkgdir}/boot"
+    install -Dm 0644 server.crypttab    "${pkgdir}/etc/crypttab"
+    install -Dm 0644 server.fstab       "${pkgdir}/etc/fstab"
+    install -Dm 0644 server.hostname    "${pkgdir}/etc/hostname"
+    install -Dm 0644 server.initrdtab   "${pkgdir}/etc/crypttab.initrd"
+    install -Dm 0644 server.mkinitcpio  "${pkgdir}/etc/mkinitcpio.conf"
+    install -Dm 0755 server.refind      "${pkgdir}/boot/refind_linux.conf"
+    install -Dm 0644 server.cmdline     "${pkgdir}/etc/cmdline.d/sbp.conf"
+    install -Dm 0644 server.exports     "${pkgdir}/etc/exports.d/server.exports"
     # Early initrd ucode
     depends=('intel-ucode')
     # Graphics
@@ -48,9 +45,7 @@ package() {
         'mesa' 'mesa-demos'
         'vulkan-intel')
     depends=(
-        'apache'            # Zeroconf server
-        'kodi'              # Media file server
-        'mariadb'           # Database management
-        'nfs-utils'         # Network file share
+        'mariadb'               # Database management
+        'syncthing-relaysrv'    # Syncthing relay discovery
     )
 }

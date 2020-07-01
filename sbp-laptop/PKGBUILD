@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-laptop
 pkgver=4.1
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Laptop setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -44,6 +44,9 @@ package() {
   install -Dm 0755 laptop.bootconf      "${pkgdir}/efi/loader/entries/arch.conf"
   install -dm 0755 "${pkgdir}/etc/pacman.d/hooks"
   install -Dm 0755 laptop.boothook      "${pkgdir}/etc/pacman.d/hooks/10-sd.hook"
+  # Create mountpoints
+  install -dm 0755 "${pkgdir}/media/gentoo"
+  install -dm 0755 "${pkgdir}/media/seedbox"
 
   #---SPECIFIC HARDWARE
   # Early initrd ucode

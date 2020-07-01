@@ -12,7 +12,9 @@
 UUID=585A-EF43                  /efi            vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
 /efi/EFI/Arch                   /boot           none    defaults,bind                                                                                               0       2
 /swap/swapfile                  none            swap    defaults                                                                                                    0       0
+
 # NFS shares
 /home/sbp/Share                 /srv/nfs/sbp    none    bind,nofail                                                                                                 0       0
-# Entry to auto-mount hopper at /home
+
+# External shares
 batu@hopper.cshl.edu:/home/batu /home/hopper    fuse.sshfs  x-systemd.automount,_netdev,user,idmap=user,follow_symlinks,identityfile=/home/sbp/.ssh/id_rsa_HOPPER,allow_other,default_permissions,uid=1000,gid=1000 0 0

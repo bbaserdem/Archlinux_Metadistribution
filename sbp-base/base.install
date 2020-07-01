@@ -112,7 +112,6 @@ post_install() {
   /usr/bin/resolvconf -u
 
   echo '['"${prestr}"']==> Installation done!'
-  post_ugrade
 }
 
 post_upgrade() {

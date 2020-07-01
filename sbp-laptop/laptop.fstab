@@ -10,13 +10,19 @@
 /dev/mapper/Laptop-Opt      /opt        ext4    defaults                                                                                                    0       0
 /dev/mapper/Laptop-Home     /home       xfs     rw,relatime,attr2,inode64,noquota                                                                           0       2
 UUID=A0B4-8ADB              /efi        vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
-/efi/EFI/Arch               /boot       vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
+/efi/EFI/Arch               /boot       none    defaults,bind                                                                                               0       2
 /swap/swapfile              none        swap    defaults                                                                                                    0       0
+
 # NFS shares
 /home/sbp/Share             /srv/nfs/sbp    none    bind,nofail                                                                                             0       0
+
 # Gentoo
 /dev/mapper/Laptop-Gentoo   /media/gentoo               btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@root                             0       0
 /dev/mapper/Laptop-Gentoo   /media/gentoo/.snapshots    btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@snapshots                        0       0
-/boot/efi                   /media/gentoo/boot/efi      none    defaults,bind                                                                               0       0
+/efi                        /media/gentoo/efi           none    defaults,bind                                                                               0       0
+/efi/EFI/Gentoo             /media/gentoo/boot          none    defaults,bind                                                                               0       0
 /home                       /media/gentoo/home          none    defaults,bind                                                                               0       0
 /opt                        /media/gentoo/opt           none    defaults,bind                                                                               0       0
+
+# External NFS shares
+sbp-seedbox:/seedbox        /media/seedbox              nfs     noauto,user,_netdev,bg,nofail                                                               0       0

@@ -18,14 +18,14 @@ UUID=CD80-E558                  /boot/efi       vfat    rw,relatime,fmask=0022,d
 /home                           /media/gentoo/home          none    defaults,rbind                                                                                  0       0
 /boot/efi                       /media/gentoo/boot/efi      none    defaults,bind                                                                                   0       0
 
+# External NFS shares
+sbp-seedbox:/seedbox            /media/seedbox              nfs     noauto,user,_netdev,bg,nofail                                                                   0       0
+
 # NFS to outside
-/home                   /srv/nfs/home                   none    defaults,rbind 0 0
+/home/sbp/Share         /srv/nfs/sbp                    none    defaults,rbind 0 0
 /home/sbp/Music         /srv/nfs/media/Music-Home       none    defaults,rbind 0 0
 /home/sbp/Videos        /srv/nfs/media/Videos-Home      none    defaults,rbind 0 0
 /home/sbp/Pictures      /srv/nfs/media/Pictures-Home    none    defaults,rbind 0 0
 /home/archive/Music     /srv/nfs/media/Music-Archive    none    defaults,rbind 0 0
 /home/archive/Videos    /srv/nfs/media/Videos-Archive   none    defaults,rbind 0 0
 /home/archive/Pictures  /srv/nfs/media/Videos-Archive   none    defaults,rbind 0 0
-
-# Mount seedbox torrents here
-sbp-seedbox:/torrents   /media/seedbox  nfs _netdev,noauto,x-systemd.automount,x-systemd.mount-timeout=10,timeo=14,x-systemd.idle-timeout=1min  0   0
