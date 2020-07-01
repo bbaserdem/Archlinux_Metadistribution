@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-base
 pkgver=5.0
-pkgrel=3
+pkgrel=4
 pkgdesc="SBP Meta Package: base system"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -77,6 +77,7 @@ package() {
     'logrotate'
     'lsb-release'
     'mlocate'
+    'ncdu'
     'neofetch'
     'rasdaemon'
     'supervisor'
@@ -160,6 +161,7 @@ package() {
     'dmidecode'
     'hdparm'
     'lshw'
+    'smartmontools'
     'stress'
     'powertop')
   #---Power management
@@ -202,6 +204,7 @@ package() {
     'geoclue2'
     'iptables'
     'iwd'
+    'nethogs'
     'nftables'
     'nmap'
     'openbsd-netcat'
