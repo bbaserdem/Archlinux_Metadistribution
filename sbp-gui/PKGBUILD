@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gui
 pkgver=5.0
-pkgrel=4
+pkgrel=5
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -66,6 +66,7 @@ package() {
   #---System tools
   depends+=(
     'baobab'                    # Disk space analyser
+    'cadence'                   # JACK control panel
     'gparted'                   # Partition editor
     'gtk2fontsel'               # Font viewer
     'gucharmap'                 # Character viewer

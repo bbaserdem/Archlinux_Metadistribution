@@ -13,7 +13,9 @@ pkggroups=(
   'kvm'
   'libvirt'
   'sys'
-  'deluge')
+  'deluge'
+  'realtime'
+)
 prestr='sbp-base'
 
 systemd_services() {
