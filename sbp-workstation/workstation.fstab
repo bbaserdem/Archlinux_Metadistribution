@@ -11,7 +11,7 @@
 /dev/mapper/Workstation-Opt     /opt            ext4    defaults                                                                                                    0       0
 UUID=585A-EF43                  /efi            vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
 /efi/EFI/Arch                   /boot           none    defaults,bind                                                                                               0       2
-/swap/swapfile                  none            swap    defaults                                                                                                    0       0
+/swap                           none            swap    defaults                                                                                                    0       0
 
 # NFS shares
 /home/sbp/Share                 /srv/nfs/sbp    none    bind,nofail                                                                                                 0       0

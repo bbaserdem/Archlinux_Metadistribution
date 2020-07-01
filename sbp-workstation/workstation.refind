@@ -1,2 +1,2 @@
 # Managed by sbp
-"Boot with default options" "rd.luks.name=bee8e6f1-2687-49e4-b86d-0be90db5bb5d=cryptlvm root=/dev/Workstation/Arch rootflags=subvol=@root resume=/dev/Workstation/Arch resume_offset=24482448"
+"Boot with default options" "rd.luks.name=bee8e6f1-2687-49e4-b86d-0be90db5bb5d=cryptlvm root=/dev/Workstation/Arch rootflags=subvol=@root resume=/dev/Workstation/Arch resume_offset=55470452736"

@@ -4,4 +4,4 @@ rd.debug
 rd.info
 log_buf_len=1M
 resume=/dev/Workstation/Arch
-resume_offset=24482448
+resume_offset=55470452736
