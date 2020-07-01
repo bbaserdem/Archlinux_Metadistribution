@@ -4,5 +4,5 @@ rd.debug
 rd.info
 log_buf_len=1M
 resume=/dev/Laptop/Arch
-resume_offset=16400
+resume_offset=17682
 ec_sys.write_support=1
