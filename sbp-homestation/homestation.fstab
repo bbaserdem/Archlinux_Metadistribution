@@ -11,10 +11,11 @@
 /dev/mapper/Homestation-Opt     /opt            ext4    defaults                                                                                                    0       0
 UUID=7653-3DB8                  /efi            vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
 /efi/EFI/Arch                   /boot           none    defaults,bind                                                                                               0       2
-/swap/swapfile                  none            swap    defaults                                                                                                    0       0
+/swap                           none            swap    defaults                                                                                                    0       0
 
 # The hard-drive partitions
 /dev/mapper/Homedata-Archive    /home/archive   ext4    defaults                                                                                                    0       2
+/dev/mapper/Homedata-Virtual    /media/virtual  ext4    ro,defaults                                                                                                 0       2
 
 # NFS share external
 /home/sbp/Share                 /srv/nfs/sbp    none    bind,nofail                                                                                                 0       0

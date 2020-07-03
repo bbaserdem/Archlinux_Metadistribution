@@ -4,6 +4,6 @@ rd.debug
 rd.info
 log_buf_len=1M
 resume=/dev/Homestation/Arch
-resume_offset=10880182
+resume_offset=10718921
 mem_encrypt=off
 i8042.reset
