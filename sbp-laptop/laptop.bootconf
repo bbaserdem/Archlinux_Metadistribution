@@ -4,4 +4,4 @@ version     Stable
 linux       /EFI/Arch/vmlinuz-linux
 initrd      /EFI/Arch/intel-ucode.img
 initrd      /EFI/Arch/initramfs-linux.img
-options     rd.luks.name=ab557439-23a5-41e4-ba0e-dbb7f73131ce=cryptlvm root=/dev/Laptop/Arch rootflags=subvol=@root resume=/dev/Laptop/Arch resume_offset=16400 ec_sys.write_support=1
+options     rd.luks.name=ab557439-23a5-41e4-ba0e-dbb7f73131ce=cryptlvm root=/dev/Laptop/Arch rootflags=subvol=@root resume=/dev/Laptop/Arch resume_offset=128203 ec_sys.write_support=1
