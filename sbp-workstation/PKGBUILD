@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-workstation
 pkgver=4.1
-pkgrel=4
+pkgrel=11
 pkgdesc="SBP Meta Package: Workstation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -35,8 +35,10 @@ package() {
   # Create boot menu options
   install -Dm 0755 workstation.refind       "${pkgdir}/boot/refind_linux.conf"
   # Create mountpoints
+  install -dm 0755 "${pkgdir}/media/arch"
   install -dm 0755 "${pkgdir}/media/gentoo"
   install -dm 0755 "${pkgdir}/media/seedbox"
+  install -dm 0700 "${pkgdir}/swap"
   
   #---SPECIFIC HARDWARE
   # Early initrd ucode
