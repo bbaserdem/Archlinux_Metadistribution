@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Remove
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Cleaning package cache (keeping the latest 2)…
+When = PostTransaction
+Exec = /usr/bin/paccache --remove --verbose --keep 2

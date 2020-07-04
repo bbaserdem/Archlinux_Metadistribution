@@ -29,7 +29,7 @@ sudo dd if=Downloads/archlinux-20XX.YY.ZZ-ARCH.iso of=/dev/sdX bs=4M status=prog
 
 ## Booting to live-usb
 Boot from the usb from there.
-May want to run `loadkeys dvorak`
+(May want to run `loadkeys dvorak`)
 
 ## Clean drives (Optional)
 
@@ -44,8 +44,9 @@ cryptsetup close container
 
 Usually, will want to do GPT, with `parted /dev/DRIVE mklabel gpt`.
 
-To create ESP, the following works using gdisk.
+### EFI System Partition
 
+Run the following;
 ```
 gdisk /dev/xxx
 o
@@ -56,8 +57,9 @@ n
 ef00
 ```
 
-To create LUKS partitions, only the partition type needs to change
+### LUKS Partition
 
+Run the following
 ```
 gdisk /dev/xxx
 o
@@ -68,24 +70,26 @@ n
 8309
 ```
 
-## LUKS
+## Encryption
 
 I use LUKS to encrypt my logical volumes.
 
-### Decrypting container
-To decrypt a luks container, run the following;
+### Decrypt LUKS container
+
+The command to **open** a LUKS container is as follows;
 ```
 cryptsetup luksOpen [--key-file /path/to.keyfile] <device> <mapper-name>
 ```
 
-### Random key generation
+### Random Key generation
 Random keys can be generated using
 ```
 dd bs=512 count=4 if=/dev/random of=<OUTPUT_FILE> iflag=fullblock
 ```
 
 ### Creating new container
-To create LUKS containers, the following command should be enough.
+
+I use the following to create a LUKS partition
 ```
 cryptsetup \
     --cipher aes-xts-plain64 \
@@ -97,31 +101,34 @@ cryptsetup \
     luksformat /dev/xxx2
 ```
 
-### Adding additional keys
+### Adding keys to existing container
+
 To add keys from a keyfile (such as the one you randomly generated);
 ```
-cryptsetup [--key-slot X] luksAddKey <PART> /path/to.keyfile
+cryptsetup [--key-slot X] luksAddKey <PART> [/path/to.keyfile]
 ```
-Omit the keyfile argument to just input using self.
 
-### Backup the container header
-To create an image of the header as a backup, run
+### Backup container header
+
+To create an image of the header as a backup, run;
 ```
 cryptsetup luksHeaderBackup <PART> --header-backup-file <FILE>.img
 ```
 
-## LVM
-LVM allows to be flexible with the partitioning layout.
-I usually use LVM on LUKS; because it makes it such that all partitions are
-encryted using one container.
+## Logical Volumes
 
-### Create container
+LVM allows to be flexible with the partitioning layout.
+Flexibility also allows encrypting many partitions with one container.
+
+### Create volume groups
+
 ```
+# Device is usually from unlocked LUKS; which is /dev/mapper/<name>
 pvcreate <device>
 vgcreate <group-name> <device>
 ```
 
-### Create logical Volumes
+### Creating Logical Volumes
 
 After LVM is created, create logical volumes either by hard coding the size;
 ```
@@ -130,25 +137,15 @@ lvcreate --size <size;10G> <group-name> --name <volume-name>
 or by interpolation
 ```
 lvcreate --extent <size;100%FREE> <group-name> --name <volume-name>
-
 ```
 
 ## File-systems
 
 ### FAT32
 
-The boot partition should be fat32
+The ESP should be fat32
 ```
 mkfs.fat -F 32 -n <name> <partition>
-```
-
-### Swap
-
-#### Partition
-To declare swap space;
-```
-mkswap -L Swapspace <device>
-swapon <device>
 ```
 
 ### BTRFS
@@ -159,10 +156,11 @@ mkfs.btrfs --label <part-label> <device>
 ```
 
 #### Swap-file using btrfs
+
 On kernels greater then 5.0; btrfs and swap files can be used.
-The swap file needs to be on a non-snapshotted volume; hence will need it's own
-subvolume.
-The swapfile needs to be generated as a 0 length file.
+The swap file needs to be on a non-snapshotted volume;
+hence will need it's own subvolume.
+The swapfile needs to be generated as a 0 length file;
 ```
 truncate -s 0 /swapfile/swap
 chattr +C /swapfile/swap
@@ -171,6 +169,18 @@ fallocate -l <SWAPSIZE> /swapfile/swap
 chmod 600 /swapfile/swap
 mkswap /swapfile/swap
 ```
+
+To resume from this swap file; the file extent needs to be calculated.
+```
+cd /tmp
+wget https://raw.githubusercontent.com/osandov/osandov-linux/master/scripts/btrfs_map_physical.c
+gcc -O2 -o btrfs_map_physical btrfs_map_physical.c
+sudo ./btrfs_map_physical <swap-file-on-btrfs>
+```
+Need to divide the `PHYSICAL OFFSET` (last column)
+of the first line (`FILE OFFSET` is 0)
+with pagesize, which is given by `getconf PAGESIZE`.
+That value needs to be used in the kernel parameter; `resume_offset=<VALUE>`.
 
 ### XFS
 
@@ -184,41 +194,52 @@ mkfs.xfs -L <partition-label> <volume>
 ## System layout
 
 I use btrfs on the system partition.
-The following layout I find to be most beneficial.
-These commands assume you are on arch, and the btrfs is on `/dev/Linux/Arch`
+The layout I like to use can be seen in my script, but displayed here;
 ```
-mount /dev/mapper/Linux-Arch /mnt
-btrfs subvolume create /mnt/@root
-btrfs subvolume create /mnt/@snapshots
-umount /mnt
+/mnt
+├── @root
+│   ├── (.snapshots): bind point for subvolume @snapshots
+│   ├── (boot)      : bind mount for ESP:/EFI/<OS-name>
+│   ├── (efi)       : mount point for ESP
+│   ├── (home)      : mount point for home partition
+│   ├── (opt)       : mount point for seperate opt partition; if used
+│   ├── srv
+│   ├── (swap)      : mount point for subvolume @swap
+│   └── var
+│       ├── abs
+│       ├── cache
+│       │   └── pacman
+│       │       └── pkg
+│       ├── lib
+│       │   ├──*libvirt
+│       │   ├── machines
+│       │   ├──*mysql
+│       │   └── portables
+│       ├── (log)   : mount point for subvolume @varlog
+│       └── tmp
+├── @snapshots
+├──*@swap
+│   └── swapfile
+└── @varlog
+* Copy on write disabled (with chattr +C <dir>)
+```
 
-mount -o rw,nodiscard,noatime,nodiratime,compress=lzo,space_cache,subvol=@root /dev/mapper/Linux-Root /mnt
-mkdir -p /mnt/{boot/efi,esp,home,.snapshots}
-mount -o rw,nodiscard,noatime,nodiratime,compress=lzo,space_cache,subvol=@snapshots /dev/mapper/Linux-Root /mnt/.snapshots
-mkdir -p /mnt/var/cache/pacman
-mkdir -p /mnt/var/lib
-btrfs subvolume create /mnt/swapfile
-btrfs subvolume create /mnt/var/abs
-btrfs subvolume create /mnt/var/cache/pacman/pkg
-btrfs subvolume create /mnt/var/lib/machines
-btrfs subvolume create /mnt/var/tmp
-btrfs subvolume create /mnt/var/log
-btrfs subvolume create /mnt/srv
-```
-
-I also usually mount the ESP at /boot/efi
-
-```
-mount <partition> /mnt/boot/efi
-```
+* Paranthesis indicates not a subvolume; but a directory (for mount points).
+* Asteriks indicates subvolumes for which CoW should be turned off.
 
 ## Installation
 
 The installation steps are custom to my personal repo.
+Most convenient way to install is to mount hard drive to a computer.
+If not; adding the repos to live environment should be sufficient.
+The command to install is `pacstrap <mnt-point> sbp-base [sbp-gui]`
 
-### Repositories
+WARNING: Do NOT install the `sbp-<comp.>` packages with pacstrap.
+The edited `/etc/fstab` will cause conflicts with the `base` packages.
 
-To add my own repo to the installation usb, use;
+### Personal repo
+
+To add my own repo to the installation usb, add the lines to `pacman.conf`;
 
 ```
 cat >>/etc/pacman.conf <<EOF
@@ -228,6 +249,9 @@ Server = https://s3.amazonaws.com/sbp-arch/repo
 EOF
 ```
 
+
+### Mirrorlist on live-usb
+
 To refresh sources, do a partial update, then update repo list
 
 ```
@@ -235,58 +259,39 @@ pacman -Sy
 pacman -S reflector
 reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 pacman -Sy
-pacstrap /mnt <MY-PACKAGES>
 ```
 
-### Keys
-To restore keys, use my special usb.
+## System configuration
+
+Couple more steps needs to be taken to fully customize the system.
+
+### SSH keys
+
+To restore keys, use the USB.
 ```
 gpg --pinentry-mode loopback --import <secret.subkey>
 cp -r <SSHKEYS> ~/.ssh
 chmod 700 ~/.ssh
 chmod 600 ~/.ssh/*
 ```
-There will be a tar file to do this in the future
 
-### Etc
-To restore etckeeper git files, I need to clone to temp then copy over all files;
-To do that, the root user needs my machine specific SSH keys from the user.
-My packagen should do this automatically, but if not;
-put this in the config line of the root user.
+### Etckeeper
 
-```
-Host github.com
-    User bbaserdem
-    IdentitiesOnly yes
-    IdentityFile /home/sbp/.ssh/id_ed25519_GITHUB
-```
-
-Then clone the repo to temporary location, and overwrite the directory.
+Clone the repo to temporary location, and overwrite the /etc directory.
 
 ```
 git clone <REPO> /tmp/etc
 cp -r /tmp/etc/. /etc/
 ```
 
-## Booting
-Several steps needs to be taken to ensure successful boot.
-
-### Fstab
-
-The fstab will be screwed up on generation. Still, from archiso, do;
-```
-genfstab -U /mnt >> /mnt/etc/fstab
-```
-
 ### rEFInd
 
-The main repo has scripts that will automatically load refind to `/esp/EFI/rEFInd`.
-The config needs to be hand-generated.
-After generation, use the following command to register refind in bios;
+On fresh installation; rEFInd will not be installed.
+Need to run refind-install script to install it to the EFI partition.
+Don't do this if installing from another computer (using external drive).
+
+To register rEFInd in BIOS; the following command can be used.
 ```
+# This example is for ESP on /dev/sda1. Adjust accordingly
 efibootmgr --create --disk /dev/sda --part 1 --loader /EFI/refind/refind_x64.efi --label "rEFInd Boot Manager" --verbose
 ```
-
-### Initramfs
-
-Need to generate a proper initramfs.

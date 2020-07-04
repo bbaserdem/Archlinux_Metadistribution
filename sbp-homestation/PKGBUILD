@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-homestation
 pkgver=4.1
-pkgrel=3
+pkgrel=8
 pkgdesc="SBP Meta Package: Homestation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -34,6 +34,8 @@ package() {
   install -Dm 0644 homestation.cmdline      "${pkgdir}/etc/cmdline.d/homestation.conf"
   # Create boot menu options
   install -Dm 0755 homestation.refind       "${pkgdir}/boot/refind_linux.conf"
+  # Create mount points for base of data
+  install -dm 0755 "${pkgdir}/media/arch"
 
   #---SPECIFIC HARDWARE
   # Early initrd ucode

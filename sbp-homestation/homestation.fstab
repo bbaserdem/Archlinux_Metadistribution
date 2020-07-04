@@ -7,11 +7,14 @@
 # <file system>                 <dir>           <type>  <options>                                                                                                   <dump>  <pass>
 /dev/mapper/Homestation-Arch    /               btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@root                                             0       0
 /dev/mapper/Homestation-Arch    /.snapshots     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@snapshots                                        0       0
+/dev/mapper/Homestation-Arch    /var/log        btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@varlog                                           0       0
+/dev/mapper/Homestation-Arch    /swap           btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@swap                                             0       0
+/dev/mapper/Homestation-Arch    /media/arch     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache                                                          0       0
 /dev/mapper/Homestation-Home    /home           xfs     rw,relatime,attr2,inode64,noquota                                                                           0       2
+/swap/swapfile                  none            swap    defaults                                                                                                    0       0
 /dev/mapper/Homestation-Opt     /opt            ext4    defaults                                                                                                    0       0
 UUID=7653-3DB8                  /efi            vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
 /efi/EFI/Arch                   /boot           none    defaults,bind                                                                                               0       2
-/swap                           none            swap    defaults                                                                                                    0       0
 
 # The hard-drive partitions
 /dev/mapper/Homedata-Archive    /home/archive   ext4    defaults                                                                                                    0       2

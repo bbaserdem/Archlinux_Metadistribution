@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Remove
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = *
+
+[Action]
+Description = Purging package cache of uninstalled packages…
+When = PostTransaction
+Exec = /usr/bin/paccache --remove --verbose --uninstalled --keep 0

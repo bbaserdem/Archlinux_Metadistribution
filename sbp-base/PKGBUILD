@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-base
 pkgver=5.0
-pkgrel=7
+pkgrel=10
 pkgdesc="SBP Meta Package: base system"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -12,6 +12,8 @@ source=(
   'base.install'
   'base.root-ssh'
   'base.root-git'
+  'admin.clean-cache'
+  'admin.clean-uninstall'
   'admin.etckeeper'
   'admin.reflect-service'
   'admin.reflect-timer'
@@ -28,7 +30,7 @@ source=(
 sha256sums=(SKIP SKIP SKIP SKIP SKIP
             SKIP SKIP SKIP SKIP SKIP
             SKIP SKIP SKIP SKIP SKIP
-            SKIP)
+            SKIP SKIP SKIP)
 package() {
   install=base.install
   provides=('vim')
@@ -51,6 +53,8 @@ package() {
     'm4' 'pkgconf' )
   #---Expose shares using nfs
   install -dm 0755 "${pkgdir}/srv/nfs/sbp"
+  #---Set permissions for swapfile container
+  install -dm 0700 "${pkgdir}/swap"
 
   #---ADMINISTRATION
   # Create reflector timers
@@ -71,6 +75,9 @@ package() {
   # Put etckeeper override to select pacman
   install -dm 0755 "${pkgdir}/etc/etckeeper"
   install -Dm 0755 admin.etckeeper          "${pkgdir}/etc/etckeeper/local.conf"
+  # Put hooks to clean package cache
+  install -Dm 0644 admin.clean-cache        "${pkgdir}/usr/share/libalpm/hooks/clean-cache.hook"
+  install -Dm 0644 admin.clean-uninstall    "${pkgdir}/usr/share/libalpm/hooks/clean-uninstall.hook"
   #---Sys-admin
   depends+=(
     'dbus'
@@ -156,7 +163,7 @@ package() {
     'inotify-tools'
     'nfs-utils'
     'parted'
-    'snapper'
+    'snapper' 'snap-pac'
     'udisks2')
 
   #---HARDWARE
