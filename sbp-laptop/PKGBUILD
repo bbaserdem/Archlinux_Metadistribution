@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-laptop
 pkgver=4.1
-pkgrel=3
+pkgrel=4
 pkgdesc="SBP Meta Package: Laptop setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -37,7 +37,7 @@ package() {
   install -Dm 0644 laptop.cmdline       "${pkgdir}/etc/cmdline.d/laptop.conf"
   # Create boot options
   install -dm 0755 "${pkgdir}/efi/EFI/Arch"
-  install -Dm 0755 laptop.refind        "${pkgdir}/efi/EFI/Arch/refind_linux.conf"
+  install -Dm 0755 laptop.refind        "${pkgdir}/boot/refind_linux.conf"
   # Currently; refind does not work; drop systemd-boot files
   install -dm 0755 "${pkgdir}/efi/loader/entries"
   install -Dm 0755 laptop.loader        "${pkgdir}/efi/loader/loader.conf"
@@ -45,8 +45,10 @@ package() {
   install -dm 0755 "${pkgdir}/etc/pacman.d/hooks"
   install -Dm 0755 laptop.boothook      "${pkgdir}/etc/pacman.d/hooks/10-sd.hook"
   # Create mountpoints
+  install -dm 0755 "${pkgdir}/media/arch"
   install -dm 0755 "${pkgdir}/media/gentoo"
   install -dm 0755 "${pkgdir}/media/seedbox"
+  install -dm 0700 "${pkgdir}/swap"
 
   #---SPECIFIC HARDWARE
   # Early initrd ucode
