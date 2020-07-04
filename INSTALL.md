@@ -288,9 +288,11 @@ cp -r /tmp/etc/. /etc/
 
 On fresh installation; rEFInd will not be installed.
 Need to run refind-install script to install it to the EFI partition.
-Don't do this if installing from another computer (using external drive).
+If installing from another computer; `refind-install` from chroot works.
+However; the EFI entry will be on the current hardware.
+Remove it; and add the entry later on the native hardware.
 
-To register rEFInd in BIOS; the following command can be used.
+To register rEFInd in BIOS; use the following command;
 ```
 # This example is for ESP on /dev/sda1. Adjust accordingly
 efibootmgr --create --disk /dev/sda --part 1 --loader /EFI/refind/refind_x64.efi --label "rEFInd Boot Manager" --verbose
