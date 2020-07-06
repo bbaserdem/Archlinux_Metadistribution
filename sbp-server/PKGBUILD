@@ -18,7 +18,7 @@ source=(
   'server.install'
   'server.mkinitcpio'
   'server.refind')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-homestation' 'sbp-laptop' 'sbp-workstation' 'sbp-seedbox')
 package() {
