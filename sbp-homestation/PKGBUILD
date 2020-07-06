@@ -19,7 +19,7 @@ source=(
   'homestation.refind')
 sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
-conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server')
+conflicts=('sbp-workstation' 'sbp-laptop' 'sbp-server' 'sbp-seedbox')
 package() {
   install=homestation.install
   # Create local config files

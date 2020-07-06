@@ -9,43 +9,60 @@ url="https://github.com/bbaserdem/Arch"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
-    'server.cmdline'
-    'server.crypttab'
-    'server.exports'
-    'server.fstab'
-    'server.hostname'
-    'server.initrdtab'
-    'server.install'
-    'server.mkinitcpio'
-    'server.refind'
-    'server.sbupdate')
+  'server.cmdline'
+  'server.crypttab'
+  'server.exports'
+  'server.fstab'
+  'server.hostname'
+  'server.initrdtab'
+  'server.install'
+  'server.mkinitcpio'
+  'server.refind')
 sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-homestation' 'sbp-laptop' 'sbp-workstation' 'sbp-seedbox')
 package() {
-    install=server.install
-    # Create local config files
-    install -dm 0755 "${pkgdir}/etc"
-    install -dm 0755 "${pkgdir}/etc/cmdline.d"
-    install -dm 0755 "${pkgdir}/etc/exports.d"
-    install -dm 0755 "${pkgdir}/boot"
-    install -Dm 0644 server.crypttab    "${pkgdir}/etc/crypttab"
-    install -Dm 0644 server.fstab       "${pkgdir}/etc/fstab"
-    install -Dm 0644 server.hostname    "${pkgdir}/etc/hostname"
-    install -Dm 0644 server.initrdtab   "${pkgdir}/etc/crypttab.initrd"
-    install -Dm 0644 server.mkinitcpio  "${pkgdir}/etc/mkinitcpio.conf"
-    install -Dm 0755 server.refind      "${pkgdir}/boot/refind_linux.conf"
-    install -Dm 0644 server.cmdline     "${pkgdir}/etc/cmdline.d/sbp.conf"
-    install -Dm 0644 server.exports     "${pkgdir}/etc/exports.d/server.exports"
-    # Early initrd ucode
-    depends=('intel-ucode')
-    # Graphics
-    depends+=(
-        'intel-media-driver'
-        'mesa' 'mesa-demos'
-        'vulkan-intel')
-    depends=(
-        'mariadb'               # Database management
-        'syncthing-relaysrv'    # Syncthing relay discovery
-    )
+  install=server.install
+  # Create local config files
+  install -dm 0755 "${pkgdir}/etc"
+  install -Dm 0644 server.crypttab      "${pkgdir}/etc/crypttab"
+  install -Dm 0644 server.initrdtab     "${pkgdir}/etc/crypttab.initrd"
+  install -Dm 0644 server.fstab         "${pkgdir}/etc/fstab"
+  install -Dm 0644 server.hostname      "${pkgdir}/etc/hostname"
+  install -Dm 0644 server.mkinitcpio    "${pkgdir}/etc/mkinitcpio.conf"
+  install -dm 0755 "${pkgdir}/etc/exports.d"
+  install -Dm 0644 server.exports       "${pkgdir}/etc/exports.d/server.exports"
+  # Put in kernel parameters
+  install -dm 0755 "${pkgdir}/etc/cmdline.d"
+  install -Dm 0644 server.cmdline       "${pkgdir}/etc/cmdline.d/server.conf"
+  # Create boot menu options
+  install -dm 0755 "${pkgdir}/boot"
+  install -Dm 0755 server.refind        "${pkgdir}/boot/refind_linux.conf"
+  # Create mount points for mounts
+  install -dm 0755 "${pkgdir}/media/arch"
+  install -dm 0755 "${pkgdir}/media/gentoo"
+  install -dm 0755 "${pkgdir}/media/seedbox"
+  install -dm 0700 "${pkgdir}/swap"
+  # Create mount points for nfs shares
+  install -dm 0755 "${pkgdir}/srv/nfs/sbp"
+  install -dm 0755 "${pkgdir}/srv/nfs/media"
+  install -dm 0755 "${pkgdir}/srv/nfs/media/Music-Home"
+  install -dm 0755 "${pkgdir}/srv/nfs/media/Videos-Home"
+  install -dm 0755 "${pkgdir}/srv/nfs/media/Pictures-Home"
+  install -dm 0755 "${pkgdir}/srv/nfs/media/Music-Archive"
+  install -dm 0755 "${pkgdir}/srv/nfs/media/Videos-Archive"
+  install -dm 0755 "${pkgdir}/srv/nfs/media/Pictures-Archive"
+
+
+  # Early initrd ucode
+  depends=('intel-ucode')
+  # Graphics
+  depends+=(
+    'intel-media-driver'
+    'mesa' 'mesa-demos'
+    'vulkan-intel')
+  depends=(
+    'mariadb'               # Database management
+    'syncthing-relaysrv'    # Syncthing relay discovery
+  )
 }
