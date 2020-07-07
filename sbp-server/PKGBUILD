@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-server
 pkgver=4.0
-pkgrel=1
+pkgrel=2
 pkgdesc="SBP Meta Package: Server setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -45,6 +45,7 @@ package() {
   install -dm 0700 "${pkgdir}/swap"
   # Create mount points for nfs shares
   install -dm 0755 "${pkgdir}/srv/nfs/sbp"
+  install -dm 0755 "${pkgdir}/srv/nfs/home"
   install -dm 0755 "${pkgdir}/srv/nfs/media"
   install -dm 0755 "${pkgdir}/srv/nfs/media/Music-Home"
   install -dm 0755 "${pkgdir}/srv/nfs/media/Videos-Home"
@@ -61,7 +62,7 @@ package() {
     'intel-media-driver'
     'mesa' 'mesa-demos'
     'vulkan-intel')
-  depends=(
+  depends+=(
     'mariadb'               # Database management
     'syncthing-relaysrv'    # Syncthing relay discovery
   )

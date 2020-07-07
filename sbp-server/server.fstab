@@ -9,7 +9,7 @@
 /dev/mapper/Server-Arch         /.snapshots     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@snapshots                                        0       0
 /dev/mapper/Server-Arch         /var/log        btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@varlog                                           0       0
 /dev/mapper/Server-Arch         /swap           btrfs   rw,noatime,nodiratime,compress=no,ssd,space_cache,subvol=@swap                                              0       0
-/dev/mapper/Server-Arch         /media/arch     btrfs   rw,noatime,nodiratime,compress=no,ssd,space_cache                                                           0       0
+/dev/mapper/Server-Arch         /media/arch     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache                                                          0       0
 /dev/mapper/Server-Home	        /home           xfs     rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota                                                    0       2
 /swap/swapfile                  none            swap    defaults                                                                                                    0       0
 UUID=CD80-E558                  /efi            vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0       2
@@ -20,6 +20,7 @@ UUID=CD80-E558                  /efi            vfat    rw,relatime,fmask=0022,d
 
 # NFS shares
 /home/sbp/Share         /srv/nfs/sbp                    none    defaults,rbind  0   0
+/home/sbp               /srv/nfs/home                   none    defaults,rbind  0   0
 /home/sbp/Music         /srv/nfs/media/Music-Home       none    defaults,rbind  0   0
 /home/sbp/Videos        /srv/nfs/media/Videos-Home      none    defaults,rbind  0   0
 /home/sbp/Pictures      /srv/nfs/media/Pictures-Home    none    defaults,rbind  0   0
