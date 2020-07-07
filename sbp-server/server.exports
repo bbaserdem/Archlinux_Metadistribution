@@ -3,4 +3,4 @@
 /srv/nfs/home sbp-homestation(rw,sync,crossmnt,insecure,all_squash,anonuid=1000,anongid=1000)
 /srv/nfs/home sbp-laptop(rw,sync,crossmnt,insecure,all_squash,anonuid=1000,anongid=1000)
 # Media share; Allow all local connections to view files
-/srv/nfs/media 192.168.1.0/24(ro,sync,crossmnt,insecure,all_squash)
+/srv/nfs/media 192.168.1.0/24(ro,sync,crossmnt,no_subtree_check,insecure,all_squash)
