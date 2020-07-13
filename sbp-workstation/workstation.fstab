@@ -8,7 +8,7 @@
 /dev/mapper/Workstation-Arch    /               btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@root         0       0
 /dev/mapper/Workstation-Arch    /.snapshots     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@snapshots    0       0
 /dev/mapper/Workstation-Arch    /var/log        btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@varlog       0       0
-/dev/mapper/Workstation-Arch    /swap           btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvol=@swap         0       0
+/dev/mapper/Workstation-Arch    /swap           btrfs   rw,noatime,nodiratime,compress=no,ssd,space_cache,subvol=@swap          0       0
 /dev/mapper/Workstation-Arch    /media/arch     btrfs   rw,noatime,nodiratime,compress=lzo,ssd,space_cache                      0       0
 /swap/swapfile                  none            swap    defaults                                                                0       0
 /dev/mapper/Workstation-Opt     /opt            ext4    defaults                                                                0       0
