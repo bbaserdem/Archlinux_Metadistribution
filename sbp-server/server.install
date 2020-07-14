@@ -13,8 +13,8 @@ systemd_services() {
   # Services
   echo '['"${prestr}"']==> '"${prstrn}"' wifi.'
   /bin/systemctl "${action}" iwd.service
-  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
-  /bin/systemctl "${action}" nfs-server.service
+#  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
+#  /bin/systemctl "${action}" nfs-server.service
   echo '['"${prestr}"']==> '"${prstrn}"' MySQL server.'
   /bin/systemctl "${action}" mariadb.service
   echo '['"${prestr}"']==> '"${prstrn}"' SSH access.'
