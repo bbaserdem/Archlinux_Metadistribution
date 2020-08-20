@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-base
 pkgver=5.0
-pkgrel=10
+pkgrel=11
 pkgdesc="SBP Meta Package: base system"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -15,8 +15,6 @@ source=(
   'admin.clean-cache'
   'admin.clean-uninstall'
   'admin.etckeeper'
-  'admin.reflect-service'
-  'admin.reflect-timer'
   'admin.repo-build'
   'admin.repo-remove'
   'admin.repo-sync'
@@ -60,10 +58,6 @@ package() {
   # Create reflector timers
   install -dm 0755 "${pkgdir}/usr/lib/systemd"
   install -dm 0755 "${pkgdir}/usr/lib/systemd/system"
-  install -Dm 0644 admin.reflect-service \
-    "${pkgdir}/usr/lib/systemd/system/reflector.service"
-  install -Dm 0644 admin.reflect-timer \
-    "${pkgdir}/usr/lib/systemd/system/reflector.timer"
   # Install tzupdate service
   install -Dm 0644 admin.tzupdate \
     "${pkgdir}/usr/lib/systemd/system/tzupdate.service"
