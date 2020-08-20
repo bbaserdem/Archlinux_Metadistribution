@@ -59,9 +59,7 @@ systemd_services() {
   /usr/bin/systemctl "${action}" avahi-daemon.service
   echo '['"${prestr}"']==> '"${prstrn}"' Network file share protocol'
   /usr/bin/systemctl "${action}" nfs-server.service
-  echo '['"${prestr}"']==> '"${prstrn}"' libvirt services.'
-  /usr/bin/systemctl "${action}" libvirtd.service
-  /usr/bin/systemctl "${action}" virtlogd.service
+  /usr/bin/systemctl "${action}" nfs-client.target
   echo '['"${prestr}"']==> '"${prstrn}"' CUPS daemon.'
   /usr/bin/systemctl "${action}" org.cups.cupsd.service
 

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-server
 pkgver=4.0
-pkgrel=2
+pkgrel=4
 pkgdesc="SBP Meta Package: Server setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -40,6 +40,7 @@ package() {
   install -Dm 0755 server.refind        "${pkgdir}/boot/refind_linux.conf"
   # Create mount points for mounts
   install -dm 0755 "${pkgdir}/media/arch"
+  install -dm 0755 "${pkgdir}/media/media"
   install -dm 0755 "${pkgdir}/media/gentoo"
   install -dm 0755 "${pkgdir}/media/seedbox"
   install -dm 0700 "${pkgdir}/swap"
@@ -53,7 +54,6 @@ package() {
   install -dm 0755 "${pkgdir}/srv/nfs/media/Music-Archive"
   install -dm 0755 "${pkgdir}/srv/nfs/media/Videos-Archive"
   install -dm 0755 "${pkgdir}/srv/nfs/media/Pictures-Archive"
-
 
   # Early initrd ucode
   depends=('intel-ucode')

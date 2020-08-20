@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-base
 pkgver=5.0
-pkgrel=11
+pkgrel=13
 pkgdesc="SBP Meta Package: base system"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -120,6 +120,7 @@ package() {
     'mpd'
     'mpdscribble'
     'ncmpcpp'
+    'sox'
     )
   #---Sound themes
   depends+=(

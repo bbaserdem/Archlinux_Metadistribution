@@ -22,6 +22,8 @@ systemd_services() {
   echo '['"${prestr}"']==> '"${prstrn}"' Syncthing user service and relay'
   /bin/systemctl "${action}" syncthing@sbp.service
   /bin/systemctl "${action}" syncthing-relaysrv.service
+  echo '['"${prestr}"']==> '"${prstrn}"' Libvirt daemon'
+  /bin/systemctl "${action}" libvirtd.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }

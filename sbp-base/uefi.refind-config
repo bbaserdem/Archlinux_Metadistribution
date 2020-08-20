@@ -5,7 +5,7 @@ screensaver 60
 banner_scale fillscreen
 small_icon_size 144
 big_icon_size 384
-resolution 1920 1080
+resolution 0
 enable_touch
 enable_mouse
 
