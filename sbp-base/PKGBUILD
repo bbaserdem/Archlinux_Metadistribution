@@ -28,7 +28,7 @@ source=(
 sha256sums=(SKIP SKIP SKIP SKIP SKIP
             SKIP SKIP SKIP SKIP SKIP
             SKIP SKIP SKIP SKIP SKIP
-            SKIP SKIP SKIP)
+            SKIP)
 package() {
   install=base.install
   provides=('vim')
