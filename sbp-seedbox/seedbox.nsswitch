@@ -9,7 +9,6 @@ shadow: files
 
 publickey: files
 
-#hosts: files mymachines myhostname mdns resolve dns
 hosts: files mymachines myhostname mdns resolve dns
 networks: files
 

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-games
 pkgver=4.0
-pkgrel=3
+pkgrel=14444
 pkgdesc="SBP Meta Package: Gaming"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"

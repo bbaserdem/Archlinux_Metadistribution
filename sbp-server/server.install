@@ -13,8 +13,8 @@ systemd_services() {
   # Services
   echo '['"${prestr}"']==> '"${prstrn}"' wifi.'
   /bin/systemctl "${action}" iwd.service
-#  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
-#  /bin/systemctl "${action}" nfs-server.service
+  echo '['"${prestr}"']==> '"${prstrn}"' NFS server.'
+  /bin/systemctl "${action}" nfs-server.service
   echo '['"${prestr}"']==> '"${prstrn}"' MySQL server.'
   /bin/systemctl "${action}" mariadb.service
   echo '['"${prestr}"']==> '"${prstrn}"' SSH access.'
@@ -22,6 +22,8 @@ systemd_services() {
   echo '['"${prestr}"']==> '"${prstrn}"' Syncthing user service and relay'
   /bin/systemctl "${action}" syncthing@sbp.service
   /bin/systemctl "${action}" syncthing-relaysrv.service
+  echo '['"${prestr}"']==> '"${prstrn}"' Libvirt daemon'
+  /bin/systemctl "${action}" libvirtd.service
 
   echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }

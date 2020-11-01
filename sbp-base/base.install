@@ -60,9 +60,6 @@ systemd_services() {
   echo '['"${prestr}"']==> '"${prstrn}"' Network file share protocol'
   /usr/bin/systemctl "${action}" nfs-server.service
   /usr/bin/systemctl "${action}" nfs-client.target
-  echo '['"${prestr}"']==> '"${prstrn}"' libvirt services.'
-  /usr/bin/systemctl "${action}" libvirtd.service
-  /usr/bin/systemctl "${action}" virtlogd.service
   echo '['"${prestr}"']==> '"${prstrn}"' CUPS daemon.'
   /usr/bin/systemctl "${action}" org.cups.cupsd.service
 

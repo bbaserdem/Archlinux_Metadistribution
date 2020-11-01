@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gui
 pkgver=5.0
-pkgrel=12
+pkgrel=14
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
