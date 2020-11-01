@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gui
 pkgver=5.0
-pkgrel=6
+pkgrel=12
 pkgdesc="SBP Meta Package: GUI packages"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -28,6 +28,7 @@ package() {
     'imv'  'ristretto'          # Image viewer
     'flowblade'                 # Video editor
     'inkscape'                  # Vector image editor
+    'kicad' 'kicad-library'     # PCB design tool
     'kitty'                     # Terminal emulator
     'kodi' 'kodi-wayland'       # Media center
     'libreoffice-fresh'         # Office suite

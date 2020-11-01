@@ -1,7 +1,0 @@
-# Ignore all
-/*
-# Except these files
-!/PKGBUILD
-!/.SRCINFO
-!/README.md
-!/matlab.script

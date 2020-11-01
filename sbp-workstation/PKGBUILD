@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-workstation
 pkgver=4.1
-pkgrel=11
+pkgrel=12
 pkgdesc="SBP Meta Package: Workstation setup"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -69,4 +69,6 @@ package() {
     )
   # Need this for managing windows (In virtual machine)
   depends+=('mtools' 'ntfs-3g')
+  # Need this for the printer in the other room
+  depends+=('cnrdrvcups-lb' 'gutenprint' 'foomatic-db-gutenprint-ppds')
 }

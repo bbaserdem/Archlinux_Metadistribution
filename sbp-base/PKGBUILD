@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-base
 pkgver=5.0
-pkgrel=11
+pkgrel=12
 pkgdesc="SBP Meta Package: base system"
 arch=('any')
 url="https://github.com/bbaserdem/Arch"
@@ -84,6 +84,7 @@ package() {
     'etckeeper'
     'fcron'
     'htop'
+    'kmon'
     'logrotate'
     'lsb-release'
     'mlocate'
@@ -104,7 +105,8 @@ package() {
     'reflector'
     'pacman-contrib' 'pacman-cleanup-hook'
     'archlinux-appstream-data'
-    'archlinux-keyring')
+    'archlinux-keyring'
+    'pkgstats')
 
   #---AUDIO
   install -Dm 0755 audio.firewalld  "${pkgdir}/usr/lib/firewalld/services/mpd.xml"
@@ -142,6 +144,7 @@ package() {
   depends+=(
     'android-tools'
     'android-udev'
+    'droidcam'
     'libmtp')
 
   #---FILESYSTEMS
@@ -174,7 +177,8 @@ package() {
     'lshw'
     'smartmontools'
     'stress'
-    'powertop')
+    'powertop'
+    'qmk')
   #---Power management
   depends+=(
     'i2c-tools'
@@ -295,6 +299,7 @@ package() {
   depends+=(
     'ctags'
     'fzf'
+    'hunspell-en_US' 'hunspell-tr'
     'languagetool'
     'neovim'
     'neovim-remote'
