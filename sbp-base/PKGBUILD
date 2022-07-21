@@ -12,13 +12,7 @@ source=(
   'base.install'
   'base.root-ssh'
   'base.root-git'
-  'admin.clean-cache'
-  'admin.clean-uninstall'
   'admin.etckeeper'
-  'admin.repo-build'
-  'admin.repo-remove'
-  'admin.repo-sync'
-  'admin.tzupdate'
   'audio.firewalld'
   'audio.mpc-prev'
   'programming.jupyter-lab'
@@ -26,9 +20,7 @@ source=(
   'uefi.refind-config'
   'uefi.refind-hook')
 sha256sums=(SKIP SKIP SKIP SKIP SKIP
-            SKIP SKIP SKIP SKIP SKIP
-            SKIP SKIP SKIP SKIP SKIP
-            SKIP)
+            SKIP SKIP SKIP SKIP SKIP)
 package() {
   install=base.install
   provides=('vim')
@@ -58,20 +50,9 @@ package() {
   # Create reflector timers
   install -dm 0755 "${pkgdir}/usr/lib/systemd"
   install -dm 0755 "${pkgdir}/usr/lib/systemd/system"
-  # Install tzupdate service
-  install -Dm 0644 admin.tzupdate \
-    "${pkgdir}/usr/lib/systemd/system/tzupdate.service"
-  # Install aur management scripts
-  install -dm 0755 "${pkgdir}/usr/bin"
-  install -Dm 0755 admin.repo-remove        "${pkgdir}/usr/bin/archrepo-remove"
-  install -Dm 0755 admin.repo-sync          "${pkgdir}/usr/bin/archrepo-sync"
-  install -Dm 0755 admin.repo-build         "${pkgdir}/usr/bin/archrepo-build"
   # Put etckeeper override to select pacman
   install -dm 0755 "${pkgdir}/etc/etckeeper"
   install -Dm 0755 admin.etckeeper          "${pkgdir}/etc/etckeeper/local.conf"
-  # Put hooks to clean package cache
-  install -Dm 0644 admin.clean-cache        "${pkgdir}/usr/share/libalpm/hooks/clean-cache.hook"
-  install -Dm 0644 admin.clean-uninstall    "${pkgdir}/usr/share/libalpm/hooks/clean-uninstall.hook"
   #---Sys-admin
   depends+=(
     'dbus'
@@ -97,7 +78,7 @@ package() {
     'aurutils'
     'devtools'
     'reflector'
-    'pacman-contrib' 'pacman-cleanup-hook'
+    'pacman-contrib'
     'archlinux-appstream-data'
     'archlinux-keyring'
     'pkgstats')
