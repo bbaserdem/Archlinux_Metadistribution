@@ -13,14 +13,8 @@ source=(
   'base.root-ssh'
   'base.root-git'
   'admin.etckeeper'
-  'audio.firewalld'
-  'audio.mpc-prev'
-  'programming.jupyter-lab'
-  'programming.jupyter-notebook'
-  'uefi.refind-config'
-  'uefi.refind-hook')
-sha256sums=(SKIP SKIP SKIP SKIP SKIP
-            SKIP SKIP SKIP SKIP SKIP)
+  'uefi.refind-config')
+sha256sums=(SKIP SKIP SKIP SKIP SKIP)
 package() {
   install=base.install
   provides=('vim')
@@ -84,8 +78,6 @@ package() {
     'pkgstats')
 
   #---AUDIO
-  install -Dm 0755 audio.firewalld  "${pkgdir}/usr/lib/firewalld/services/mpd.xml"
-  install -Dm 0755 audio.mpc-prev   "${pkgdir}/usr/bin/mpc-prev"
   #---Pulseaudio
   depends+=(
     'alsa-utils' 'lib32-alsa-plugins'
@@ -229,10 +221,6 @@ package() {
     'youtube-dl')
 
   #---PROGRAMMING
-  install -Dm 0644 programming.jupyter-lab \
-    "${pkgdir}/usr/lib/systemd/user/jupyter-lab.service"
-  install -Dm 0644 programming.jupyter-notebook \
-    "${pkgdir}/usr/lib/systemd/user/jupyter-notebook.service"
   #---Python
   depends+=(
     'bpython'
@@ -254,8 +242,6 @@ package() {
 
   #---UTILITIES
   #---Neovim with needed environment for plugins
-  install -dm 0755 "${pkgdir}/usr/bin"
-  ln -sf /usr/bin/nvim "${pkgdir}/usr/bin/vim"
   # Applications
   depends+=(
     'cmake' 'clang'
@@ -318,8 +304,6 @@ package() {
   # Insert refind configuration
   install -dm 0755 "${pkgdir}/efi/EFI/rEFInd"
   install -Dm 0755 uefi.refind-config   "${pkgdir}/efi/EFI/rEFInd/refind.conf"
-  install -dm 0755 "${pkgdir}/usr/share/libalpm/hooks"
-  install -Dm 0755 uefi.refind-hook     "${pkgdir}/usr/share/libalpm/hooks/99-refind-sb.hook"
   ln -sf "/etc/sbkeys/db.key" "${pkgdir}/etc/refind.d/keys/refind_local.key"
   ln -sf "/etc/sbkeys/db.esl" "${pkgdir}/etc/refind.d/keys/refind_local.esl"
   ln -sf "/etc/sbkeys/db.crt" "${pkgdir}/etc/refind.d/keys/refind_local.crt"

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<service>
-  <short>Music Player Daemon (mpd)</short>
-  <description>MPD is a daemon that organizes and plays music from a library. This port allows communicating with the daemon non-locally, and stream the music like a radio channel.</description>
-  <port protocol="tcp" port="6600"/>
-  <port protocol="tcp" port="8000"/>
-</service>
