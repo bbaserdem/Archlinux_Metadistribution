@@ -1,3 +1,5 @@
 # Managed by sbp
 "Boot with default options" "initrd=EFI/Arch/amd-ucode.img initrd=EFI/Arch/initramfs-%v.img rd.luks.name=bee8e6f1-2687-49e4-b86d-0be90db5bb5d=cryptlvm root=/dev/Workstation/Arch rootflags=subvol=@root resume=/dev/Workstation/Arch resume_offset=9524395"
 "Boot with fallback initrd" "initrd=EFI/Arch/amd-ucode.img initrd=EFI/Arch/initramfs-%v-fallback.img rd.luks.name=bee8e6f1-2687-49e4-b86d-0be90db5bb5d=cryptlvm root=/dev/Workstation/Arch rootflags=subvol=@root resume=/dev/Workstation/Arch resume_offset=9524395"
+"Boot with dracut initrd" "initrd=EFI/Arch/amd-ucode.img initrd=EFI/Arch/initramfs-%v-dracut.img"
+"Boot without any parameters" ""

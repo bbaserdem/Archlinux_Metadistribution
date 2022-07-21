@@ -50,7 +50,7 @@ FILES=()
 #
 ##   NOTE: If you have /usr on a separate partition, you MUST include the
 #    usr, fsck and shutdown hooks.
-HOOKS=(base systemd keyboard autodetect sd-vconsole modconf block sd-encrypt sd-lvm2 filesystems fsck)
+HOOKS=(base systemd keyboard autodetect sd-vconsole modconf block sd-encrypt lvm2 filesystems fsck)
 
 # COMPRESSION
 # Use this to compress the initramfs image. By default, gzip compression
