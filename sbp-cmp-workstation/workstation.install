@@ -20,6 +20,7 @@ systemd_services() {
     echo '['"${prestr}"']==> '"${prstrn}"' Network UPS tools'
     /usr/bin/systemctl "${action}" nut-server.service
     /usr/bin/systemctl "${action}" nut-monitor.service
+    /usr/bin/systemctl "${action}" nut-driver@cyberpower.service
   
     echo '['"${prestr}"']==> '"${prstrn}"' Enable SSH access'
     /usr/bin/systemctl "${action}" sshd.service
