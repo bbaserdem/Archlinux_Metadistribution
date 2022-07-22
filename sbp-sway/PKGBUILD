@@ -1,0 +1,37 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-sway
+pkgver=1.0
+pkgrel=01
+pkgdesc="SBP Meta Package: Sway"
+arch=('any')
+url="https://github.com/bbaserdem/Archlinux_Metadistribution"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    depends=('sway')
+    # This is wayland based
+    depends=+(
+        'wayland'
+        'wlroots'
+        'xorg-server-xwayland'
+        'ydotool'
+    )
+    # Apps stuff
+    depends+=(
+        'dex'                       # Autostart launcher
+        'grim'                      # Screenshot taking
+        'kanshi'                    # Hotplug screen manager
+        'mako'                      # Notification daemon
+        'slurp'                     # Region selector, to aid screenshots
+        'sway'                      # Wayland compositor
+        'swaybg'                    # Background setter
+        'swaylock'                  # Screen-locker
+        'swayidle'                  # Idle handler
+        'libappindicator-gtk3'      # System-tray
+        'waybar'                    # Info-bar
+        'wf-recorder'               # Screen video grabbing
+        'wl-clipboard'              # Clipboard utility
+        'wofi'                      # App launcher
+    )
+}

@@ -1,7 +1,0 @@
-# Managed by sbp
-
-# Configuration for encrypted block devices.
-# See crypttab(5) for details.
-
-# <name>        <device>                                    <password>                          <options>
-#Laptop-Archive  UUID=???                                    /root/laptop-archive.keyfile

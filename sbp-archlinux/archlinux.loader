@@ -1,0 +1,8 @@
+# File of sbp-archlinux
+default         @saved
+timeout         8
+console-mode    max
+editor          yes
+auto-entries    yes
+auto-firmware   yes
+beep            no

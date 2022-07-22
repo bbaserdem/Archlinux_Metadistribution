@@ -1,7 +1,0 @@
-# Managed by sbp
-
-# Configuration for encrypted block devices.
-# See crypttab(5) for details.
-
-# <name>            <device>                                    <password>                          <options>
-cryptdata           UUID=3893d492-ac30-448a-9fb9-7e592a7e5fa5   /root/serverdata.keyfile

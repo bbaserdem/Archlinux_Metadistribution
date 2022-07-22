@@ -1,43 +1,51 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
-pkgname=sbp-games
-pkgver=4.0
-pkgrel=14444
+pkgname=sbp-gaming
+pkgver=1
+pkgrel=01
 pkgdesc="SBP Meta Package: Gaming"
 arch=('any')
-url="https://github.com/bbaserdem/Arch"
+url="https://github.com/bbaserdem/Archlinux_Metadistribution"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=('games.install')
-sha256sums=(SKIP)
 package() {
-  install=games.install
-  # Lutris
-  depends=('lutris')
-  # Steam
-  depends+=(
-    'steam-fonts' 'ttf-roboto'
-    'steamos-compositor-plus'
-    'sssm' 'air-for-steam'
-    'steam'
-    'steam-native-runtime')
-  install -dm 0755 "${pkgdir}/opt"
-  install -dm 0775 -g games -o 1000 "${pkgdir}/opt/steam"
-  # Wine
-  depends+=(
-    'wine-staging'
-    'wine-mono'
-    'lib32-libxml2'
-    'lib32-mpg123'
-    'lib32-lcms2'
-    'lib32-giflib'
-    'lib32-libpng'
-    'lib32-gnutls'
-    'lib32-gst-plugins-base'
-    'lib32-openal'
-    'lib32-gst-plugins-good')
-  # Some native games
-  depends+=(
-    'openra'
-    'stepmania')
+    # Create steam download directory; to keep it separate from home
+    install -dm 0755 "${pkgdir}/opt"
+    install -dm 0775 -g games -o 1000 "${pkgdir}/opt/steam"
+    # Steam and other platforms
+    depends=(
+        'steam'                     # Steam
+        'steam-native-runtime'
+        'steam-fonts'
+        'ttf-roboto'
+        'steamos-compositor-plus'
+        'sssm'
+        'air-for-steam'
+        'lutris'                    # Lutris, for GoG
+    )
+    # Some native games
+    depends+=(
+        'openra'
+        'performous'
+        'rftg'
+    )
+    # Wine
+    depends+=(
+        'wine-staging'
+        'wine-gecko'
+        'wine-mono'
+        'lib32-libxml2'
+        'lib32-mpg123'
+        'lib32-lcms2'
+        'lib32-giflib'
+        'lib32-libpng'
+        'lib32-gnutls'
+        'lib32-gst-plugins-base'
+        'lib32-openal'
+        'lib32-gst-plugins-good'
+    )
+    # Lib32 support
+    depends+=(
+        'lib32-pipewire'
+    )
 }

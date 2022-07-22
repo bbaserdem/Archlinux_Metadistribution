@@ -1,7 +1,0 @@
-rd.luks.name=b42b6551-17ff-45d0-bf4e-c8d304ce5a50=cryptlvm
-rd.shell
-rd.debug
-rd.info
-log_buf_len=1M
-resume=/dev/Server/Arch
-resume_offset=16400

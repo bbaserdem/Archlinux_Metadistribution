@@ -1,7 +1,0 @@
-# Managed by sbp
-
-# Configuration for encrypted block devices.
-# See crypttab(5) for details.
-
-# <name>    <device>                                    <password>  <options>
-cryptlvm    UUID=da9c7226-d355-4dcd-a40a-32418f052f9b   none        luks,timeout=0,x-systemd.device-timeout=0

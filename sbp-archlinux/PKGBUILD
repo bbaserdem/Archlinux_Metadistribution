@@ -1,0 +1,253 @@
+# Maintainer: Batuhan Baserdem 
+# vim: ft=PKGBUILD
+pkgname=sbp-archlinux
+pkgver=1.0
+pkgrel=01
+pkgdesc="SBP Meta Package: Archlinux base system (excludes kernel)"
+arch=('any')
+url="https://github.com/bbaserdem/Archlinux_Metadistribution"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=(
+    'archlinux.etckeeper'
+    'archlinux.git'
+    'archlinux.install'
+    'archlinux.loader'
+    'archlinux.refind'
+    'archlinux.ssh'
+)
+sha256sums=(
+    SKIP
+    SKIP
+    SKIP
+    SKIP
+    SKIP
+    SKIP
+)
+package() {
+    install=archlinux.install
+
+    #---Configure root account to be able to use proper keys for commits
+    install -dm 0750 "${pkgdir}/root/"
+    install -dm 0750 "${pkgdir}/root/.local"
+    install -dm 0700 "${pkgdir}/root/.local/ssh"
+    install -dm 0750 "${pkgdir}/root/.config"
+    install -dm 0750 "${pkgdir}/root/.config/git"
+    install -Dm 0600 archlinux.ssh "${pkgdir}/root/.local//ssh/config"
+    install -Dm 0600 archlinux.git "${pkgdir}/root/.config/git/config"
+
+    #---Set permissions for swapfile container
+    install -dm 0700 "${pkgdir}/swap"
+
+    #---Make etckeeper use pacman as package manager
+    install -dm 0755 "${pkgdir}/etc/etckeeper"
+    install -Dm 0755 archlinux.etckeeper "${pkgdir}/etc/etckeeper/local.conf"
+
+    #---Drop in bootloader config files
+    install -dm 0755 "${pkgdir}/efi"
+    install -dm 0755 "${pkgdir}/efi/EFI"
+    install -dm 0755 "${pkgdir}/efi/EFI/rEFInd"
+    install -Dm 0644 archlinux.refind       "${pkgdir}/efi/EFI/rEFInd/refind.conf"
+    install -dm 0755 "${pkgdir}/efi/EFI/RefindPlus"
+    install -dm 0755 "${pkgdir}/efi/loader"
+    install -Dm 0644 archlinux.loader       "${pkgdir}/efi/loader/loader.conf"
+
+    # 2022-07-21---Packages in the base package
+    depends=(
+        'bash'
+        'bzip2'
+        'coreutils'
+        'file'
+        'filesystem'
+        'findutils'
+        'gawk'
+        'gcc-libs'
+        'gettext'
+        'glibc'
+        'grep'
+        'gzip'
+        'iproute2'
+        'iputils'
+        'licenses'
+        'pacman'
+        'pciutils'
+        'procps-ng'
+        'psmisc'
+        'sed'
+        'shadow'
+        'systemd'
+        'systemd-sysvcompat'
+        'tar'
+        'util-linux'
+        'xz'
+    )
+    # Overridden
+    depends=('base')
+    #2022.07.21---Packages that are in the base-devel group
+    depends+=(
+        'archlinux-keyring'
+        'autoconf'
+        'automake'
+        'binutils'
+        'bison'
+        'fakeroot'
+        'file'
+        'findutils'
+        'flex'
+        'gawk'
+        'gcc'
+        'gettext'
+        'grep'
+        'groff'
+        'gzip'
+        'libtool'
+        'm4'
+        'make'
+        'pacman'
+        'patch'
+        'pkgconf'
+        'sed'
+        'sudo'
+        'texinfo'
+        'which'
+    )
+    #---Booting and kernel stuff
+    depends+=(
+        'linux'
+        'linux-firmware'
+        'linux-headers'
+        'mkinitcpio'                # Initrd generation
+        'dracut'                    # Initrd generation
+        'powerline-console-fonts'   # Console fonts
+        'efibootmgr'                # Write to bios
+        'efitools'                  # EFI manip tools
+        'openssl'                   # For signing
+        'refind-theme-regular'      # Theming refind
+        'refind'                    # Boot manager
+        'systemd-boot-pacman-hook'  # Systemd-boot as fallback
+    )
+    #---Generic tools
+    depends+=(
+        'diffutils'     # Calculate file differences
+        'earlyoom'      # OOM preventor
+        'git'           # Preferred VCS
+        'jq'            # JSON parser
+        'less'          # Buffer output
+        'man-pages'     # System manual pages
+        'rsync'         # Copy files
+        'wget'          # Import files over network
+        'bash'          # Shells
+        'bash-completion'
+        'dash'
+        'zsh'
+        'spaceship-prompt'
+    )
+    #---System administration packages
+    depends+=(
+        'dbus'          # Inter-process communication
+        'etckeeper'     # Put /etc under vcs
+        'fcron'         # Run periodic tasks
+        'logrotate'     # System log cycler
+        'mlocate'       # Find files by name
+        'neofetch'      # Sysinfo display
+        'pam'           # Permission access
+        'polkit'        # Permission management
+        'rasdaemon'     # MCE logger
+        'sudo'          # Elevates privilege
+        'tzupdate'      # Timezone updator
+        'ntp'           # System clock syncher
+    )
+    #---File system related toolkit
+    depends+=(
+        'btrfs-progs'   # Btrfs
+        'cryptsetup'    # LUKS
+        'e2fsprogs'     # Ext2/3/4
+        'exfat-utils'   # Vfat
+        'fuse3'         # FUSE; needed to mount remote stuff by user
+        'lvm2'          # Logical volumes
+        'sysfsutils'    # Kernel's virtual filesystem
+        'xfsprogs'      # XFS
+        'ntfs-3g'       # NTFS
+        'mtools'        # Windows management
+        'snapper'       # BTRFS snapshot manager
+        'parted'        # Partition management
+        'nfs-utils'     # NFS
+        'udisks2'       # Disk management service
+        'inotify-tools' # Cmd tools to use inotify (file watcher)
+    )
+    #---Hardware stuff
+    depends+=(
+        'acpid'         # ACPI event logging
+        'libinput'      # Input management
+        'lm_sensors'    # System sensor info
+        'lshw'          # Hardware info
+    )
+    #---Packaging
+    depends+=(
+        'aurutils'          # AUR integration
+        'devtools'
+        'reflector'         # Refresh mirrors
+        'pacman-contrib'    # Pacman toolkit
+        'archlinux-keyring' # Keyring
+        'pkgstats'          # Package info
+        'snap-pac'          # Pacman snapper hooks
+    )
+    #---Networking
+    depends+=(
+        'avahi'             # Zeroconf
+        'nss-mdns'
+        'bluez'             # Bluetooth
+        'bluez-libs'
+        'bridge-utils'      # Ethernet bridge
+        'cups'              # Network printing
+        'cups-pdf'
+        'cups-pk-helper'
+        'dhcpcd'            # DHCP daemon; internet provider
+        'firewalld'         # Firewall
+        'geoclue2'          # Geolocation
+        'iwd'               # Wireless interface
+        'nmap'              # Network discovery
+        'openbsd-netcat'    # Some tools
+        'openresolv'        # Resolvconf implementation
+        'unbound'           # DNS server
+    )
+    #---Virtualization
+    depends+=(
+        'docker'            # Container runner
+        'docker-compose'
+        'qemu'              # Hypervisor
+        'vde2'
+        'edk2-ovmf'
+        'libvirt'           # Virtualization management
+        'ebtables'
+        'dnsmasq'
+        'bridge-utils'
+        'virtio-win'        # Virtio drivers for windows
+    )
+    #---Encryption
+    depends+=(
+        'gnupg'
+        'openfortivpn'
+        'openssh'
+        'qrencode'
+        'tor'
+        'wireguard-tools'
+    )
+    #---Compression
+    depends+=(
+        'patool' # For unarchiving
+        'bzip2'
+        'cpio'
+        'gzip'
+        'lhasa'
+        'lzop'
+        'p7zip'
+        'tar'
+        'unace'
+        'unrar'
+        'unzip'
+        'xz'
+        'zip'
+        'rpm-tools'
+    )
+}

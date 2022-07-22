@@ -1,0 +1,83 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-media
+pkgver=1.0
+pkgrel=01
+pkgdesc="SBP Meta Package: Media playback/management"
+arch=('any')
+url="https://github.com/bbaserdem/Archlinux_Metadistribution"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+
+package() {
+    depends=()
+    # Audio base
+    #---Pipewire
+    depends+=(
+        'pipewire'
+        'pipewire-docs'
+        'wireplumber'
+        'pipewire-alsa'     # Takeover ALSA clients
+        'pipewire-pulse'    # Takeover PulseAudio clients
+        'pipewire-jack'     # Takeover Jack clients
+        'easyeffects'       # Audio stream effects
+        'pavucontrol'       # GUI for pulseaudio
+        'pulsemixer'        # TUI for pulseaudio
+        'pamixer'           # Cmdline tools for pulseaudio
+    )
+    #---Music playback/editing
+    depends+=(
+        'mpd'               # Music player daemon
+        'mpc'               # MPD commandline controls
+        'listenbrainz-mpd'  # Scrobbler to listenbrainz for mpd
+        'ncmpcpp'           # TUI for mpd
+        'cantata'           # GUI (qt) for mpd
+        'audacity'          # Sound editing
+        'picard'            # Music tagger for MB database
+        'musescore'         # Sheet viewing/editing
+        'cadence'           # JACK frontend
+        'libopusenc'        # Lossy audio codec: OPUS
+        'flac'              # Lossless audio codec: FLAC
+    )
+    #---Video playback/editing
+    depends+=(
+        'mpv'               # Video player
+        'smplayer'          # Frontend for mpv
+        'flowblade'         # Video editor
+        'handbrake'         # Video encoder
+        'svt-av1'           # Lossy video codec: AV1
+        'libvpx'            # Lossy video codec: VP9/VP8
+        'x264'              # Apple video codec: D264
+        'x265'              # Apple video codec: D265
+    )
+    #---Image manipulation/viewing
+    depend+=(
+        'imagemagick'           # Image cmd manipulator
+        'perl-image-exiftool'   # Exif info
+        'imv'                   # Simple image viewer
+        'ristretto'             # Slideshow
+        'blender'               # 3D modelling
+        'darktable'             # RAW editing
+        'gimp'                  # Image editing
+        'inkscape'              # Vector editor
+        'libresprite-appimage'  # Sprite creator
+    )
+    #---Tools
+    depend+=(
+        'ffmpeg'            # All purpose encoder
+        'abcde'             # CD ripping tool
+        'cdparanoia'        # Data collector
+        'yt-dlp'            # Youtube (and other website) scraper
+        'kodi'              # Media center
+        'kodi-wayland'
+    )
+    #---Midi and flair
+    depends+=(
+        'fluidsynth'            # MIDI sythesizer
+        'freepats-general-midi' # MIDI font
+        'soundfont-fluid'       # MIDI font
+        'libcanberra'           # Sound theme applicator
+        'sound-theme-elementary'# Sound theme
+        'projectm'              # Visualizer
+    )
+}

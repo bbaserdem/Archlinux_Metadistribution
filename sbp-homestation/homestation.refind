@@ -1,3 +1,0 @@
-# Managed by sbp
-"Boot with default options" "initrd=EFI/Arch/amd-ucode.img initrd=EFI/Arch/initramfs-%v.img rd.luks.name=da9c7226-d355-4dcd-a40a-32418f052f9b=cryptlvm root=/dev/Homestation/Arch rootflags=subvol=@root resume=/dev/Homestation/Arch resume_offset=10718921 mem_encrypt=off i8042.reset"
-"Boot with fallback initrd" "initrd=EFI/Arch/amd-ucode.img initrd=EFI/Arch/initramfs-%v-fallback.img rd.luks.name=da9c7226-d355-4dcd-a40a-32418f052f9b=cryptlvm root=/dev/Homestation/Arch rootflags=subvol=@root resume=/dev/Homestation/Arch resume_offset=10718921 mem_encrypt=off i8042.reset"

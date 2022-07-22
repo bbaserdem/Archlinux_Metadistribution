@@ -1,0 +1,7 @@
+# File put by sbp-cmp-laptop
+
+# Configuration for encrypted block devices.
+# See crypttab(5) for details.
+
+# <name>        <device>                                    <password>                          <options>
+#cryptdata       UUID=???                                    /root/laptop-data.keyfile           luks,timeout=180

@@ -1,3 +1,0 @@
-# Managed by sbp
-drivers+=" "
-kernel_cmdline="rd.luks.name=bee8e6f1-2687-49e4-b86d-0be90db5bb5d=cryptlvm rd.lvm.lv=Workstation/Arch root=/dev/Workstation/Arch rootfstype=btrfz rootflags=rw,noatime,nodiratime,compress=lzo,ssd,space_cache,subvolid=256,subvol=@root resume=/dev/Workstation/Arch resume_offset=9524395"

@@ -1,0 +1,7 @@
+# File put by sbp-cmp-laptop
+title       Arch Linux
+version     Mainline
+linux       /EFI/Arch/vmlinuz-linux
+initrd      /EFI/Arch/intel-ucode.img
+initrd      /EFI/Arch/initramfs-linux.img
+options     rd.luks.name=ab557439-23a5-41e4-ba0e-dbb7f73131ce=cryptos root=/dev/Laptop/Arch rootflags=subvol=@root resume=/dev/Laptop/Arch resume_offset=128203 ec_sys.write_support=1

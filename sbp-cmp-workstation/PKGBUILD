@@ -1,0 +1,113 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-cmp-workstation
+pkgver=1
+pkgrel=01
+pkgdesc='SBP Meta Package: Computer setup of Workstation'
+arch=('any')
+url='https://github.com/bbaserdem/Archlinux_Metadistribution'
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=(
+    'workstation.install'
+    'workstation.crypttab'
+    'workstation.initrdtab'
+    'workstation.fstab'
+    'workstation.hostname'
+    'workstation.mkinitcpio'
+    'workstation.refind'
+    'workstation.bootconf'
+)
+sha256sums=(
+    SKIP SKIP SKIP SKIP SKIP
+    SKIP SKIP SKIP SKIP
+)
+provides=('sbp-cmp')
+conflicts=('sbp-cmp-laptop')
+backup=(
+    'etc/crypttab'
+    'etc/crypttab.initrd'
+    'etc/fstab'
+    'etc/hostname'
+    'etc/mkinitcpio.conf'
+    'efi/EFI/Arch/refind_linux.conf'
+)
+package() {
+    install=workstation.install
+
+    # Create local config files
+    install -dm 0755 "${pkgdir}/etc"
+    
+    # Crypttab to autoload encrypted partitions on boot
+    install -Dm 0644 workstation.crypttab   "${pkgdir}/etc/crypttab"
+    install -Dm 0644 workstation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
+
+    # Fstab specific to computer
+    install -Dm 0644 workstation.fstab      "${pkgdir}/etc/fstab"
+
+    # Enforce hostname
+    install -Dm 0644 workstation.hostname   "${pkgdir}/etc/hostname"
+
+    # Initrd rules
+    install -Dm 0644 workstation.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
+
+    # Create boot options
+    install -dm 0755 "${pkgdir}/efi"
+    install -dm 0755 "${pkgdir}/efi/EFI"
+    install -dm 0755 "${pkgdir}/efi/EFI/Arch"
+    # Refind config
+    install -Dm 0755 workstation.refind     "${pkgdir}/efi/EFI/Arch/refind_linux.conf"
+    install -dm 0755 "${pkgdir}/efi/loader"
+    install -dm 0755 "${pkgdir}/efi/loader/entries"
+    # Have systemd-boot just as a fallback option
+    install -Dm 0644 laptop.bootconf    "${pkgdir}/efi/loader/entries/archlinux.conf"
+    
+    # Create mountpoints
+    install -dm 0755 "${pkgdir}/media/archlinux"
+    install -dm 0755 "${pkgdir}/media/gentoo"
+    install -dm 0700 "${pkgdir}/swap"
+  
+    # Early initrd ucode
+    depends=('amd-ucode')
+    # Use the zen kernel for this computer
+    depends+=(
+        'linux-zen'
+        'linux-zen-docs'
+        'linux-zen-headers'
+    )
+    # Graphics (amd, vulkan)
+    depends+=(
+        'mesa'
+        'mesa-demos'
+        'lib32-mesa'
+        'lib32-mesa-demos'
+        'mesa-vdpau'
+        'lib32-mesa-vdpau'
+        'libva-mesa-driver'
+        'lib32-libva-mesa-driver'
+        'libdrm'
+        'lib32-libdrm'
+        'xf86-video-amdgpu'
+        'amdvlk'
+        'lib32-vulkan-icd-loader'
+        'lib32-vulkan-radeon'
+        'vulkan-icd-loader' 
+        'vulkan-mesa-layers'
+        'vulkan-radeon'
+    )
+    # OpenCL
+    depends+=(
+        'libclc'
+        'opencl-mesa'
+        'lib32-opencl-mesa'
+    )
+    # Specific hardware
+    depends+=(
+        'nut'               # UPS monitoring
+        'nut-monitor'
+        'cnrdrvcups-lb'     # Canon printer
+        'gutenprint'
+        'foomatic-db-gutenprint-ppds'
+        'hplip'             # HP printer
+    )
+}

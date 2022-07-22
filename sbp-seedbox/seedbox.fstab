@@ -1,5 +1,0 @@
-# Managed by sbp
-# <file system>     <dir>               <type>  <options>               <dump>  <pass>
-LABEL=SeedboxRoot   /                   ext4    rw,relatime             0       2
-LABEL=SeedboxShare  /srv/deluge         ext4    rw,relatime             0       2
-/srv/deluge         /srv/nfs/seedbox    none    defaults,bind,nofail    0       2

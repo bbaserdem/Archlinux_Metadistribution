@@ -1,0 +1,65 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-editor
+pkgver=1.0
+pkgrel=01
+pkgdesc="SBP Meta Package: Editing"
+arch=('any')
+url="https://github.com/bbaserdem/Archlinux_Metadistribution"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+
+package() {
+    # Main text editor is nvim
+    depends=(
+        'neovim'
+        'neovim-remote'
+        'python-pynvim'
+    )
+    # Latex suite
+    depends+=(
+        'biber'             # Bibliography
+        'texlive-bibextra'
+        'texlive-bin'
+        'texlive-core'
+        'texlive-humanities'
+        'texlive-fontsextra'
+        'texlive-latexextra'
+        'texlive-pictures'
+        'texlive-pstricks'
+        'texlive-science'
+    )
+    # Need these for plugins
+    depends+=(
+        'autopep8'              # Null-ls linters
+        'codespell'
+        'eslint'
+        'flake8'
+        'jq'
+        'luacheck'
+        'python-pydocstyle'
+        'python-pylint'
+        'shellcheck'
+        'stylua'
+        'vint'
+        'bash-language-server'  # LSP
+        'clang'
+        'vscode-json-languageserver'
+        'lua-language-server'
+        'texlab'
+        'python-lsp-server'
+        'pandoc'
+        'pandoc-crossref'
+        'glow'                  # Markdown preview
+    )
+    # Documents
+    depends+=(
+        'libreoffice-fresh'     # Office suite
+        'zathura'               # PDF viewer
+        'zathura-cb'
+        'zathura-djvu'
+        'zathura-pdf-mupdf'
+        'zathura-ps'
+        'zotero'                # Annotation manager
+    )
+}

@@ -1,0 +1,67 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-bspwm
+pkgver=1.0
+pkgrel=01
+pkgdesc="SBP Meta Package: BSPWM"
+arch=('any')
+url="https://github.com/bbaserdem/Archlinux_Metadistribution"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    depends=('bspwm')
+    # This is xorg based
+    depends=+(
+        'xdo'
+        'xdotool'
+        'xf86-input-libinput'
+        'xf86-video-vesa'
+        'xkb-switch'
+        'xorg-font-util'
+        'xorg-fonts-misc'
+        'xorg-mkfontdir'
+        'xorg-server'
+        'xorg-server-common'
+        'xorg-setxkbmap'
+        'xorg-xcursorgen'
+        'xorg-xdpyinfo'
+        'xorg-xdriinfo'
+        'xorg-xev'
+        'xorg-xfontsel'
+        'xorg-xgamma'
+        'xorg-xinput'
+        'xorg-xkbcomp'
+        'xorg-xkbutils'
+        'xorg-xkill'
+        'xorg-xmodmap'
+        'xorg-xprop'
+        'xorg-xrandr'
+        'xorg-xrdb'
+        'xorg-xrefresh'
+        'xorg-xset'
+        'xorg-xsetroot'
+        'xorg-xvinfo'
+        'xorg-xwininfo'
+        'xorgproto'
+        'xkeycaps'
+        'xsel'
+    )
+    # Apps stuff
+    depends+=(
+        'autorandr'                 # Monitor management
+        'dunst'                     # Notification daemon
+        'feh'                       # Wallpaper management
+        'unclutter'                 # Hide mouse when idle
+        'i3lock-color'              # Screen locker
+        'maim'                      # Screenshot utility
+        'polybar'                   # AUR: Status bar
+        'gammastep'                 # Screen dimmer
+        'rofi'                      # Application launcher
+        'rofi-pass'
+        'rofi-file-browser-extended'
+        'sxhkd'                     # Simple X hotkey daemon
+        'xfce4-power-manager'       # Battery notifications
+        'xss-lock'                  # Locks screen to power & DPMS events
+        'picom'                     # Compositor for window effects
+    )
+}

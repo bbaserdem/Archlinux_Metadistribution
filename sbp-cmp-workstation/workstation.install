@@ -1,0 +1,55 @@
+# Script of sbp-cmp-laptop
+prestr='sbp-workstation'
+
+systemd_services() {
+    if [ "${1}" = 'enable' ] ; then
+        action='enable'
+        prstrn='Enabling'
+    elif [ "${1}" = 'disable' ] ; then
+        action='disable'
+        prstrn='Disabling'
+    elif [ -z "${1}" ] ; then
+        action='enable'
+        prstrn='Enabling'
+    else
+        echo "Invalid action type"
+        exit 1
+    fi
+    echo '['"${prestr}"']==> '${prstrn}' systemd services!'
+
+    echo '['"${prestr}"']==> '"${prstrn}"' Network UPS tools'
+    /usr/bin/systemctl "${action}" nut-server.service
+    /usr/bin/systemctl "${action}" nut-monitor.service
+  
+    echo '['"${prestr}"']==> '"${prstrn}"' Enable SSH access'
+    /usr/bin/systemctl "${action}" sshd.service
+
+    echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+}
+
+post_install() {
+    echo '['"${prestr}"']==> Installing meta package...'
+
+    # Services
+    systemd_services enable
+
+    echo '['"${prestr}"']==> Installation done!'
+}
+
+post_upgrade() {
+    echo '['"${prestr}"']==> Upgrading meta package ...'
+  
+    # Services
+    systemd_services enable
+
+    echo '['"${prestr}"']==> Upgrade done!'
+}
+
+post_remove() {
+    echo '['"${prestr}"']==> Uninstalling meta package...'
+  
+    # Services
+    systemd_services disable
+    
+    echo '['"${prestr}"']==> Uninstallation done!'
+}

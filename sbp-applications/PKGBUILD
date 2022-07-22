@@ -1,0 +1,152 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-applications
+pkgver=1.0
+pkgrel=01
+pkgdesc="SBP Meta Package: Applications"
+arch=('any')
+url="https://github.com/bbaserdem/Archlinux_Metadistribution"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+source=(
+    'applications.install'
+)
+sha256sums=(
+    SKIP
+)
+package() {
+    install=applications.install
+    #---Login manager
+    depends=(
+        'sddm'
+        'chili-sddm-theme'
+    )
+    #---Interfaces
+    depends+=(
+        'ibus'                  # Input methods
+        'ibus-m17n'
+        'qmk'                   # Keyboard software manager
+        'android-tools'         # Android platform
+        'android-udev'          # Proper udev rules for android
+        'droidcam'              # Use android device as camera
+        'libmtp'                # File transfer protocol for android
+        'mullvad-vpn'           # VPN service
+        'x11-openssh-askpass'   # SSH password prompt
+    )
+    #---Tools
+    depends+=(
+        'dex'                   # Autostart launcher
+        'freerdp'               # Remote desktop protocol
+        'gtk2fontsel'           # Font viewer
+        'gucharmap'             # Character viewer
+        'isync'                 # Mailbox syncing
+        'light'                 # Brightness controls
+        'mesa-utils'            # Test mesa
+        'msmtp'                 # Mail sender
+        'urlscan'               # URL extractor
+        'notmuch'               # Indexer for mail
+        'polkit-gnome'          # PolicyKit prompt
+        'profile-sync-daemon'   # Move browser profile to tmpfs
+        'profile-cleaner'       # Cleans browser profile
+        'pass'                  # Password store
+        's3cmd'                 # Amazon bucket management
+        'syncthing'             # File syncing
+        'trash-cli'             # Trash implementation
+        'tmux'                  # Multiplexer
+        'vdirsyncer'            # CalDAV/CardDAV syncing service
+        'xdg-user-dirs'         # Set user directories
+        'xdg-utils'             # File type associations
+    )
+    #---TUI Apps
+    depends=(
+        'aria2'         # Download manager
+        'deluge'        # Bittorrent client
+        'htop'          # Resourcess usage
+        'khal'          # Calendar
+        'khard'         # Contacts
+        'kmon'          # Kernel modules usage
+        'ncdu'          # Disk usage analyzer
+        'neomutt'       # Mail client
+        'nethogs'       # Network traffic viewer
+        'newsboat'      # RSS reader
+        'todoman'       # Todo manager
+        'vifm'          # File browser
+        'w3m'           # Web browser
+        'weechat'       # IRC client
+    )
+    #---GUI applications
+    depends+=(
+        'baobab'                    # Disk space analyser
+        'dynalist-desktop'          # List client
+        'firefox'                   # Browser
+        'uget-integrator'
+        'gparted'                   # Partition editor
+        'qutebrowser'
+        'hamsket'                   # Login aggregator
+        'imv'                       # Image viewer
+        'kitty'                     # Terminal emulator
+        'pdfsam'                    # Document editor
+        'remmina'                   # Remote viewer
+        'signal-desktop'            # Signal client
+        'snapper-gui'               # Snapshot management
+        'thunar'                    # File browser
+        'tumbler'
+        'ffmpegthumbnailer'
+        'thunar-archive-plugin'
+        'thunar-media-tags-plugin'
+        'thunar-volman'
+        'raw-thumbnailer'
+        'gvfs'
+        'trezor-suite-appimage'     # Hardware crypto wallet
+        'virt-manager'              # Virtual machine viewer (libvirt)
+        'zoom'                      # Conferancing
+        'zoom-firejail'
+    )
+    #---Programming and math
+    depends+=(
+        'jupyter-notebook'      # Notebook style programming
+        'jupyterlab'
+        'bpython'               # Better python shell
+        'python-pip'            # Python package management
+        'python-pipenv'
+        'spyder'                # Python IDE like matlab
+        'octave'                # Open-Matlab
+        'jupyter-octave_kernel'
+        'lapack'                # Linear algebra package
+        'openblas'              # BLAS libraries
+    )
+    #---Tray applications
+    depends+=(
+        'blueman'                   # Bluetooth management
+        'deluge-gtk'                # Torrent client
+        'udiskie'                   # Udisks frontend
+        'uget'                      # Download manager
+        'uget-integrator'
+        'syncthing-gtk'             # Syncthing status
+        'system-config-printer'     # Print manager
+    )
+    #---Fonts
+    depends+=(
+        'noto-fonts-emoji'              # Emoji fonts
+        'ttf-nerd-fonts-symbols-mono'   # Glyphs
+        'ttf-liberation'                # Windows compatibility font
+        'ttf-caladea'                   # Office fonts alternative
+        'ttf-carlito'                   # Georgia alternative
+        'ttf-croscore'                  # Helvetica, Times and courier alternative
+        'ttf-inconsolata'               # Status font   (statusbar)
+        'ttf-fira-code'                 # Ligature font (monospace)
+        'ttf-droid'                     # Font for sans (sans-serif|sans)
+        'adobe-source-serif-pro-fonts'  # Serif font  (serif)
+        'gohufont-otb'                  # Bitmap font
+    )
+    #---Icons & theming
+    depends+=(
+        'papirus-icon-theme'
+        'breeze-hacked-cursor-theme'
+        'vimix-cursors'
+        'arc-gtk-theme'
+        'kvantum-qt5'
+        'kvantum-theme-arc'
+    )
+
+}

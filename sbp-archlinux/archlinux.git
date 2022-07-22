@@ -1,0 +1,8 @@
+# File of sbp-archlinux
+[user]
+    name = Batuhan Başerdem
+    email = baserdem.batuhan@gmail.com
+[pull]
+    rebase = false
+[core]
+    editor = nvim
