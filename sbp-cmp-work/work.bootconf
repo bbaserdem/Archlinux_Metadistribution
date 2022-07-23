@@ -1,7 +1,7 @@
 # File put by sbp-cmp-laptop
 title       Arch Linux
 version     Mainline
-linux       /EFI/Arch/vmlinuz-linux
+linux       /EFI/Arch/vmlinuz-linux-zen
 initrd      /EFI/Arch/amd-ucode.img
-initrd      /EFI/Arch/initramfs-linux.img
+initrd      /EFI/Arch/initramfs-linux-zen.img
 options     rd.luks.name=bee8e6f1-2687-49e4-b86d-0be90db5bb5d=cryptos root=/dev/Workstation/Arch rootflags=subvol=@root resume=/dev/Workstation/Arch resume_offset=9524395

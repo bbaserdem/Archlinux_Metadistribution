@@ -1,22 +1,22 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
-pkgname=sbp-cmp-workstation
+pkgname=sbp-cmp-work
 pkgver=1
-pkgrel=03
+pkgrel=05
 pkgdesc='SBP Meta Package: Computer setup of Workstation'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
-    'workstation.install'
-    'workstation.crypttab'
-    'workstation.initrdtab'
-    'workstation.fstab'
-    'workstation.hostname'
-    'workstation.mkinitcpio'
-    'workstation.refind'
-    'workstation.bootconf'
+    'work.install'
+    'work.crypttab'
+    'work.initrdtab'
+    'work.fstab'
+    'work.hostname'
+    'work.mkinitcpio'
+    'work.refind'
+    'work.bootconf'
 )
 sha256sums=(
     SKIP SKIP SKIP SKIP SKIP
@@ -33,34 +33,34 @@ backup=(
     'efi/EFI/Arch/refind_linux.conf'
 )
 package() {
-    install=workstation.install
+    install=work.install
 
     # Create local config files
     install -dm 0755 "${pkgdir}/etc"
     
     # Crypttab to autoload encrypted partitions on boot
-    install -Dm 0644 workstation.crypttab   "${pkgdir}/etc/crypttab"
-    install -Dm 0644 workstation.initrdtab  "${pkgdir}/etc/crypttab.initrd"
+    install -Dm 0644 work.crypttab   "${pkgdir}/etc/crypttab"
+    install -Dm 0644 work.initrdtab  "${pkgdir}/etc/crypttab.initrd"
 
     # Fstab specific to computer
-    install -Dm 0644 workstation.fstab      "${pkgdir}/etc/fstab"
+    install -Dm 0644 work.fstab      "${pkgdir}/etc/fstab"
 
     # Enforce hostname
-    install -Dm 0644 workstation.hostname   "${pkgdir}/etc/hostname"
+    install -Dm 0644 work.hostname   "${pkgdir}/etc/hostname"
 
     # Initrd rules
-    install -Dm 0644 workstation.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
+    install -Dm 0644 work.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
 
     # Create boot options
     install -dm 0755 "${pkgdir}/efi"
     install -dm 0755 "${pkgdir}/efi/EFI"
     install -dm 0755 "${pkgdir}/efi/EFI/Arch"
     # Refind config
-    install -Dm 0755 workstation.refind     "${pkgdir}/efi/EFI/Arch/refind_linux.conf"
+    install -Dm 0755 work.refind     "${pkgdir}/efi/EFI/Arch/refind_linux.conf"
     install -dm 0755 "${pkgdir}/efi/loader"
     install -dm 0755 "${pkgdir}/efi/loader/entries"
     # Have systemd-boot just as a fallback option
-    install -Dm 0644 workstation.bootconf    "${pkgdir}/efi/loader/entries/archlinux.conf"
+    install -Dm 0644 work.bootconf    "${pkgdir}/efi/loader/entries/archlinux.conf"
     
     # Create mountpoints
     install -dm 0755 "${pkgdir}/media/archlinux"

@@ -38,10 +38,8 @@ package() {
     install -dm 0750 "${pkgdir}/root/"
     install -dm 0750 "${pkgdir}/root/.local"
     install -dm 0700 "${pkgdir}/root/.local/ssh"
-    install -dm 0750 "${pkgdir}/root/.config"
-    install -dm 0750 "${pkgdir}/root/.config/git"
-    install -Dm 0600 archlinux.ssh "${pkgdir}/root/.local//ssh/config"
-    install -Dm 0600 archlinux.git "${pkgdir}/root/.config/git/config"
+    install -Dm 0600 archlinux.ssh "${pkgdir}/root/.ssh/config"
+    install -Dm 0600 archlinux.git "${pkgdir}/root/.gitconfig"
 
     #---Set permissions for swapfile container
     install -dm 0700 "${pkgdir}/swap"

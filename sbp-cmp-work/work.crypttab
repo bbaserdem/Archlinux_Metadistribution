@@ -4,4 +4,4 @@
 # See crypttab(5) for details.
 
 # <name>       <device>                                     <password>                      <options>
-cryptdata      UUID=18559638-3f35-46e9-9600-7c259e2ab7e9    /root/workstation-data.keyfile  luks,timeout=180
+cryptdata      UUID=18559638-3f35-46e9-9600-7c259e2ab7e9    /root/work-data.keyfile  luks,timeout=180
