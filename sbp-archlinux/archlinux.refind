@@ -7,7 +7,7 @@ screensaver 60
 banner_scale fillscreen
 showtools fwupdate,about,firmware,shutdown,reboot,exit
 #textmode 1024
-textonly no
+#textonly no
 resolution max
 enable_touch no
 enable_mouse no

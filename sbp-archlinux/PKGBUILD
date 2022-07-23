@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-archlinux
 pkgver=1.0
-pkgrel=04
+pkgrel=05
 pkgdesc="SBP Meta Package: Archlinux base system (excludes kernel)"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
