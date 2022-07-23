@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-applications
 pkgver=1.0
-pkgrel=01
+pkgrel=03
 pkgdesc="SBP Meta Package: Applications"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -31,7 +31,7 @@ package() {
         'droidcam'              # Use android device as camera
         'libmtp'                # File transfer protocol for android
         'mullvad-vpn'           # VPN service
-        'x11-openssh-askpass'   # SSH password prompt
+        'x11-ssh-askpass'       # SSH password prompt
     )
     #---Tools
     depends+=(
@@ -58,7 +58,7 @@ package() {
         'xdg-utils'             # File type associations
     )
     #---TUI Apps
-    depends=(
+    depends+=(
         'aria2'         # Download manager
         'deluge'        # Bittorrent client
         'htop'          # Resourcess usage
@@ -148,5 +148,4 @@ package() {
         'kvantum-qt5'
         'kvantum-theme-arc'
     )
-
 }

@@ -43,7 +43,7 @@ systemd_services() {
     /usr/bin/systemctl "${action}" bluetooth.service
 
     echo '['"${prestr}"']==> '"${prstrn}"' CUPS daemon for printing'
-    /usr/bin/systemctl "${action}" org.cups.cupsd.service
+    /usr/bin/systemctl "${action}" cups.service
 
     echo '['"${prestr}"']==> '"${prstrn}"' Network services.'
     /usr/bin/systemctl "${action}" dhcpcd.service
@@ -94,7 +94,7 @@ post_install() {
             --comment "Batuhan Başerdem" \
             --user-group \
             --shell /usr/bin/zsh \
-        sbp
+            sbp
     else
         echo '['"${prestr}"']==> Creating user sbp.'
         /bin/useradd \
@@ -102,7 +102,7 @@ post_install() {
             --comment "Batuhan Başerdem" \
             --user-group \
             --shell /usr/bin/zsh \
-        sbp
+            sbp
     fi
 
     # Adding user to the groups

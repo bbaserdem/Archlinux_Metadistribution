@@ -2,46 +2,32 @@
  
 _name='refind-theme-regular'
 pkgname="${_name}-vcs"
-pkgver=r49.f77de31
-pkgrel=3
-pkgdesc="A simplistic clean and minimal theme for rEFInd"
+pkgver=r76.b63579c
+pkgrel=2
+pkgdesc='A simplistic clean and minimal theme for rEFInd'
 arch=('any')
-url="https://github.com/bobafetthotmail/refind-theme-regular"
+url="https://github.com/bobafetthotmail/${_name}"
 license=('AGPL3' 'custom:OFL' 'custom:Ubuntu Font License 1.0')
 depends=('refind')
 provides=('refind-theme-regular')
 conflicts=('refind-theme-regular' 'refind-theme-regular-git')
 makedepends=('git')
-source=("git+https://github.com/bobafetthotmail/${_name}" 'os_grub.png')
-md5sums=('SKIP' '892117fe965e2acd21ed06ccb2d15240')
+source=("git+https://github.com/bobafetthotmail/${_name}")
+md5sums=('SKIP')
 
 pkgver() {
-  cd "${_name}"
-  printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+    cd "${_name}"
+    printf 'r%s.%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 package() {
-  # Specify path to the refind directory
-  _refind_home="${pkgdir}/efi/EFI/rEFInd"
-
-  # Fix theme info
-  _config="${srcdir}/${_name}/theme.conf"
-  # Comment all the lines that are not commented, and is a command line
-  sed -i '/refind/ s|^[^#]|#|' "${_config}"
-  # Fix the font line, and remodify the font size
-  sed -i '/font / s|^#||' "${_config}"
-  sed -i '/font / s|\([0-9]\+\)|18|g' "${_config}"
-  # Uncomment all lines with 384-144
-  sed -i '/384-144/ s|^#||' "${_config}"
-  # Uncomment all lines with proper icon sizes
-  sed -i '/big_icon_size 384/ s|^#||' "${_config}"
-  sed -i '/small_icon_size 144/ s|^#||' "${_config}"
-  # Comment all the dark lines; we want the light theme
-  sed -i '/dark/ s|^[^#]|#|' "${_config}"
-
-  # Install to directory
-  install -D "${_config}" "${_refind_home}/${_name}/theme.conf"
-  install -Dm 755 os_grub.png "${_refind_home}/${_name}/icons/384-144/os_grub.png"
-  cp -r "${srcdir}/${_name}/fonts" "${_refind_home}/${_name}"
-  cp -r "${srcdir}/${_name}/icons" "${_refind_home}/${_name}"
+    # Specify path to the refind directory
+    install -dm 755 "${pkgdir}/efi"
+    install -dm 755 "${pkgdir}/efi/EFI"
+    install -dm 755 "${pkgdir}/efi/EFI/rEFInd"
+    install -dm 755 "${pkgdir}/efi/EFI/rEFInd/${_name}"
+    # Install to directory
+    cp --recursive  "${srcdir}/${_name}/fonts"      "${pkgdir}/efi/EFI/rEFInd/${_name}"
+    cp --recursive  "${srcdir}/${_name}/icons"      "${pkgdir}/efi/EFI/rEFInd/${_name}"
+    install -Dm 644 "${srcdir}/${_name}/theme.conf" "${pkgdir}/efi/EFI/rEFInd/${_name}/theme.conf"
 }

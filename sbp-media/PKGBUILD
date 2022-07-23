@@ -2,18 +2,16 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-media
 pkgver=1.0
-pkgrel=01
+pkgrel=03
 pkgdesc="SBP Meta Package: Media playback/management"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-
 package() {
-    depends=()
     # Audio base
     #---Pipewire
-    depends+=(
+    depends=(
         'pipewire'
         'pipewire-docs'
         'wireplumber'
@@ -35,9 +33,9 @@ package() {
         'audacity'          # Sound editing
         'picard'            # Music tagger for MB database
         'musescore'         # Sheet viewing/editing
-        'cadence'           # JACK frontend
         'libopusenc'        # Lossy audio codec: OPUS
         'flac'              # Lossless audio codec: FLAC
+        #'cadence'           # JACK frontend
     )
     #---Video playback/editing
     depends+=(
@@ -51,7 +49,7 @@ package() {
         'x265'              # Apple video codec: D265
     )
     #---Image manipulation/viewing
-    depend+=(
+    depends+=(
         'imagemagick'           # Image cmd manipulator
         'perl-image-exiftool'   # Exif info
         'imv'                   # Simple image viewer
@@ -63,7 +61,7 @@ package() {
         'libresprite-appimage'  # Sprite creator
     )
     #---Tools
-    depend+=(
+    depends+=(
         'ffmpeg'            # All purpose encoder
         'abcde'             # CD ripping tool
         'cdparanoia'        # Data collector
@@ -73,11 +71,11 @@ package() {
     )
     #---Midi and flair
     depends+=(
-        'fluidsynth'            # MIDI sythesizer
-        'freepats-general-midi' # MIDI font
-        'soundfont-fluid'       # MIDI font
-        'libcanberra'           # Sound theme applicator
-        'sound-theme-elementary'# Sound theme
-        'projectm'              # Visualizer
+        'fluidsynth'                # MIDI sythesizer
+        'freepats-general-midi'     # MIDI font
+        'soundfont-fluid'           # MIDI font
+        'libcanberra'               # Sound theme applicator
+        'sound-theme-elementary'    # Sound theme
+        'projectm'                  # Visualizer
     )
 }

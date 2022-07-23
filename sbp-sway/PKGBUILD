@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-sway
 pkgver=1.0
-pkgrel=01
+pkgrel=03
 pkgdesc="SBP Meta Package: Sway"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -11,7 +11,7 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 package() {
     depends=('sway')
     # This is wayland based
-    depends=+(
+    depends+=(
         'wayland'
         'wlroots'
         'xorg-server-xwayland'

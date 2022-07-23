@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gaming
 pkgver=1
-pkgrel=01
+pkgrel=03
 pkgdesc="SBP Meta Package: Gaming"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -46,6 +46,7 @@ package() {
     )
     # Lib32 support
     depends+=(
+        'lib32-pipewire-jack'
         'lib32-pipewire'
     )
 }

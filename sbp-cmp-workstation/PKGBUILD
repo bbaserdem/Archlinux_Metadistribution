@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-workstation
 pkgver=1
-pkgrel=01
+pkgrel=03
 pkgdesc='SBP Meta Package: Computer setup of Workstation'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -20,7 +20,7 @@ source=(
 )
 sha256sums=(
     SKIP SKIP SKIP SKIP SKIP
-    SKIP SKIP SKIP SKIP
+    SKIP SKIP SKIP
 )
 provides=('sbp-cmp')
 conflicts=('sbp-cmp-laptop')
@@ -60,7 +60,7 @@ package() {
     install -dm 0755 "${pkgdir}/efi/loader"
     install -dm 0755 "${pkgdir}/efi/loader/entries"
     # Have systemd-boot just as a fallback option
-    install -Dm 0644 laptop.bootconf    "${pkgdir}/efi/loader/entries/archlinux.conf"
+    install -Dm 0644 workstation.bootconf    "${pkgdir}/efi/loader/entries/archlinux.conf"
     
     # Create mountpoints
     install -dm 0755 "${pkgdir}/media/archlinux"

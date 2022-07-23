@@ -2,19 +2,19 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-archlinux
 pkgver=1.0
-pkgrel=01
+pkgrel=04
 pkgdesc="SBP Meta Package: Archlinux base system (excludes kernel)"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
-    'archlinux.etckeeper'
-    'archlinux.git'
     'archlinux.install'
-    'archlinux.loader'
-    'archlinux.refind'
     'archlinux.ssh'
+    'archlinux.git'
+    'archlinux.etckeeper'
+    'archlinux.refind'
+    'archlinux.loader'
 )
 sha256sums=(
     SKIP
@@ -23,6 +23,13 @@ sha256sums=(
     SKIP
     SKIP
     SKIP
+)
+backup=(
+    'root/.local/ssh/config'
+    'root/.config/git/config'
+    'etc/etckeetper/local.conf'
+    'efi/EFI/rEFInd/refind.conf'
+    'efi/loader/loader.conf'
 )
 package() {
     install=archlinux.install

@@ -6,27 +6,6 @@ This is my Arch installation guide, specialized to pull from my personal repo.
 
 Generic instructions for installation are noted here.
 
-## Create ISO (Optional)
-
-This is an alternative; to customize an iso image.
-<Revisit this once I actually do this again>
-
-## Create live usb
-
-Install the live-iso either from the torrent, or the mirrors.
-Checking the gpg-keys can be made with the following commands;
-
-```
-gpg --keyserver-options auto-key-retrieve --verify archlinux-20XX.YY.ZZ-x86_64.iso.sig
-pacman-key -v archlinux-20XX.YY.ZZ-x86_64.iso.sig
-```
-
-To write the live USB (the archiso is compatible with all boot modes by default)
-
-```
-sudo dd if=Downloads/archlinux-20XX.YY.ZZ-ARCH.iso of=/dev/sdX bs=4M status=progress oflag=sync 
-```
-
 ## Booting to live-usb
 Boot from the usb from there.
 (May want to run `loadkeys dvorak`)
@@ -202,7 +181,7 @@ The layout I like to use can be seen in my script, but displayed here;
 │   ├── (boot)      : bind mount for ESP:/EFI/<OS-name>
 │   ├── (efi)       : mount point for ESP
 │   ├── (home)      : mount point for home partition
-│   ├── (opt)       : mount point for seperate opt partition; if used
+│   ├── (opt)       : mount point for separate opt partition; if used
 │   ├── srv
 │   ├── (swap)      : mount point for subvolume @swap
 │   └── var
@@ -224,18 +203,15 @@ The layout I like to use can be seen in my script, but displayed here;
 * Copy on write disabled (with chattr +C <dir>)
 ```
 
-* Paranthesis indicates not a subvolume; but a directory (for mount points).
-* Asteriks indicates subvolumes for which CoW should be turned off.
+* Parenthesis indicates not a subvolume; but a directory (for mount points).
+* Asterisks indicates subvolumes for which CoW should be turned off.
 
 ## Installation
 
 The installation steps are custom to my personal repo.
 Most convenient way to install is to mount hard drive to a computer.
 If not; adding the repos to live environment should be sufficient.
-The command to install is `pacstrap <mnt-point> sbp-base [sbp-gui]`
-
-WARNING: Do NOT install the `sbp-<comp.>` packages with pacstrap.
-The edited `/etc/fstab` will cause conflicts with the `base` packages.
+The command to install is `pacstrap <mnt-point> things`
 
 ### Personal repo
 
@@ -249,14 +225,11 @@ Server = https://s3.amazonaws.com/sbp-arch/repo
 EOF
 ```
 
-
 ### Mirrorlist on live-usb
 
 To refresh sources, do a partial update, then update repo list
 
 ```
-pacman -Sy
-pacman -S reflector
 reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
 pacman -Sy
 ```
@@ -271,8 +244,8 @@ To restore keys, use the USB.
 ```
 gpg --pinentry-mode loopback --import <secret.subkey>
 cp -r <SSHKEYS> ~/.ssh
-chmod 700 ~/.ssh
-chmod 600 ~/.ssh/*
+chmod 700 ~/.local/ssh
+chmod 600 ~/.local/ssh/*
 ```
 
 ### Etckeeper

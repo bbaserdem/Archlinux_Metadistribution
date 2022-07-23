@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-bspwm
 pkgver=1.0
-pkgrel=01
+pkgrel=03
 pkgdesc="SBP Meta Package: BSPWM"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -11,7 +11,7 @@ validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 package() {
     depends=('bspwm')
     # This is xorg based
-    depends=+(
+    depends+=(
         'xdo'
         'xdotool'
         'xf86-input-libinput'
