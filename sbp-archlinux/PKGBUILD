@@ -36,8 +36,7 @@ package() {
 
     #---Configure root account to be able to use proper keys for commits
     install -dm 0750 "${pkgdir}/root/"
-    install -dm 0750 "${pkgdir}/root/.local"
-    install -dm 0700 "${pkgdir}/root/.local/ssh"
+    install -dm 0700 "${pkgdir}/root/.ssh"
     install -Dm 0600 archlinux.ssh "${pkgdir}/root/.ssh/config"
     install -Dm 0600 archlinux.git "${pkgdir}/root/.gitconfig"
 
@@ -53,7 +52,6 @@ package() {
     install -dm 0755 "${pkgdir}/efi/EFI"
     install -dm 0755 "${pkgdir}/efi/EFI/rEFInd"
     install -Dm 0644 archlinux.refind       "${pkgdir}/efi/EFI/rEFInd/refind.conf"
-    install -dm 0755 "${pkgdir}/efi/EFI/RefindPlus"
     install -dm 0755 "${pkgdir}/efi/loader"
     install -Dm 0644 archlinux.loader       "${pkgdir}/efi/loader/loader.conf"
 
