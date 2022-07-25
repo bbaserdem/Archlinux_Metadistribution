@@ -114,6 +114,7 @@ package() {
         'jupyter-octave_kernel'
         'lapack'                # Linear algebra package
         'openblas'              # BLAS libraries
+        'libxcrypt-compat'      # Matlab dependency
     )
     #---Tray applications
     depends+=(
