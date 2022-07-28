@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-work
 pkgver=1
-pkgrel=05
+pkgrel=06
 pkgdesc='SBP Meta Package: Computer setup of Workstation'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -67,10 +67,9 @@ package() {
     install -dm 0755 "${pkgdir}/media/gentoo"
     install -dm 0700 "${pkgdir}/swap"
   
-    # Early initrd ucode
-    depends=('amd-ucode')
-    # Use the zen kernel for this computer
-    depends+=(
+    # Early initrd ucode and kernel
+    depends=(
+        'amd-ucode'
         'linux-zen'
         'linux-zen-docs'
         'linux-zen-headers'

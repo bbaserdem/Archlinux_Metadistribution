@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-laptop
 pkgver=1
-pkgrel=05
+pkgrel=06
 pkgdesc='SBP Meta Package: Computer setup of Laptop'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -69,8 +69,13 @@ package() {
     install -dm 0755 "${pkgdir}/media/windows"
     install -dm 0700 "${pkgdir}/swap"
 
-    # Early initrd ucode
-    depends=('intel-ucode')
+    # Early initrd ucode and kernel
+    depends=(
+        'intel-ucode'
+        'linux'
+        'linux-docs'
+        'linux-headers'
+    )
     # Graphics (intel)
     depends+=(
         'intel-media-driver'
