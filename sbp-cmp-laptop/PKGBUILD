@@ -65,7 +65,7 @@ package() {
     install -dm 0755 "${pkgdir}/media/root"
     install -dm 0755 "${pkgdir}/media/gentoo"
     install -dm 0755 "${pkgdir}/media/windows"
-    install -dm 0700 "${pkgdir}/.swap"
+    install -dm 0700 "${pkgdir}/swap"
 
     # Early initrd ucode and kernel
     depends=(

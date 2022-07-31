@@ -20,7 +20,7 @@
 #/dev/mapper/cryptos     /                       btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-root   0       0
 #/dev/mapper/cryptos     /var-log                btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-log    0       0
 #/dev/mapper/cryptos     /.snapshots             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-snap   0       0
-#/dev/mapper/cryptos     /.swap                  btrfs   defaults,strictatime,lazytime,compress=no,subvol=@arch-swap     0       0
+#/dev/mapper/cryptos     /swap                   btrfs   defaults,strictatime,lazytime,compress=no,subvol=@arch-swap     0       0
 #/.swap/swapfile         none                    swap    defaults                                                        0       0
 #--------------------------------------------------------------Data system--------------------------------------------------------------#
 #/dev/mapper/cryptos     /mnt/root               btrfs   defaults,strictatime,lazytime,compress=zstd                     0       0
@@ -34,7 +34,7 @@ UUID=AABD-CA5F  /efi/EFI/Windows    vfat    rw,relatime,fmask=0022,dmask=0022,co
 #----------------------------------------------------------Root system: Gentoo----------------------------------------------------------#
 #/dev/mapper/cryptos     /mnt/gentoo             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-root 0       0
 #/dev/mapper/cryptos     /mnt/gentoo/.snapshots  btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-snap 0       0
-#/dev/mapper/cryptos     /mnt/gentoo/.swap       btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-swap 0       0
+#/dev/mapper/cryptos     /mnt/gentoo/swap        btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-swap 0       0
 #/dev/mapper/cryptos     /mnt/gentoo/distfiles   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-dist 0       0
 #/dev/mapper/cryptos     /mnt/gentoo/vm          btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-virt 0       0
 #/home                   /mnt/gentoo/home        none    defaults,bind                                                   0       0
