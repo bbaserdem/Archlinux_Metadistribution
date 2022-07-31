@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-laptop
 pkgver=1
-pkgrel=06
+pkgrel=07
 pkgdesc='SBP Meta Package: Computer setup of Laptop'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -18,10 +18,7 @@ source=(
     'laptop.refind'
     'laptop.bootconf'
 )
-sha256sums=(
-    SKIP SKIP SKIP SKIP SKIP
-    SKIP SKIP SKIP
-)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-cmp-workstation')
 backup=(
@@ -31,6 +28,7 @@ backup=(
     'etc/hostname'
     'etc/mkinitcpio.conf'
     'efi/EFI/Arch/refind_linux.conf'
+    '/efi/loader/entries/archlinux.conf'
 )
 package() {
     install=laptop.install
@@ -55,19 +53,19 @@ package() {
     install -dm 0755 "${pkgdir}/efi"
     install -dm 0755 "${pkgdir}/efi/EFI"
     install -dm 0755 "${pkgdir}/efi/EFI/Arch"
-    # Refind config (not working)
+    # Refind config
     install -Dm 0644 laptop.refind      "${pkgdir}/efi/EFI/Arch/refind_linux.conf"
+    # Systemd-boot config (backup)
     install -dm 0755 "${pkgdir}/efi/loader"
     install -dm 0755 "${pkgdir}/efi/loader/entries"
     install -Dm 0644 laptop.bootconf    "${pkgdir}/efi/loader/entries/archlinux.conf"
 
     # Create mountpoints
     install -dm 0755 "${pkgdir}/media"
-    install -dm 0755 "${pkgdir}/media/archlinux"
+    install -dm 0755 "${pkgdir}/media/root"
     install -dm 0755 "${pkgdir}/media/gentoo"
-    install -dm 0755 "${pkgdir}/media/seedbox"
     install -dm 0755 "${pkgdir}/media/windows"
-    install -dm 0700 "${pkgdir}/swap"
+    install -dm 0700 "${pkgdir}/.swap"
 
     # Early initrd ucode and kernel
     depends=(

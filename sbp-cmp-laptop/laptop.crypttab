@@ -3,5 +3,5 @@
 # Configuration for encrypted block devices.
 # See crypttab(5) for details.
 
-# <name>        <device>                                    <password>                          <options>
-#cryptdata       UUID=???                                    /root/laptop-data.keyfile           luks,timeout=180
+# <name>    <device>                                    <password>                  <options>
+cryptdata   UUID=1fa6c52b-fec6-469c-8ed9-000e56f048f2   /root/laptop-data.keyfile   luks,timeout=180
