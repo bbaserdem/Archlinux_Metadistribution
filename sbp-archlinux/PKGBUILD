@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-archlinux
 pkgver=1.0
-pkgrel=06
+pkgrel=07
 pkgdesc="SBP Meta Package: Archlinux base system (excludes kernel)"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -126,6 +126,7 @@ package() {
         'refind-theme-regular'      # Theming refind
         'refind'                    # Boot manager
         'systemd-boot-pacman-hook'  # Systemd-boot as fallback
+        'sbctl'                     # Automate key signing
     )
     #---Generic tools
     depends+=(
