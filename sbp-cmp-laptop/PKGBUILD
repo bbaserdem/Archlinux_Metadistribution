@@ -28,7 +28,7 @@ backup=(
     'etc/hostname'
     'etc/mkinitcpio.conf'
     'efi/EFI/Arch/refind_linux.conf'
-    '/efi/loader/entries/archlinux.conf'
+    'efi/loader/entries/archlinux.conf'
 )
 package() {
     install=laptop.install
