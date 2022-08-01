@@ -4,6 +4,6 @@
 MODULES=(i915 usbhid xhci_hcd)
 BINARIES=()
 FILES=()
-HOOKS=(base systemd keyboard autodetect modconf block sd-vconsole sd-encrypt lvm2 fsck filesystems)
+HOOKS=(base systemd keyboard autodetect modconf block sd-vconsole sd-encrypt fsck filesystems)
 #COMPRESSION="zstd"
 #COMPRESSION_OPTIONS=(-9)

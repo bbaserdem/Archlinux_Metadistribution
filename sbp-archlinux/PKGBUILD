@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-archlinux
 pkgver=1.0
-pkgrel=07
+pkgrel=10
 pkgdesc="SBP Meta Package: Archlinux base system (excludes kernel)"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -130,15 +130,16 @@ package() {
     )
     #---Generic tools
     depends+=(
-        'diffutils'     # Calculate file differences
-        'earlyoom'      # OOM preventor
-        'git'           # Preferred VCS
-        'jq'            # JSON parser
-        'less'          # Buffer output
-        'man-pages'     # System manual pages
-        'rsync'         # Copy files
-        'wget'          # Import files over network
-        'bash'          # Shells
+        'diffutils'             # Calculate file differences
+        'earlyoom'              # OOM preventor
+        'git'                   # Preferred VCS
+        'jre-openjdk-headless'  # Java server
+        'jq'                    # JSON parser
+        'less'                  # Buffer output
+        'man-pages'             # System manual pages
+        'rsync'                 # Copy files
+        'wget'                  # Import files over network
+        'bash'                  # Shells
         'bash-completion'
         'dash'
         'zsh'
@@ -158,8 +159,8 @@ package() {
         'sudo'          # Elevates privilege
         'tzupdate'      # Timezone updator
         'ntp'           # System clock syncher
-    )
-    #---File system related toolkit
+        )
+#---File system related toolkit
     depends+=(
         'btrfs-progs'   # Btrfs
         'cryptsetup'    # LUKS
@@ -217,11 +218,9 @@ package() {
     depends+=(
         'docker'            # Container runner
         'docker-compose'
-        'qemu'              # Hypervisor
         'vde2'
         'edk2-ovmf'
         'libvirt'           # Virtualization management
-        'ebtables'
         'dnsmasq'
         'bridge-utils'
         'virtio-win'        # Virtio drivers for windows

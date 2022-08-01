@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-gaming
 pkgver=1
-pkgrel=03
+pkgrel=04
 pkgdesc="SBP Meta Package: Gaming"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -34,6 +34,8 @@ package() {
         'wine-staging'
         'wine-gecko'
         'wine-mono'
+        'lib32-pipewire-jack'
+        'lib32-pipewire'
         'lib32-libxml2'
         'lib32-mpg123'
         'lib32-lcms2'
@@ -43,10 +45,5 @@ package() {
         'lib32-gst-plugins-base'
         'lib32-openal'
         'lib32-gst-plugins-good'
-    )
-    # Lib32 support
-    depends+=(
-        'lib32-pipewire-jack'
-        'lib32-pipewire'
     )
 }

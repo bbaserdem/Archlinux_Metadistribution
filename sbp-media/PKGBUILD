@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-media
 pkgver=1.0
-pkgrel=03
+pkgrel=09
 pkgdesc="SBP Meta Package: Media playback/management"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -10,8 +10,10 @@ licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 package() {
     # Audio base
+    #---Open dependency versions
+    depends=('openblas')
     #---Pipewire
-    depends=(
+    depends+=(
         'pipewire'
         'pipewire-docs'
         'wireplumber'
@@ -63,11 +65,11 @@ package() {
     #---Tools
     depends+=(
         'ffmpeg'            # All purpose encoder
-        'abcde'             # CD ripping tool
-        'cdparanoia'        # Data collector
+        'whipper'           # CD ripping tool
+        'python-pillow'
         'yt-dlp'            # Youtube (and other website) scraper
-        'kodi'              # Media center
-        'kodi-wayland'
+        #'kodi'              # Media center, currently conflicts with firewalld
+        #'kodi-wayland'
     )
     #---Midi and flair
     depends+=(

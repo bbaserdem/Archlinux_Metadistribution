@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-sway
 pkgver=1.0
-pkgrel=03
+pkgrel=08
 pkgdesc="SBP Meta Package: Sway"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -15,7 +15,7 @@ package() {
         'wayland'
         'wlroots'
         'xorg-server-xwayland'
-        'ydotool'
+        #'ydotool'
     )
     # Apps stuff
     depends+=(

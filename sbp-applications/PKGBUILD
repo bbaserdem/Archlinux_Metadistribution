@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-applications
 pkgver=1.0
-pkgrel=06
+pkgrel=09
 pkgdesc="SBP Meta Package: Applications"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -29,7 +29,6 @@ package() {
         'android-tools'         # Android platform
         'android-udev'          # Proper udev rules for android
         'droidcam'              # Use android device as camera
-        'libmtp'                # File transfer protocol for android
         'mullvad-vpn'           # VPN service
         'x11-ssh-askpass'       # SSH password prompt
     )
@@ -39,6 +38,8 @@ package() {
         'freerdp'               # Remote desktop protocol
         'gtk2fontsel'           # Font viewer
         'gucharmap'             # Character viewer
+        'gvfs'                  # Fuse filesystems for nautilus
+        'gvfs-goa' 'gvfs-google' 'gvfs-gphoto2' 'gvfs-mtp' 'gvfs-nfs' 'gvfs-smb'
         'isync'                 # Mailbox syncing
         'light'                 # Brightness controls
         'mesa-utils'            # Test mesa
@@ -85,18 +86,17 @@ package() {
         'hamsket'                   # Login aggregator
         'imv'                       # Image viewer
         'kitty'                     # Terminal emulator
-        'pdfsam'                    # Document editor
+        'nautilus'                  # File browser
+        'filemanager-actions'       # Files: actions
+        'nautilus-share'            # Files: share with samba
+        'seahorse-nautilus'         # Files: pgp support
+        'easytag'                   # Files: audio tags
+        'file-roller'               # Files: search
+        'gvfs-mtp'                  # Files: android transfer
+        'pdfslicer'                 # Document editor
         'remmina'                   # Remote viewer
         'signal-desktop'            # Signal client
         'snapper-gui'               # Snapshot management
-        'thunar'                    # File browser
-        'tumbler'
-        'ffmpegthumbnailer'
-        'thunar-archive-plugin'
-        'thunar-media-tags-plugin'
-        'thunar-volman'
-        'raw-thumbnailer'
-        'gvfs'
         'trezor-suite-appimage'     # Hardware crypto wallet
         'virt-manager'              # Virtual machine viewer (libvirt)
         'zoom'                      # Conferancing
@@ -115,6 +115,9 @@ package() {
         'lapack'                # Linear algebra package
         'openblas'              # BLAS libraries
         'libxcrypt-compat'      # Matlab dependency
+        'qemu-full'             # Hypervisor
+        'qemu-block-iscsi'
+        'samba'
     )
     #---Tray applications
     depends+=(
@@ -123,22 +126,8 @@ package() {
         'udiskie'                   # Udisks frontend
         'uget'                      # Download manager
         'uget-integrator'
-        'syncthing-gtk'             # Syncthing status
+        'syncthing-gtk-python3'     # Syncthing status
         'system-config-printer'     # Print manager
-    )
-    #---Fonts
-    depends+=(
-        'noto-fonts-emoji'              # Emoji fonts
-        'ttf-nerd-fonts-symbols-mono'   # Glyphs
-        'ttf-liberation'                # Windows compatibility font
-        'ttf-caladea'                   # Office fonts alternative
-        'ttf-carlito'                   # Georgia alternative
-        'ttf-croscore'                  # Helvetica, Times and courier alternative
-        'ttf-inconsolata'               # Status font   (statusbar)
-        'ttf-fira-code'                 # Ligature font (monospace)
-        'ttf-droid'                     # Font for sans (sans-serif|sans)
-        'adobe-source-serif-pro-fonts'  # Serif font  (serif)
-        'gohufont-otb'                  # Bitmap font
     )
     #---Icons & theming
     depends+=(

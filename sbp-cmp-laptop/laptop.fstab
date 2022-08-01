@@ -7,30 +7,32 @@
 #-----------------------------------------------------------File System Table-----------------------------------------------------------#
 # <file system>         <dir>                   <type>  <options>                                                       <dump>  <pass>  #
 #--------------------------------------------------------Root system : Archlinux--------------------------------------------------------#
-/dev/mapper/cryptos     /                       btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-root   0       0
-/dev/mapper/cryptos     /var-log                btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-log    0       0
-/dev/mapper/cryptos     /.snapshots             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-snap   0       0
-/dev/mapper/cryptos     /swap                   btrfs   defaults,strictatime,lazytime,compress=no,subvol=@arch-swap     0       0
+/dev/mapper/Laptop-OS   /                       btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-root   0       0
+/dev/mapper/Laptop-OS   /.snapshots             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-snap   0       0
+/dev/mapper/Laptop-OS   /var/log                btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-log    0       0
+/dev/mapper/Laptop-OS   /swap                   btrfs   defaults,strictatime,lazytime,compress=no,subvol=@arch-swap     0       0
 /swap/swapfile          none                    swap    defaults                                                        0       0
+UUID=A0B4-8ADB          /efi                    vfat    defaults,relatime,umask=0022,utf8                               0       2
+/efi/EFI/Arch           /boot                   none    defaults,bind                                                   0       0
 #--------------------------------------------------------------Data system--------------------------------------------------------------#
-/dev/mapper/cryptos     /mnt/root               btrfs   defaults,strictatime,lazytime,compress=zstd                     0       0
-/dev/mapper/cryptos     /home                   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@home        0       0
-/dev/mapper/cryptos     /opt                    btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@opt         0       0
-/dev/mapper/cryptdata   /home/data              ext4    defaults,strictatime,lazytime                                   0       1
+/dev/mapper/Laptop-OS   /mnt/filesystem-btrfs   btrfs   defaults,strictatime,lazytime,compress=zstd                     0       1
+/dev/mapper/Laptop-OS   /root                   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@roothome    0       0
+/dev/mapper/Laptop-OS   /home                   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@home        0       0
+/dev/mapper/Laptop-OS   /opt                    btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@opt         0       0
+/dev/mapper/Laptop-Data /home/data              ext4    defaults,strictatime,lazytime                                   0       1
 #----------------------------------------------------------Root system: Gentoo----------------------------------------------------------#
-/dev/mapper/cryptos     /mnt/gentoo             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-root 0       0
-/dev/mapper/cryptos     /mnt/gentoo/.snapshots  btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-snap 0       0
-/dev/mapper/cryptos     /mnt/gentoo/swap        btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-swap 0       0
-/dev/mapper/cryptos     /mnt/gentoo/distfiles   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-dist 0       0
-/dev/mapper/cryptos     /mnt/gentoo/vm          btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-virt 0       0
+/dev/mapper/Laptop-OS   /mnt/gentoo             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-root 0       0
+/dev/mapper/Laptop-OS   /mnt/gentoo/.snapshots  btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-snap 0       0
+/dev/mapper/Laptop-OS   /mnt/gentoo/swap        btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-swap 0       0
+/dev/mapper/Laptop-OS   /mnt/gentoo/distfiles   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-dist 0       0
+/dev/mapper/Laptop-OS   /mnt/gentoo/vm          btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-virt 0       0
+/root                   /mnt/gentoo/root        none    defaults,bind                                                   0       0
 /home                   /mnt/gentoo/home        none    defaults,bind                                                   0       0
 /home/data              /mnt/gentoo/home/data   none    defaults,bind                                                   0       0
 /opt                    /mnt/gentoo/opt         none    defaults,bind                                                   0       0
 /efi                    /mnt/gentoo/boot        none    defaults,bind                                                   0       0
 #--------------------------------------------------------Root system: Windows 10--------------------------------------------------------#
 # Windows OS
-UUID=A6A83A1EA839EE05   /mnt/windows            ntfs3   defaults,noatime,nofail                                         0       2
-#---------------------------------------------------------EFI System partitions---------------------------------------------------------#
-UUID=A0B4-8ADB  /efi                vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0   2
-UUID=AABD-CA5F  /efi/EFI/Windows    vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro   0   2
-/efi/EFI/Arch   /boot               none    defaults,bind                                                                                               0   2
+UUID=A6A83A1EA839EE05   /mnt/windows            ntfs3   defaults,noatime,utf8,nofail,uid=1000,gid=1000,umask=022        0       0
+UUID=AABD-CA5F          /efi/EFI/Windows        vfat    defaults,relatime,umask=0022,utf8                               0       2
+#---------------------------------------------------------------------------------------------------------------------------------------#
