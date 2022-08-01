@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-archlinux
 pkgver=1.0
-pkgrel=10
+pkgrel=12
 pkgdesc="SBP Meta Package: Archlinux base system (excludes kernel)"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -132,10 +132,13 @@ package() {
     depends+=(
         'diffutils'             # Calculate file differences
         'earlyoom'              # OOM preventor
+        'systembus-notify'
         'git'                   # Preferred VCS
         'jre-openjdk-headless'  # Java server
         'jq'                    # JSON parser
         'less'                  # Buffer output
+        'mariadb'               # MySQL
+        'man-db'                # Need this for man pages
         'man-pages'             # System manual pages
         'rsync'                 # Copy files
         'wget'                  # Import files over network
@@ -166,6 +169,7 @@ package() {
         'cryptsetup'    # LUKS
         'e2fsprogs'     # Ext2/3/4
         'exfat-utils'   # Vfat
+        'f2fs-tools'    # Flash-friendly file system
         'fuse3'         # FUSE; needed to mount remote stuff by user
         'lvm2'          # Logical volumes
         'sysfsutils'    # Kernel's virtual filesystem
@@ -173,8 +177,10 @@ package() {
         'ntfs-3g'       # NTFS
         'mtools'        # Windows management
         'snapper'       # BTRFS snapshot manager
+        'sshfs'         # FS over SSH
         'parted'        # Partition management
         'nfs-utils'     # NFS
+        'udftools'      # CD dealsing
         'udisks2'       # Disk management service
         'inotify-tools' # Cmd tools to use inotify (file watcher)
     )

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-media
 pkgver=1.0
-pkgrel=09
+pkgrel=10
 pkgdesc="SBP Meta Package: Media playback/management"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -24,6 +24,7 @@ package() {
         'pavucontrol'       # GUI for pulseaudio
         'pulsemixer'        # TUI for pulseaudio
         'pamixer'           # Cmdline tools for pulseaudio
+        'rtkit'
     )
     #---Music playback/editing
     depends+=(
@@ -68,6 +69,7 @@ package() {
         'whipper'           # CD ripping tool
         'python-pillow'
         'yt-dlp'            # Youtube (and other website) scraper
+        'python-pycryptodomex'
         #'kodi'              # Media center, currently conflicts with firewalld
         #'kodi-wayland'
     )
