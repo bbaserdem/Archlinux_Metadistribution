@@ -207,6 +207,7 @@ package() {
         'nss-mdns'
         'bluez'             # Bluetooth
         'bluez-libs'
+        'bluez-utils'
         'bridge-utils'      # Ethernet bridge
         'cups'              # Network printing
         'cups-pdf'

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-media
 pkgver=1.0
-pkgrel=10
+pkgrel=12
 pkgdesc="SBP Meta Package: Media playback/management"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -46,6 +46,7 @@ package() {
         'smplayer'          # Frontend for mpv
         'flowblade'         # Video editor
         'handbrake'         # Video encoder
+        'mkvtoolnix-gui'    # Video muxer for Matroska
         'svt-av1'           # Lossy video codec: AV1
         'libvpx'            # Lossy video codec: VP9/VP8
         'x264'              # Apple video codec: D264
