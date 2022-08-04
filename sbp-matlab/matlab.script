@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Matlab wrapper script to modify environment before launch
+# Part of sbp-matlab
+
+# Override mesa driver, if requested
+if [ -n "${MATLAB_MESA_OVERRIDE}" ] ; then
+    export MESA_LOADER_DRIVER_OVERRIDE="${MATLAB_MESA_OVERRIDE}"
+fi
+
+# Preload libraries if requested
+if [ -n "${MATLAB_LIBRARY_PRELOAD}" ] ; then
+    export LD_PRELOAD="${MATLAB_LIBRARY_PRELOAD}"
+fi
+
+# Additional scan directories for library paths if needed
+if [ -n "${MATLAB_PRELOAD_PATH}" ] ; then
+    export LD_LIBRARY_PATH="${MATLAB_PRELOAD_PATH}"
+fi
+
+# Got this from the PKGBUILD of 2022a
+export GTK_PATH='/usr/lib/gtk-2.0'
+
+# Matlab log file location
+if [ -n "${XDG_CACHE_HOME}" ] ; then
+    export MATLAB_LOG_DIR="${XDG_CACHE_HOME}/matlab/"
+else
+    export MATLAB_LOG_DIR="${HOME}/.cache/matlab/"
+fi
+# If directory does not exist; create it
+if [ ! -e "${MATLAB_LOG_DIR}" ] ; then
+    mkdir --parents "${MATLAB_LOG_DIR}"
+elif [ ! -d  "${MATLAB_LOG_DIR}" ] ; then
+    echo "Log target is not a directory: ${MATLAB_LOG_DIR}"
+    exit 1
+fi
+
+# Check if the first argument is a specifier for some other programs.
+# If it's not; launch main matlab with all the arguments
+_arg="${1}"
+shift
+case "${_arg}" in
+    activate)   exec /opt/tmw/matlab/bin/activate_matlab.sh     "$@"    ;;
+    deactivate) exec /opt/tmw/matlab/bin/deactivate_matlab.sh   "$@"    ;;
+    genspark)   exec /opt/tmw/matlab/bin/generatesparkjcpath    "$@"    ;;
+    lint)       exec /opt/tmw/matlab/bin/glnxa64/mlint          "$@"    ;;
+    ldd)        exec /opt/tmw/matlab/bin/ldd                    "$@"    ;;
+    mbuild)     exec /opt/tmw/matlab/bin/mbuild                 "$@"    ;;
+    mcc)        exec /opt/tmw/matlab/bin/mcc                    "$@"    ;;
+    mex)        exec /opt/tmw/matlab/bin/mex                    "$@"    ;;
+    deploytool) exec /opt/tmw/matlab/bin/deploytool             "$@"    ;;
+    batch)      exec /opt/tmw/matlab/bin/matlab     -batch      "$@"    ;; 
+    script) 
+        if [ $# -eq 1 ] ; then
+            # Check if executable, run in batch mode if it is
+            if [ -n "${1}" ] && [ -x "${1}" ]; then
+                exec /opt/tmw/matlab/bin/matlab -batch "${1}"
+            else
+                echo "Can't run ${1}, not executable."
+            fi
+        else
+            echo 'Either supply one script, or use async.'
+        fi
+        ;;
+    async)      _i='0'
+        for _file in "$@" ; do
+            # Check if executable, run in batch mode if it is
+            if [ -n "${_file}" ] && [ -x "${_file}" ]; then
+                /opt/tmw/matlab/bin/matlab -batch "$(realpath "${_file}")" &
+                _i=$((_i+1))
+            else
+                echo "Can't run ${_file}, not executable."
+            fi
+        done
+        echo "Launched $((_i+1)) jobs."
+        # Wait until everyone is done
+        for _job in $(jobs -p)
+        do
+            wait "${_job}"
+        done
+        ;; 
+    *)          exec /opt/tmw/matlab/bin/matlab     "${_arg}"   "$@"    ;;
+esac

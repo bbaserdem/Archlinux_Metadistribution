@@ -1,0 +1,239 @@
+# Maintainer: Batuhan Baserdem <lastname dot firstname at gmail>
+# PKGBUILD
+pkgbase='matlab'
+pkgname=(
+    'python-matlabengine'
+    'matlab'
+)
+source=(
+    "${pkgbase}.tar"
+    "${pkgbase}.fik"
+    "${pkgbase}.lic"
+)
+sha256sums=(
+    'SKIP'
+    'SKIP'
+    'SKIP'
+)
+pkgver=9.12.0.2009381
+pkgrel=1
+pkgdesc='A high-level language for numerical computation and visualization'
+arch=('x86_64')
+url='http://www.mathworks.com'
+license=(custom)
+# Enter dependencies as makedepends.
+# Dependencies of matlab change from system to system and modules.
+# I personally provide these with a meta package.
+makedepends=(
+    'gendesk'           # Functions needed in this install
+    'coreutils'
+    'findutils'
+    'python'            # Needed to install the python API
+    'ca-certificates'   # Matlab installer needs (possibly less; experiment later)
+    'cairo'
+    'fontconfig'
+    'glib2'
+    'krb5'
+    'libgcrypt'
+    'libselinux'
+    'libxcrypt-compat'
+    'make'
+    'mesa'
+    'pam'
+    'unzip'
+    'util-linux-libs'
+)
+# Example list of products for a partial install, leave empty for full install
+products=(
+    'MATLAB'
+    'Audio_Toolbox'
+    'Bioinformatics_Toolbox'
+    'Curve_Fitting_Toolbox'
+    'Database_Toolbox'
+    'Deep_Learning_Toolbox'
+    'DSP_System_Toolbox'
+    'Global_Optimization_Toolbox'
+    'GPU_Coder'
+    'Image_Processing_Toolbox'
+    'MATLAB_Coder'
+    'Optimization_Toolbox'
+    'Parallel_Computing_Toolbox'
+    'Partial_Differential_Equation_Toolbox'
+    'Reinforcement_Learning_Toolbox'
+    'Signal_Processing_Toolbox'
+    'Statistics_and_Machine_Learning_Toolbox'
+    'Symbolic_Math_Toolbox'
+    'Text_Analytics_Toolbox'
+    'Wavelet_Toolbox'
+)
+
+# Generate the package version from the installer
+pkgver() {
+    cat "${srcdir}/${pkgbase}/VersionInfo.xml" \
+        | sed --quiet 's|\s*<version>\(.*\)</version>\s*|\1|p'
+}
+
+prepare() {
+    # Extract file installation key
+    _fik=$(grep -o '[0-9-]*' "${srcdir}/${pkgbase}.fik")
+
+    # Modify the installer settings'
+    _set="${srcdir}/${pkgbase}/installer_input.txt"
+    sed -i "s|^# destinationFolder=|destinationFolder=${srcdir}/build|" "${_set}"
+    sed -i "s|^# fileInstallationKey=|fileInstallationKey=${_fik}|"     "${_set}"
+    sed -i "s|^# agreeToLicense=|agreeToLicense=yes|"                   "${_set}"
+    sed -i "s|^# outputFile=|outputFile=${srcdir}/${name}.log|"         "${_set}"
+    sed -i "s|^improveMATLAB=yes|improveMATLAB=no|"                     "${_set}"
+    sed -i "s|^# licensePath=|licensePath=${srcdir}/matlab.lic|"        "${_set}"
+
+    # Select products if partialinstall is set
+    if [ "${#products[@]}" -gt '0' ]; then
+        for _prod in "${products[@]}"; do
+            sed --in-place 's|^#\(product.'"${_prod}"'\)$|\1|' "${_set}"
+        done
+    fi
+
+    # Desktop file, get release version, for installation directory
+    release="$(cat "${srcdir}/${pkgbase}/VersionInfo.xml" \
+        | sed --quiet 's|\s*<release>\(.*\)</release>\s*|\1|p')"
+    gendesk -f -n \
+        --pkgname "${pkgbase}" \
+        --pkgdesc "${pkgdesc}" \
+        --name "MATLAB ${release}" \
+        --genericname "MATLAB" \
+        --comment 'Programming and numeric computing platform' \
+        --exec 'matlab' \
+        --icon "${pkgbase}" \
+        --categories "Development;Education;Science;Mathematics;IDE" \
+        --mimetypes "application/x-matlab-data;text/x-matlab"
+}
+
+build() {
+    # Run the main instaler
+    release="$(cat "${srcdir}/${pkgbase}/VersionInfo.xml" \
+        | sed --quiet 's|\s*<release>\(.*\)</release>\s*|\1|p')"
+    echo "Installing MATLAB ${release} using the installer"
+    # -inputFile automatically disables GUI
+    "${srcdir}/${pkgbase}/install" -inputFile "${srcdir}/${pkgbase}/installer_input.txt"
+
+    echo 'Using the installation to build python API'
+    # Correct python API version; otherwise gives error (non PEP3)
+    _py_dir="${srcdir}/build/extern/engines/python"
+    sed --in-place 's|version="'"${release}"'",|version="'"${pkgver}"'",|' \
+        "${_py_dir}/setup.py"
+
+    # Checking supported vs existing matlab versions
+    _ml_minor="$(find "${_py_dir}" -name 'matlabengineforpython3*.so' \
+        | sort | sed 's|.*matlabengineforpython3_\([0-9]\+\)\.so|\1|g' | tail -1)"
+    _py_minor="$(python -c 'import sys; print(sys.version_info.minor)')"
+
+    # Spoof version compatibility if not applicable
+    if [[ "${_py_minor}" != "${_ml_minor}" ]]; then
+        # setup.py has version strings as 3.X   (dots)
+        sed --in-place \
+            's|_supported_versions\(.*\)\]|_supported_versions\1, '"'3\.${_py_minor}'"'\]|' \
+            "${_py_dir}/setup.py"
+        # __init__.py has them as 3_X           (underscores)
+        sed --in-place \
+            's|_supported_versions\(.*\)\]|_supported_versions\1, '"'3_${_py_minor}'"'\]|' \
+            "${_py_dir}/dist/matlab/__init__.py"
+        sed --in-place \
+            's|_supported_versions\(.*\)\]|_supported_versions\1, '"'3_${_py_minor}'"'\]|' \
+            "${_py_dir}/dist/matlab/engine/__init__.py"
+        # Copy supplied library version; must be good enough
+        cp  "${_py_dir}/dist/matlab/engine/glnxa64/matlabengineforpython3_${_ml_minor}.so" \
+            "${_py_dir}/dist/matlab/engine/glnxa64/matlabengineforpython3_${_py_minor}.so"
+    fi
+
+    # Build the python package
+    cd "${_py_dir}"
+    python setup.py build
+
+    # Fix erroneous _arch.txt file reference; seirously TMW you guys SUCK
+    errstr="$(realpath "${_py_dir}")"
+    instdir="/opt/tmw/MATLAB-${release}"
+    trustr="/${instdir}/extern/engines/python"
+    sed --in-place "s|${errstr}|${trustr}|" "${_py_dir}/build/lib/matlab/engine/_arch.txt"
+}
+
+package_python-matlabengine () {
+    pkgdesc='Module to call MATLAB from Python'
+    # Replace dependency array with a small one
+    depends=(
+        'python'
+        'matlab'
+    )
+    echo 'Packaging python API.'
+    cd "${srcdir}/build/extern/engines/python"
+    python setup.py install --root="${pkgdir}" --optimize=1 --skip-build
+    install -D --mode=644 "${srcdir}/${pkgbase}/license_agreement.txt" \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
+
+package_matlab() {
+    # Get installation directory
+    release="$(cat "${srcdir}/${pkgbase}/VersionInfo.xml" \
+        | sed --quiet 's|\s*<release>\(.*\)</release>\s*|\1|p')"
+    instdir="/opt/tmw/MATLAB-${release}"
+
+    # Moving files from build area; large so make sure to move to save disk space
+    # Important that python API be built first if moving
+    install --directory --mode=0755 "$(dirname "${pkgdir}${instdir}")"
+    mv "${srcdir}/build" "${pkgdir}${instdir}"
+
+    # Make us the default version installation
+    ln --symbolic "${instdir}" "${pkgdir}/opt/tmw/${pkgbase}"
+
+    # Copying license
+    install -D --mode=644 "${srcdir}/${pkgbase}/license_agreement.txt" \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+
+    # Install the desktop file
+    install -D --mode=644 "${srcdir}/${pkgbase}.desktop" \
+        "${pkgdir}/usr/share/applications/${pkgbase}.desktop"
+
+    echo 'Backing up and unlinking non-system compatible libraries'
+    curdir="${pkgdir}/${instdir}"
+    newdir="${curdir}/backup"
+    # Link mex options to ancient libraries
+    sysdir='bin/glnxa64/mexopts'
+    inpdir="${curdir}/${sysdir}"
+    outdir="${newdir}/${sysdir}"
+    # C, Cpp and Fortran Compilers backup
+    install -D --mode=644   "${inpdir}/gcc_glnxa64.xml" "${outdir}/gcc_glnxa64.xml"
+    install -D --mode=644   "${inpdir}/g++_glnxa64.xml" "${outdir}/g++_glnxa64.xml"
+    install -D --mode=644   "${inpdir}/gfortran.xml"    "${outdir}/gfortran.xml"
+    install -D --mode=644   "${inpdir}/gfortran6.xml"   "${outdir}/gfortran6.xml"
+    # Edit in-place
+    sed         --in-place  "s/gcc/gcc-10/g"            "${inpdir}/gcc_glnxa64.xml"
+    sed         --in-place  "s/g++/g++-10/g"            "${inpdir}/g++_glnxa64.xml"
+    sed         --in-place  "s/gfortran/gfortran-10/g"  "${inpdir}/gfortran.xml"
+    sed         --in-place  "s/gfortran/gfortran-10/g"  "${inpdir}/gfortran6.xml"
+    # Remove unused library files
+    sysdir='sys/os/glnxa64'
+    inpdir="${curdir}/${sysdir}"
+    outdir="${newdir}/${sysdir}"
+    install --directory --mode=755 "${outdir}"
+    # These are obsolete libraries
+    mv "${inpdir}/libstdc++.so.6.0.28"          "${outdir}/libstdc++.so.6.0.28"
+    mv "${inpdir}/libgfortran.so.5.0.0"         "${outdir}/libgfortran.so.5.0.0"
+    mv "${inpdir}/libquadmath.so.0.0.0"         "${outdir}/libquadmath.so.0.0.0"
+    # These are links to obsolete libraries
+    mv "${inpdir}/libgcc_s.so.1"                "${outdir}/libgcc_s.so.1"
+    mv "${inpdir}/libstdc++.so.6"               "${outdir}/libstdc++.so.6"
+    mv "${inpdir}/libgfortran.so.5"             "${outdir}/libgfortran.so.5"
+    mv "${inpdir}/libquadmath.so.0"             "${outdir}/libquadmath.so.0"
+    # Supply system symlinks instead
+    ln --symbolic   '/usr/lib/libgcc_s.so.1'    "${inpdir}/libgcc_s.so.1"
+    ln --symbolic   '/usr/lib/libstdc++.so.6'   "${inpdir}/libstdc++.so.6"
+    ln --symbolic   '/usr/lib/libgfortran.so.5' "${inpdir}/libgfortran.so.5"
+    ln --symbolic   '/usr/lib/libquadmath.so.0' "${inpdir}/libquadmath.so.0"
+    # Fix freetype library as well
+    sysdir='bin/glnxa64'
+    inpdir="${curdir}/${sysdir}"
+    outdir="${newdir}/${sysdir}"
+    install --directory --mode=755 "${outdir}"
+    mv "${inpdir}/libfreetype.so.6.16.0"        "${outdir}/libfreetype.so.6.16.0"
+    mv "${inpdir}/libfreetype.so.6"             "${outdir}/libfreetype.so.6"
+    ln --symbolic   '/usr/lib/libfreetype.so.6' "${inpdir}/libfreetype.so.6"
+}
