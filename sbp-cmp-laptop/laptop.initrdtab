@@ -1,7 +1,0 @@
-# File put by sbp-cmp-laptop
-
-# Configuration for encrypted block devices.
-# See crypttab(5) for details.
-
-# <name>    <device>                                    <password>  <options>
-Laptop-OS   UUID=ab557439-23a5-41e4-ba0e-dbb7f73131ce   none        luks,timeout=0,x-systemd.device-timeout=0

@@ -2,23 +2,22 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-laptop
 pkgver=1
-pkgrel=16
+pkgrel=25
 pkgdesc='SBP Meta Package: Computer setup of Laptop'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
-    'laptop.install'
+    'laptop.bootconf'
     'laptop.crypttab'
-    'laptop.initrdtab'
+    'laptop.dracut'
     'laptop.fstab'
     'laptop.hostname'
-    'laptop.mkinitcpio'
+    'laptop.install'
     'laptop.refind'
-    'laptop.bootconf'
 )
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-cmp-workstation')
 backup=(
@@ -33,21 +32,18 @@ backup=(
 package() {
     install=laptop.install
 
-    # Create local files
+    # Create local configuration files
     install -dm 0755 "${pkgdir}/etc"
-
     # Crypttab to autoload encrypted partitions on boot
     install -Dm 0644 laptop.crypttab    "${pkgdir}/etc/crypttab"
-    install -Dm 0644 laptop.initrdtab   "${pkgdir}/etc/crypttab.initrd"
-
     # Fstab specific to computer
     install -Dm 0644 laptop.fstab       "${pkgdir}/etc/fstab"
-
     # Enforce hostname
     install -Dm 0644 laptop.hostname    "${pkgdir}/etc/hostname"
 
-    # Initrd rules
-    install -Dm 0644 laptop.mkinitcpio  "${pkgdir}/etc/mkinitcpio.conf"
+    # Initrd rules for waking up
+    install -dm 0755 "${pkgdir}/usr/lib/dracut/dracut.conf.d"
+    install -Dm 0644 laptop.dracut      "${pkgdir}/usr/lib/dracut/dracut.conf.d/91-sbp-cmp-laptop.conf"
   
     # Create boot options
     install -dm 0755 "${pkgdir}/efi"
@@ -62,7 +58,7 @@ package() {
 
     # Create mountpoints
     install -dm 0755 "${pkgdir}/media"
-    install -dm 0755 "${pkgdir}/media/filesystem-btrfs"
+    install -dm 0755 "${pkgdir}/media/filesystem"
     install -dm 0755 "${pkgdir}/media/gentoo"
     install -dm 0755 "${pkgdir}/media/windows"
     install -dm 0700 "${pkgdir}/swap"

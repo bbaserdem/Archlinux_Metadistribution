@@ -14,11 +14,12 @@
 /swap/swapfile          none                    swap    defaults                                                                                0       0
 UUID=A0B4-8ADB          /efi                    vfat    defaults,relatime,umask=0022,utf8                                                       0       2
 /efi/EFI/Arch           /boot                   none    defaults,bind                                                                           0       0
+/efi/EFI/Arch           /efi/EFI/Linux          none    defaults,bind                                                                           0       0
 #----------------------------------------------------------------------Data system----------------------------------------------------------------------#
-/dev/mapper/Laptop-OS   /mnt/filesystem-btrfs   btrfs   defaults,strictatime,lazytime,compress=zstd                                             0       1
+/dev/mapper/Laptop-OS   /mnt/filesystem         btrfs   defaults,strictatime,lazytime,compress=zstd                                             0       1
 /dev/mapper/Laptop-OS   /root                   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@roothome                            0       0
-/dev/mapper/Laptop-OS   /home                   btrfs   defaults,strictatime,lazytime,compress=zstd,user_subvol_rm_allowed,subvol=@home         0       0
 /dev/mapper/Laptop-OS   /opt                    btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@opt                                 0       0
+/dev/mapper/Laptop-OS   /home                   btrfs   defaults,strictatime,lazytime,compress=zstd,user_subvol_rm_allowed,subvol=@home         0       0
 /dev/mapper/Laptop-Data /home/data              ext4    defaults,strictatime,lazytime                                                           0       1
 #------------------------------------------------------------------Root system: Gentoo------------------------------------------------------------------#
 /dev/mapper/Laptop-OS   /mnt/gentoo             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-root                         0       0

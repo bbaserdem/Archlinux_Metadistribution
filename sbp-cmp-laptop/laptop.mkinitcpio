@@ -1,9 +1,0 @@
-# File put by sbp-cmp-laptop
-# vim:set ft=sh
-
-MODULES=(i915 usbhid xhci_hcd)
-BINARIES=()
-FILES=()
-HOOKS=(base systemd keyboard autodetect modconf block sd-vconsole sd-encrypt fsck filesystems)
-#COMPRESSION="zstd"
-#COMPRESSION_OPTIONS=(-9)

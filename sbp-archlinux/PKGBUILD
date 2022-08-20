@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-archlinux
 pkgver=1.0
-pkgrel=13
+pkgrel=25
 pkgdesc="SBP Meta Package: Archlinux base system (excludes kernel)"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -117,15 +117,15 @@ package() {
     #---Booting and kernel stuff
     depends+=(
         'linux-firmware'
-        'mkinitcpio'                # Initrd generation
-        'dracut'                    # Initrd generation
         'powerline-console-fonts'   # Console fonts
         'efibootmgr'                # Write to bios
         'efitools'                  # EFI manip tools
         'openssl'                   # For signing
         'refind-theme-regular'      # Theming refind
         'refind'                    # Boot manager
-        'systemd-boot-pacman-hook'  # Systemd-boot as fallback
+        'systemd-boot-pacman-hook'  # Systemd-boot as fallback to refind
+        'dracut'                    # Initrd generation and EFISTUB generation
+        'dracut-uefi-hook'
         'sbctl'                     # Automate key signing
     )
     #---Generic tools

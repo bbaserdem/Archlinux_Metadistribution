@@ -13,7 +13,7 @@ enable_touch no
 enable_mouse no
 uefi_deep_legacy_scan no
 dont_scan_dirs + system76-firmware-update, EFI/BOOT, EFI/systemd
-scan_all_linux_kernels true
+scan_all_linux_kernels false
 fold_linux_kernels true
 extra_kernel_version_strings linux-hardened,linux-zen,linux-lts,linux
 default_selection "+"

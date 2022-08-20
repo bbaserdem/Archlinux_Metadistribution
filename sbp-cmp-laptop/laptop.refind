@@ -1,3 +1,2 @@
 # File put by sbp-cmp-laptop
-"Boot with default options" "initrd=EFI/Arch/intel-ucode.img initrd=EFI/Arch/initramfs-%v.img rd.luks.name=ab557439-23a5-41e4-ba0e-dbb7f73131ce=Laptop-OS root=/dev/mapper/Laptop-OS rootflags=subvol=@arch-root ec_sys.write_support=1"
-"Boot with fallback initrd" "initrd=EFI/Arch/intel-ucode.img initrd=EFI/Arch/initramfs-%v-fallback.img rd.luks.name=ab557439-23a5-41e4-ba0e-dbb7f73131ce=Laptop-OS root=/dev/mapper/Laptop-OS rootflags=subvol=@arch-root resume=/dev/mapper/Laptop-OS resume_offset=900352 ec_sys.write_support=1"
+"Boot cleanly" " "
