@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-media
 pkgver=1.0
-pkgrel=12
+pkgrel=20
 pkgdesc="SBP Meta Package: Media playback/management"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -30,6 +30,7 @@ package() {
     depends+=(
         'mpd'               # Music player daemon
         'mpc'               # MPD commandline controls
+        'mpdris2'           # MPRIS support for mpd
         'listenbrainz-mpd'  # Scrobbler to listenbrainz for mpd
         'ncmpcpp'           # TUI for mpd
         'cantata'           # GUI (qt) for mpd
@@ -67,10 +68,11 @@ package() {
     #---Tools
     depends+=(
         'ffmpeg'            # All purpose encoder
-        'whipper'           # CD ripping tool
+        'playerctl'         # Media playback information protocol
         'python-pillow'
-        'yt-dlp'            # Youtube (and other website) scraper
         'python-pycryptodomex'
+        'whipper'           # CD ripping tool
+        'yt-dlp'            # Youtube (and other website) scraper
         #'kodi'              # Media center, currently conflicts with firewalld
         #'kodi-wayland'
     )

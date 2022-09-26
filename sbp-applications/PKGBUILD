@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-applications
 pkgver=1.0
-pkgrel=11
+pkgrel=40
 pkgdesc="SBP Meta Package: Applications"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -20,6 +20,11 @@ package() {
     depends=(
         'sddm'
         'chili-sddm-theme'
+        'cage'
+        'sway'
+        'greetd'
+        'greetd-qtgreet'
+        'greetd-qtgreet'
     )
     #---Interfaces
     depends+=(
@@ -54,6 +59,7 @@ package() {
         'syncthing'             # File syncing
         'trash-cli'             # Trash implementation
         'tmux'                  # Multiplexer
+        'vdhcoapp'              # Downloader helper for firefox
         'vdirsyncer'            # CalDAV/CardDAV syncing service
         'xdg-user-dirs'         # Set user directories
         'xdg-utils'             # File type associations
@@ -62,7 +68,7 @@ package() {
     depends+=(
         'aria2'         # Download manager
         'deluge'        # Bittorrent client
-        'htop'          # Resourcess usage
+        'bpytop'        # Resourcess usage, fancier
         'khal'          # Calendar
         'khard'         # Contacts
         'kmon'          # Kernel modules usage
@@ -78,6 +84,7 @@ package() {
     #---GUI applications
     depends+=(
         'baobab'                    # Disk space analyser
+        'calibre'                   # Library
         'dynalist-desktop'          # List client
         'firefox'                   # Browser
         'uget-integrator-firefox'
@@ -102,6 +109,7 @@ package() {
         'snapper-gui'               # Snapshot management
         'trezor-suite-appimage'     # Hardware crypto wallet
         'virt-manager'              # Virtual machine viewer (libvirt)
+        'vimiv'                     # Vim-like image viewer
         'zoom'                      # Conferancing
         'zoom-firejail'
     )
@@ -132,8 +140,23 @@ package() {
         'syncthing-gtk-python3'     # Syncthing status
         'system-config-printer'     # Print manager
     )
-    #---Icons & theming
+    #---Icons, fonts & theming
     depends+=(
+        'noto-fonts-extra'                  # Fallback glyphs
+        'noto-fonts-emoji'                  # Emoji fonts
+        'ttf-nerd-fonts-symbols-1000-em'    # Glyphs
+        'ttf-liberation'                    # Windows compatibility font
+        'ttf-caladea'                       # Office fonts alternative
+        'ttf-carlito'                       # Georgia alternative
+        'ttf-croscore'                      # Helvetica, Times and courier alternative
+        'ttf-inconsolata'                   # Status font   (statusbar)
+        'ttf-iosevka-nerd'
+        'ttf-jetbrains-mono'
+        'ttf-fira-code'                     # Ligature font (monospace)
+        'ttf-droid'                         # Font for sans (sans-serif|sans)
+        'adobe-source-serif-pro-fonts'      # Serif font  (serif)
+        'scientifica-font'                  # Retro bitmap font
+        'gohufont-otb'                      # Bitmap f
         'papirus-icon-theme'
         'breeze-hacked-cursor-theme'
         'vimix-cursors'

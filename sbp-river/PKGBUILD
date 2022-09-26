@@ -1,0 +1,48 @@
+# Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
+# vim: ft=PKGBUILD
+pkgname=sbp-river
+pkgver=1.0
+pkgrel=40
+pkgdesc="SBP Meta Package: River (WIP)"
+arch=('any')
+url="https://github.com/bbaserdem/Archlinux_Metadistribution"
+licence=(MIT)
+validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
+package() {
+    # This is wayland based
+    depends=(
+        #'river'
+        'wayland'
+        'wlroots'
+        'xorg-xwayland'
+        'xdg-desktop-portal-wlr'
+        #'ydotool'
+    )
+    # Look and feel, and toolkits specific to wayland
+    depends+=(
+        'eww'                       # Info bar'
+        #'wpaperd'                   # Set up wallpaper
+        'python-pywal'              # Change color scheme with wallpaper
+        #'mpvpaper'                  # Set video as wallpaper
+        'kanshi'                    # Hotplug screen manager
+    )
+    # Userspace utilities
+    depends+=(
+        'foot'                      # Terminal emulator for wayland
+    )
+    # Old deps
+    depends+=(
+        'dex'                       # Autostart launcher
+        'grim'                      # Screenshot taking
+        'mako'                      # Notification daemon
+        'slurp'                     # Region selector, to aid screenshots
+        'sway'                      # Wayland compositor
+        'swaybg'                    # Background setter
+        'swaylock'                  # Screen-locker
+        'swayidle'                  # Idle handler
+        'libappindicator-gtk3'      # System-tray
+        'wf-recorder'               # Screen video grabbing
+        'wl-clipboard'              # Clipboard utility
+        'wofi'                      # App launcher
+    )
+}

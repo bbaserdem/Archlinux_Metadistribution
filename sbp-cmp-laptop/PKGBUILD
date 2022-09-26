@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-laptop
 pkgver=1
-pkgrel=25
+pkgrel=26
 pkgdesc='SBP Meta Package: Computer setup of Laptop'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -92,6 +92,7 @@ package() {
     )
     # Hardware management
     depends+=(
+        'chrony'    # Time-synching for notebooks
         'acpi'      # Get battery status
         'tlp'       # Power management
         'hplip'     # Print to HP printers

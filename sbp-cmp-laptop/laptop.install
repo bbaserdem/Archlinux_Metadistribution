@@ -25,7 +25,10 @@ systemd_services() {
     /usr/bin/systemctl "${action}" system76-firmware-daemon.service
     /usr/bin/systemctl "${action}" com.system76.Scheduler.service
 
-  echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
+    echo '['"${prestr}"']==> '"${prstrn}"' Chrony time-sync daemon'
+    /bin/systemctl "${action}" chronyd.service
+
+    echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }
 
 post_install() {

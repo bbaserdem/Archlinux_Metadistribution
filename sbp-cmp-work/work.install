@@ -25,6 +25,9 @@ systemd_services() {
     echo '['"${prestr}"']==> '"${prstrn}"' Enable SSH access'
     /usr/bin/systemctl "${action}" sshd.service
 
+    echo '['"${prestr}"']==> '"${prstrn}"' Network Time Protocol daemon'
+    /bin/systemctl "${action}" ntpd.service
+
     echo '['"${prestr}"']==> '"${prstrn}"' systemd services, done!'
 }
 

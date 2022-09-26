@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-work
 pkgver=1
-pkgrel=06
+pkgrel=20
 pkgdesc='SBP Meta Package: Computer setup of Workstation'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -102,6 +102,7 @@ package() {
     )
     # Specific hardware
     depends+=(
+        'ntp'               # Timesynching for PCs
         'nut'               # UPS monitoring
         'nut-monitor'
         'cnrdrvcups-lb'     # Canon printer

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname='sbp-matlab'
 pkgver=1
-pkgrel=11
+pkgrel=40
 pkgdesc='SBP Meta Package: MATLAB dependencies and system integration'
 arch=('x86_64')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'

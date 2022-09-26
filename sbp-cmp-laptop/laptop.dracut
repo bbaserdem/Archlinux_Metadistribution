@@ -1,2 +1,2 @@
 # File put by sbp-cmp-laptop
-kernel_cmdline+=" resume=UUID=307503f7-6be6-4c87-872a-aaac53813640 resume_offset=900352 "
+kernel_cmdline+=" resume=UUID=307503f7-6be6-4c87-872a-aaac53813640 resume_offset=900352 dev.i915.perf_stream_paranoid=0 "

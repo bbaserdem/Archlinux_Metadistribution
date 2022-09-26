@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-bspwm
 pkgver=1.0
-pkgrel=03
+pkgrel=40
 pkgdesc="SBP Meta Package: BSPWM"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -29,6 +29,7 @@ package() {
         'xorg-xev'
         'xorg-xfontsel'
         'xorg-xgamma'
+        'xorg-xinit'
         'xorg-xinput'
         'xorg-xkbcomp'
         'xorg-xkbutils'

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-editor
 pkgver=1.0
-pkgrel=10
+pkgrel=40
 pkgdesc="SBP Meta Package: Editing"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -65,19 +65,5 @@ package() {
         'hunspell-en_us'
         'hunspell-tr'
         'languagetool'
-    )
-    # Fonts
-    depends+=(
-        'noto-fonts-emoji'              # Emoji fonts
-        'ttf-nerd-fonts-symbols-mono'   # Glyphs
-        'ttf-liberation'                # Windows compatibility font
-        'ttf-caladea'                   # Office fonts alternative
-        'ttf-carlito'                   # Georgia alternative
-        'ttf-croscore'                  # Helvetica, Times and courier alternative
-        'ttf-inconsolata'               # Status font   (statusbar)
-        'ttf-fira-code'                 # Ligature font (monospace)
-        'ttf-droid'                     # Font for sans (sans-serif|sans)
-        'adobe-source-serif-pro-fonts'  # Serif font  (serif)
-        'gohufont-otb'                  # Bitmap font
     )
 }

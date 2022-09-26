@@ -38,19 +38,30 @@ fi
 # Check if the first argument is a specifier for some other programs.
 # If it's not; launch main matlab with all the arguments
 _arg="${1}"
+[ -z "${_arg}" ] && _arg='launch'
 shift
 case "${_arg}" in
-    activate)   exec /opt/tmw/matlab/bin/activate_matlab.sh     "$@"    ;;
-    deactivate) exec /opt/tmw/matlab/bin/deactivate_matlab.sh   "$@"    ;;
-    genspark)   exec /opt/tmw/matlab/bin/generatesparkjcpath    "$@"    ;;
-    lint)       exec /opt/tmw/matlab/bin/glnxa64/mlint          "$@"    ;;
-    ldd)        exec /opt/tmw/matlab/bin/ldd                    "$@"    ;;
-    mbuild)     exec /opt/tmw/matlab/bin/mbuild                 "$@"    ;;
-    mcc)        exec /opt/tmw/matlab/bin/mcc                    "$@"    ;;
-    mex)        exec /opt/tmw/matlab/bin/mex                    "$@"    ;;
-    deploytool) exec /opt/tmw/matlab/bin/deploytool             "$@"    ;;
-    batch)      exec /opt/tmw/matlab/bin/matlab     -batch      "$@"    ;; 
-    script) 
+    activate)   echo 'Launching MATLAB activator'
+        exec /opt/tmw/matlab/bin/activate_matlab.sh     "$@"    ;;
+    deactivate) echo 'Launching MATLAB deactivator'
+        exec /opt/tmw/matlab/bin/deactivate_matlab.sh   "$@"    ;;
+    genspark)   echo 'Launching MATLAB genspark script'
+        exec /opt/tmw/matlab/bin/generatesparkjcpath    "$@"    ;;
+    lint)
+        exec /opt/tmw/matlab/bin/glnxa64/mlint          "$@"    ;;
+    ldd)        echo 'Launching MATLAB ldd loader'
+        exec /opt/tmw/matlab/bin/ldd                    "$@"    ;;
+    mbuild)     echo 'Launching MATLAB build script'
+        exec /opt/tmw/matlab/bin/mbuild                 "$@"    ;;
+    mcc)        echo 'Launching MATLAB C++ compiler'
+        exec /opt/tmw/matlab/bin/mcc                    "$@"    ;;
+    mex)        echo 'Launching MATLAB MEX compiler'
+        exec /opt/tmw/matlab/bin/mex                    "$@"    ;;
+    deploytool) echo 'Launching MATLAB deployment tool'
+        exec /opt/tmw/matlab/bin/deploytool             "$@"    ;;
+    batch)      echo 'Launching MATLAB using the batch option'
+        exec /opt/tmw/matlab/bin/matlab     -batch      "$@"    ;; 
+    script) echo "Launching matlab script at ${1}"
         if [ $# -eq 1 ] ; then
             # Check if executable, run in batch mode if it is
             if [ -n "${1}" ] && [ -x "${1}" ]; then
@@ -62,7 +73,8 @@ case "${_arg}" in
             echo 'Either supply one script, or use async.'
         fi
         ;;
-    async)      _i='0'
+    async) echo 'Launching matlab as asynchronous batch jobs'
+        _i='0'
         for _file in "$@" ; do
             # Check if executable, run in batch mode if it is
             if [ -n "${_file}" ] && [ -x "${_file}" ]; then
@@ -79,5 +91,17 @@ case "${_arg}" in
             wait "${_job}"
         done
         ;; 
-    *)          exec /opt/tmw/matlab/bin/matlab     "${_arg}"   "$@"    ;;
+    launch) echo 'Launching MATLAB standalone'
+        if [ -n "${MATLAB_LOG_DIR}" ] && [ -d "${MATLAB_LOG_DIR}" ] ; then
+            _log="${MATLAB_LOG_DIR}/matlab-console-log-$(date '+%Y.%m.%d-%R')"
+        else
+            _log="/tmp/matlab-console-log-$(date '+%Y.%m.%d-%R')"
+        fi
+        [ -f "${_log}" ] && rm "${_log}"
+        exec /opt/tmw/matlab/bin/matlab -desktop </dev/null >"${_log}" 2>&1 
+        ;;
+    *)
+        echo "Invalid option ${_arg}"
+        return 1
+        ;;
 esac

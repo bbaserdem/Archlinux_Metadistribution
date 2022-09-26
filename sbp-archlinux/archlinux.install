@@ -65,9 +65,6 @@ systemd_services() {
     echo '['"${prestr}"']==> '"${prstrn}"' Virtualization management'
     /usr/bin/systemctl "${action}" libvirtd.service
 
-    echo '['"${prestr}"']==> '"${prstrn}"' Network Time Protocol daemon'
-    /bin/systemctl "${action}" ntpd.service
-
     echo '['"${prestr}"']==> '"${prstrn}"' Machine check exception (MCE) monitoring'
     /usr/bin/systemctl "${action}" ras-mc-ctl.service
     /usr/bin/systemctl "${action}" rasdaemon.service
