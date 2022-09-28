@@ -1,27 +1,39 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
-pkgname=sbp-sway
+pkgname=sbp-gui-river
 pkgver=1.0
-pkgrel=08
-pkgdesc="SBP Meta Package: Sway"
+pkgrel=42
+pkgdesc="SBP Meta Package: River (WIP)"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 package() {
-    depends=('sway')
     # This is wayland based
-    depends+=(
+    depends=(
+        #'river'
         'wayland'
         'wlroots'
-        'xorg-server-xwayland'
+        'xorg-xwayland'
+        'xdg-desktop-portal-wlr'
         #'ydotool'
     )
-    # Apps stuff
+    # Look and feel, and toolkits specific to wayland
+    depends+=(
+        'eww'                       # Info bar'
+        #'wpaperd'                   # Set up wallpaper
+        'python-pywal'              # Change color scheme with wallpaper
+        #'mpvpaper'                  # Set video as wallpaper
+        'kanshi'                    # Hotplug screen manager
+    )
+    # Userspace utilities
+    depends+=(
+        'foot'                      # Terminal emulator for wayland
+    )
+    # Old deps
     depends+=(
         'dex'                       # Autostart launcher
         'grim'                      # Screenshot taking
-        'kanshi'                    # Hotplug screen manager
         'mako'                      # Notification daemon
         'slurp'                     # Region selector, to aid screenshots
         'sway'                      # Wayland compositor
@@ -29,7 +41,6 @@ package() {
         'swaylock'                  # Screen-locker
         'swayidle'                  # Idle handler
         'libappindicator-gtk3'      # System-tray
-        'waybar'                    # Info-bar
         'wf-recorder'               # Screen video grabbing
         'wl-clipboard'              # Clipboard utility
         'wofi'                      # App launcher

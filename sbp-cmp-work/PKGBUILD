@@ -2,26 +2,22 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-work
 pkgver=1
-pkgrel=20
+pkgrel=41
 pkgdesc='SBP Meta Package: Computer setup of Workstation'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
 licence=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
 source=(
-    'work.install'
+    'work.bootconf'
     'work.crypttab'
-    'work.initrdtab'
+    'work.dracut'
     'work.fstab'
     'work.hostname'
-    'work.mkinitcpio'
+    'work.install'
     'work.refind'
-    'work.bootconf'
 )
-sha256sums=(
-    SKIP SKIP SKIP SKIP SKIP
-    SKIP SKIP SKIP
-)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-cmp-laptop')
 backup=(
@@ -31,6 +27,7 @@ backup=(
     'etc/hostname'
     'etc/mkinitcpio.conf'
     'efi/EFI/Arch/refind_linux.conf'
+    'efi/loader/entries/archlinux.conf'
 )
 package() {
     install=work.install
@@ -39,32 +36,32 @@ package() {
     install -dm 0755 "${pkgdir}/etc"
     
     # Crypttab to autoload encrypted partitions on boot
-    install -Dm 0644 work.crypttab   "${pkgdir}/etc/crypttab"
-    install -Dm 0644 work.initrdtab  "${pkgdir}/etc/crypttab.initrd"
-
+    install -Dm 0644 work.crypttab  "${pkgdir}/etc/crypttab"
     # Fstab specific to computer
-    install -Dm 0644 work.fstab      "${pkgdir}/etc/fstab"
-
+    install -Dm 0644 work.fstab     "${pkgdir}/etc/fstab"
     # Enforce hostname
-    install -Dm 0644 work.hostname   "${pkgdir}/etc/hostname"
+    install -Dm 0644 work.hostname  "${pkgdir}/etc/hostname"
 
-    # Initrd rules
-    install -Dm 0644 work.mkinitcpio "${pkgdir}/etc/mkinitcpio.conf"
+    # Initrd rules for waking up
+    install -dm 0755 "${pkgdir}/usr/lib/dracut/dracut.conf.d"
+    install -Dm 0644 work.dracut    "${pkgdir}/usr/lib/dracut/dracut.conf.d/91-sbp-cmp-laptop.conf"
 
     # Create boot options
     install -dm 0755 "${pkgdir}/efi"
     install -dm 0755 "${pkgdir}/efi/EFI"
     install -dm 0755 "${pkgdir}/efi/EFI/Arch"
     # Refind config
-    install -Dm 0755 work.refind     "${pkgdir}/efi/EFI/Arch/refind_linux.conf"
+    install -Dm 0755 work.refind    "${pkgdir}/efi/EFI/Arch/refind_linux.conf"
     install -dm 0755 "${pkgdir}/efi/loader"
     install -dm 0755 "${pkgdir}/efi/loader/entries"
     # Have systemd-boot just as a fallback option
-    install -Dm 0644 work.bootconf    "${pkgdir}/efi/loader/entries/archlinux.conf"
+    install -Dm 0644 work.bootconf  "${pkgdir}/efi/loader/entries/archlinux.conf"
     
     # Create mountpoints
-    install -dm 0755 "${pkgdir}/media/archlinux"
+    install -dm 0755 "${pkgdir}/media"
+    install -dm 0755 "${pkgdir}/media/filesystem"
     install -dm 0755 "${pkgdir}/media/gentoo"
+    install -dm 0755 "${pkgdir}/media/windows"
     install -dm 0700 "${pkgdir}/swap"
   
     # Early initrd ucode and kernel

@@ -1,9 +1,0 @@
-# File put by sbp-cmp-laptop
-# vim:set ft=sh
-
-MODULES=(amdgpu usbhid xhci_hcd)
-BINARIES=()
-FILES=()
-HOOKS=(base systemd keyboard autodetect sd-vconsole modconf block sd-encrypt lvm2 filesystems fsck)
-#COMPRESSION="zstd"
-#COMPRESSION_OPTIONS=(-9)

@@ -1,0 +1,2 @@
+# File put by sbp-cmp-work
+kernel_cmdline+=" resume=UUID=<unlocked container UUID> resume_offset=<offset> "

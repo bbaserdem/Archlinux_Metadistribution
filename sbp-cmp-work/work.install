@@ -1,5 +1,5 @@
-# Script of sbp-cmp-laptop
-prestr='sbp-workstation'
+# Script of sbp-cmp-work
+prestr='sbp-cmp-work'
 
 systemd_services() {
     if [ "${1}" = 'enable' ] ; then

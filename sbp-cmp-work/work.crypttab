@@ -1,7 +1,8 @@
-# File put by sbp-cmp-laptop
+# File put by sbp-cmp-work
 
 # Configuration for encrypted block devices.
 # See crypttab(5) for details.
 
-# <name>       <device>                                     <password>                      <options>
-cryptdata      UUID=18559638-3f35-46e9-9600-7c259e2ab7e9    /root/work-data.keyfile  luks,timeout=180
+# <name>    <device>                                    <password>  <options>
+Work-OS     UUID=18559638-3f35-46e9-9600-7c259e2ab7e9   none        luks,timeout=0,x-systemd.device-timeout=0
+Work-Data   UUID=18559638-3f35-46e9-9600-7c259e2ab7e9   -           luks,timeout=180

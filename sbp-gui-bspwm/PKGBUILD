@@ -1,8 +1,8 @@
 # Maintainer: Batuhan Baserdem <baserdem.batuhan@gmail.com>
 # vim: ft=PKGBUILD
-pkgname=sbp-bspwm
+pkgname=sbp-gui-bspwm
 pkgver=1.0
-pkgrel=40
+pkgrel=42
 pkgdesc="SBP Meta Package: BSPWM"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
