@@ -28,25 +28,23 @@ Usually, will want to do GPT, with `parted /dev/DRIVE mklabel gpt`.
 Run the following;
 ```
 gdisk /dev/xxx
-o
 n
-1
+<Return>/1
 <Return>
 +550M
-ef00
+ef00 (for ESP)
 ```
 
 ### LUKS Partition
 
-Run the following
+Run the following, without quitting gdisk.
 ```
 gdisk /dev/xxx
-o
 n
-<Return>/<Partition number>
+<Return>/<Partition number>/2
 <Return>
 <Return>/Disk size
-8309
+8309 (for LUKS)
 ```
 
 ## Encryption

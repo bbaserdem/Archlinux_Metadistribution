@@ -1,0 +1,12 @@
+[Unit]
+Description=Set the charging thresholds at startup for System76 laptop.
+Requisite=com.system76.PowerDaemon.service
+After=default.target
+After=com.system76.PowerDaemon.service
+
+[Service]
+Type=simple
+ExecStart=system76-power charge-thresholds 40 80
+
+[Install]
+WantedBy=default.target

@@ -4,4 +4,4 @@ version     Zen
 linux       /EFI/Arch/vmlinuz-linux-zen
 initrd      /EFI/Arch/amd-ucode.img
 initrd      /EFI/Arch/initramfs-linux-zen.img
-options     rd.luks.name=bee8e6f1-2687-49e4-b86d-0be90db5bb5d=Work-OS root=/dev/mapper/Work-OS rootflags=subvol=@arch-root resume=/dev/mapper/Work-OS resume_offset=9524395
+options     rd.luks.name=dfe78f22-c728-429e-a301-45008115c28b=Work-OS root=/dev/mapper/Work-OS rootflags=subvol=@arch-root

@@ -35,7 +35,7 @@ nvme0n1             931.5G
       │ * These are gentoo subvolumes
       ├─@gentoo-root                        /mnt/gentoo
       ├─@gentoo-snap                        /mnt/gentoo/.snapshots
-      ├─@gentoo-swap                no CoW  /mnt/gentoo/.swap
+      ├─@gentoo-swap                no CoW  /mnt/gentoo/swap
       ├─@gentoo-dist                no CoW  /mnt/gentoo/distfiles
       ├─@gentoo-virt                no CoW  /mnt/gentoo/vm
       │ * These are shared subvolumes
@@ -93,13 +93,15 @@ These are what I followed
 * Unmounted and remounted `@arch-root`
 * Created directories; and gave them immutable attribute `chatter +i <mountpoint>` before mounting.
 * Mounted the `@arch-root`, `@arch-snap`, `@arch-swap` and `@arch-log` in the file hierarchy.
-* Disabled CoW on swap subvolume; `chattr +C /mnt/swap`  (do after mounting)
+* Disabled CoW on swap subvolume; `chattr +C /mnt/swap` (do after mounting)
 * Created swap file of 45 GiB; `dd if=/dev/zero of=/mnt/swap/swapfile bs=1M count=46080 status=progress`
+* Made proper permissions by `chmod 0600 /mnt/swap/swapfile`
+* Made swapfile by `mkswap -U clear /swapfile`
 * Created directories and subvolumes as explained in the above layout
 * Pacstrapped base package to `/mnt`
 * Edited in my repo in `/mnt/etc/pacman.conf`
 * Chrooted in and set root user password
-* Installed one by one; `sbp-archlinux`, `sbp-editor`, `sbp-media`, `sbp-applications`, `sbp-bspwm`, `sbp-sway`, `sbp-cmp-laptop` and `sbp-gaming`.
+* Installed one by one; `sbp-archlinux`, `sbp-editor`, `sbp-media`, `sbp-applications`, `sbp-gui-bspwm`, `sbp-gui-river`, `sbp-cmp-laptop` and `sbp-gaming`.
 * Got the /etc files; `rsync --archive --verbose /home/data/etc/ /etc/`
 * Got the home files; `rsync --archive /home/data/sbp/ /sbp/`
 * Got the root files; `rsync --archive --verbose /home/data/root/ /root/`

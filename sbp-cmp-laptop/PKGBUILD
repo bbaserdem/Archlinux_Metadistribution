@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-laptop
 pkgver=1
-pkgrel=41
+pkgrel=51
 pkgdesc='SBP Meta Package: Computer setup of Laptop'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -16,8 +16,9 @@ source=(
     'laptop.hostname'
     'laptop.install'
     'laptop.refind'
+    'laptop.battery'
 )
-sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
+sha256sums=(SKIP SKIP SKIP SKIP SKIP SKIP SKIP SKIP)
 provides=('sbp-cmp')
 conflicts=('sbp-cmp-workstation')
 backup=(
@@ -56,6 +57,13 @@ package() {
     install -dm 0755 "${pkgdir}/efi/loader/entries"
     install -Dm 0644 laptop.bootconf    "${pkgdir}/efi/loader/entries/archlinux.conf"
 
+    # Create systemd unit to set battery thresholds
+    install -dm 0755 "${pkgdir}/usr"
+    install -dm 0755 "${pkgdir}/usr/lib"
+    install -dm 0755 "${pkgdir}/usr/lib/systemd"
+    install -dm 0755 "${pkgdir}/usr/lib/systemd/system"
+    install -Dm 0644 laptop.battery     "${pkgdir}/usr/lib/systemd/system/system76-charge-thresholds.service"
+
     # Create mountpoints
     install -dm 0755 "${pkgdir}/media"
     install -dm 0755 "${pkgdir}/media/filesystem"
@@ -69,6 +77,9 @@ package() {
         'linux'
         'linux-docs'
         'linux-headers'
+        'linux-zen'
+        'linux-zen-docs'
+        'linux-zen-headers'
     )
     # Graphics (intel)
     depends+=(
@@ -87,6 +98,7 @@ package() {
         'system76-driver'
         'system76-firmware'
         'system76-firmware-daemon'
+        'system76-power'
         'system76-scheduler'
         #'system76-acpi-dkms' Obsolete; the acpi is in kernel
     )
@@ -94,7 +106,6 @@ package() {
     depends+=(
         'chrony'    # Time-synching for notebooks
         'acpi'      # Get battery status
-        'tlp'       # Power management
         'hplip'     # Print to HP printers
     )
 }

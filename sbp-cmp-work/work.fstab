@@ -3,6 +3,7 @@
 
 # Static information about the filesystems.
 # See fstab(5) for details.
+
 #-------------------------------------------------------------------File System Table-------------------------------------------------------------------#
 # <file system>         <dir>                   <type>  <options>                                                       <dump>  <pass>  #
 #----------------------------------------------------------------Root system : Archlinux----------------------------------------------------------------#
@@ -32,7 +33,7 @@ UUID=585A-EF43          /efi                    vfat    defaults,relatime,umask=
 /opt                    /mnt/gentoo/opt         none    defaults,bind                                                                           0       0
 /efi                    /mnt/gentoo/boot        none    defaults,bind                                                                           0       0
 #---------------------------------------------------------------------Network mounts--------------------------------------------------------------------#
-batu@hopper.cshl.edu:/home/batu /home/hopper    fuse.sshfs  x-systemd.automount,_netdev,user,idmap=user,follow_symlinks,identityfile=/home/sbp/.local/ssh/id_rsa_HOPPER,allow_other,default_permissions,uid=1000,gid=1000 0 0
+#batu@hopper.cshl.edu:/home/batu /home/hopper    fuse.sshfs  x-systemd.automount,_netdev,user,idmap=user,follow_symlinks,identityfile=/home/sbp/.local/ssh/id_rsa_HOPPER,allow_other,default_permissions,uid=1000,gid=1000 0 0
 #----------------------------------------------------------------Root system: Windows 10----------------------------------------------------------------#
 # Windows OS
 # UUID=A6A83A1EA839EE05   /mnt/windows            ntfs    defaults,noatime,utf8,nofail,uid=1000,gid=1000,umask=022                                0       0

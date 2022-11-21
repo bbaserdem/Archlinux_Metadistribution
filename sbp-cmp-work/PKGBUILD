@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-work
 pkgver=1
-pkgrel=41
+pkgrel=50
 pkgdesc='SBP Meta Package: Computer setup of Workstation'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -70,6 +70,9 @@ package() {
         'linux-zen'
         'linux-zen-docs'
         'linux-zen-headers'
+        'linux-lts'
+        'linux-lts-docs'
+        'linux-lts-headers'
     )
     # Graphics (amd, vulkan)
     depends+=(

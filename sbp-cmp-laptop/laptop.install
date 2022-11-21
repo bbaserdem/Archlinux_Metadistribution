@@ -16,14 +16,13 @@ systemd_services() {
         exit 1
     fi
     echo '['"${prestr}"']==> '"${prstrn}"' systemd services!'
-
-    echo '['"${prestr}"']==> Enabling TLP.'
-    /usr/bin/systemctl "${action}" tlp.service
   
     echo '['"${prestr}"']==> Enabling System76 services.'
     /usr/bin/systemctl "${action}" system76.service
     /usr/bin/systemctl "${action}" system76-firmware-daemon.service
     /usr/bin/systemctl "${action}" com.system76.Scheduler.service
+    /usr/bin/systemctl "${action}" com.system76.PowerDaemon.service
+    /usr/bin/systemctl "${action}" system76-charge-thresholds.service
 
     echo '['"${prestr}"']==> '"${prstrn}"' Chrony time-sync daemon'
     /bin/systemctl "${action}" chronyd.service
