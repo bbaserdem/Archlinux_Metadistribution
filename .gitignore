@@ -7,3 +7,8 @@
 # Never include licence or key files
 *.lic
 *.key
+*.fik
+
+# Don't take in source directories
+src
+pkg

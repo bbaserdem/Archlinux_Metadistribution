@@ -15,7 +15,7 @@ sha256sums=(
     'SKIP'
     'SKIP'
 )
-pkgver=9.13.0.2105380
+pkgver=9.12.0.2009381
 pkgrel=1
 pkgdesc='A high-level language for numerical computation and visualization'
 arch=('x86_64')
@@ -63,7 +63,7 @@ products=(
     'Signal_Processing_Toolbox'
     'Statistics_and_Machine_Learning_Toolbox'
     'Symbolic_Math_Toolbox'
-    'System_Identification_Toolbox'
+    'System Identification Toolbox'
     'Text_Analytics_Toolbox'
     'Wavelet_Toolbox'
 )
@@ -125,7 +125,7 @@ build() {
 
     # Checking supported vs existing matlab versions
     _ml_minor="$(find "${_py_dir}" -name 'matlabengineforpython3*.so' \
-        | sed 's|.*matlabengineforpython3_\([0-9]\+\)\.so|\1|g' | sort -n | tail -1)"
+        | sort | sed 's|.*matlabengineforpython3_\([0-9]\+\)\.so|\1|g' | tail -1)"
     _py_minor="$(python -c 'import sys; print(sys.version_info.minor)')"
 
     # Spoof version compatibility if not applicable
