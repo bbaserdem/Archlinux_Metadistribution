@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname='sbp-matlab'
 pkgver=1
-pkgrel=45
+pkgrel=50
 pkgdesc='SBP Meta Package: MATLAB dependencies and system integration'
 arch=('x86_64')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -26,7 +26,7 @@ package() {
         'jupyter-matlab_kernel'
     )
     # Matlab dependencies; from:
-    # https://github.com/mathworks-ref-arch/container-images/blob/main/matlab-deps/r2022a/ubuntu20.04/base-dependencies.txt
+    # https://github.com/mathworks-ref-arch/container-images/blob/main/matlab-deps/r2023a/ubuntu20.04/base-dependencies.txt
     depends+=(
         'alsa-lib'
         'atk'
@@ -43,6 +43,7 @@ package() {
         'libcups'
         'libdbus'
         'libdrm'
+        'libdwarf'
         'libgcrypt'
         'libselinux'
         'libsm'
@@ -71,12 +72,14 @@ package() {
         'net-tools'
         'nspr'
         'nss'
+        'unixodbc'
         'pam'
         'pango'
         'procps-ng'
         'sudo'
         'unzip'
         'util-linux-libs'
+        'wayland'
         'wget'
         'x11vnc'
         'xorg-server-xvfb'

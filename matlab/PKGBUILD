@@ -15,7 +15,7 @@ sha256sums=(
     'SKIP'
     'SKIP'
 )
-pkgver=9.13.0.2105380
+pkgver=9.14.0.2206163
 pkgrel=1
 pkgdesc='A high-level language for numerical computation and visualization'
 arch=('x86_64')
@@ -52,14 +52,19 @@ products=(
     'Database_Toolbox'
     'Deep_Learning_Toolbox'
     'DSP_System_Toolbox'
+    'Econometrics_Toolbox'
     'Global_Optimization_Toolbox'
     'GPU_Coder'
     'Image_Processing_Toolbox'
     'MATLAB_Coder'
+    'MATLAB_Compiler'
+    'MATLAB_Report_Generator'
+    'MATLAB_Test'
     'Optimization_Toolbox'
     'Parallel_Computing_Toolbox'
     'Partial_Differential_Equation_Toolbox'
     'Reinforcement_Learning_Toolbox'
+    'Requirements_Toolbox'
     'Signal_Processing_Toolbox'
     'Statistics_and_Machine_Learning_Toolbox'
     'Symbolic_Math_Toolbox'
@@ -110,7 +115,7 @@ prepare() {
 }
 
 build() {
-    # Run the main instaler
+    # Run the main installer
     release="$(cat "${srcdir}/${pkgbase}/VersionInfo.xml" \
         | sed --quiet 's|\s*<release>\(.*\)</release>\s*|\1|p')"
     echo "Installing MATLAB ${release} using the installer"
