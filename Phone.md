@@ -72,7 +72,7 @@ Google apps:
 Installation should follow these steps;
 
 * Install LineageOS as per the guides
-* Along with lineage, flash fdroid, fdroid privilaged, yalp contemporary.
+* Along with lineage, flash fdroid, fdroid privileged, yelp contemporary.
 
 ### UnifiedNLP
 
@@ -83,7 +83,7 @@ to `/system/priv-app/NetworkLocation.apk` by using adb as root and remounting.
 ### OpenKeychain & Password Store
 
 Using the guide online, from computer, run;
-`gpg --armor --export-secret-keys <EMAIL> | gpg --armor --symmetric --output mykey.sec.asc`
+`gpg --armor --export-secret-keys <EMAIL> > mykey.sec.asc`
 Afterwards, use `adb` to push the file, and use import on the app.
 OpenKeychain should work fine with it.
 When downloaded, upload the ssh keys using adb, and then import them.

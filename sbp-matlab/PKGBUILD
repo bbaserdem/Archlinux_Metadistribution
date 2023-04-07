@@ -2,15 +2,13 @@
 # vim: ft=PKGBUILD
 pkgname='sbp-matlab'
 pkgver=1
-pkgrel=40
+pkgrel=45
 pkgdesc='SBP Meta Package: MATLAB dependencies and system integration'
 arch=('x86_64')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
 license=(MIT)
 validpgpkeys=('0B7151C823559DD8A7A04CE36426139E2F4C6CCE')
-source=(
-    'matlab.script'
-)
+source=('matlab.script')
 sha256sums=(SKIP)
 package() {
     # Put the launcher script in the binary directory

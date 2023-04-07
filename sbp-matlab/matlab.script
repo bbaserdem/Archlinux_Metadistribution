@@ -23,8 +23,12 @@ export GTK_PATH='/usr/lib/gtk-2.0'
 
 # Matlab log file location
 if [ -n "${XDG_CACHE_HOME}" ] ; then
+    # 2022b fix
+    export TMPDIR="${XDG_CACHE_HOME}/matlab/2022b"
     export MATLAB_LOG_DIR="${XDG_CACHE_HOME}/matlab/"
 else
+    # 2022b fix
+    export TMPDIR="${HOME}/.cache/matlab/2022b"
     export MATLAB_LOG_DIR="${HOME}/.cache/matlab/"
 fi
 # If directory does not exist; create it

@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-applications
 pkgver=1.0
-pkgrel=40
+pkgrel=50
 pkgdesc="SBP Meta Package: Applications"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -20,11 +20,11 @@ package() {
     depends=(
         'sddm'
         'chili-sddm-theme'
-        'cage'
-        'sway'
-        'greetd'
-        'greetd-qtgreet'
-        'greetd-qtgreet'
+        #'cage'
+        #'sway'
+        #'greetd'
+        #'greetd-qtgreet'
+        #'greetd-qtgreet'
     )
     #---Interfaces
     depends+=(
@@ -57,6 +57,7 @@ package() {
         'pass'                  # Password store
         's3cmd'                 # Amazon bucket management
         'syncthing'             # File syncing
+        'smartmontools'         # Check harddrives
         'trash-cli'             # Trash implementation
         'tmux'                  # Multiplexer
         'vdhcoapp'              # Downloader helper for firefox
@@ -76,6 +77,7 @@ package() {
         'neomutt'       # Mail client
         'nethogs'       # Network traffic viewer
         'newsboat'      # RSS reader
+        'termdown'      # Terminal counter
         'todoman'       # Todo manager
         'vifm'          # File browser
         'w3m'           # Web browser

@@ -4,6 +4,7 @@
 
 # Ignore all tarballs, if we accidentally make any here
 *.tar.*
+
 # Never include licence or key files
 *.lic
 *.key

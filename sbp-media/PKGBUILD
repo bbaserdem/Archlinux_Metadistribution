@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-media
 pkgver=1.0
-pkgrel=20
+pkgrel=35
 pkgdesc="SBP Meta Package: Media playback/management"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -35,11 +35,20 @@ package() {
         'ncmpcpp'           # TUI for mpd
         'cantata'           # GUI (qt) for mpd
         'audacity'          # Sound editing
-        'picard'            # Music tagger for MB database
         'musescore'         # Sheet viewing/editing
         'libopusenc'        # Lossy audio codec: OPUS
         'flac'              # Lossless audio codec: FLAC
         #'cadence'           # JACK frontend
+    )
+    #---Music database
+    depends+=(
+        'picard'            # Music tagger for MB database
+        'beets'             # Music library organizer
+        'python-pylast'     # For last-fm tagging with beets
+        'python-requests'   # For last-fm tagging with beets
+        'python-mpd2'       # Update play statistics
+        'python-gobject'    # To calculate replay gain
+        'gstreamer'
     )
     #---Video playback/editing
     depends+=(
