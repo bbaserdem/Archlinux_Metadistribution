@@ -34,6 +34,6 @@ UUID=A0B4-8ADB          /efi                    vfat    defaults,relatime,umask=
 /efi                    /mnt/gentoo/boot        none    defaults,bind                                                                           0       0
 #----------------------------------------------------------------Root system: Windows 10----------------------------------------------------------------#
 # Windows OS
-UUID=A6A83A1EA839EE05   /mnt/windows            ntfs    defaults,noatime,utf8,nofail,uid=1000,gid=1000,umask=022                                0       0
-UUID=AABD-CA5F          /efi/EFI/Windows        vfat    defaults,relatime,umask=0022,utf8                                                       0       2
+#UUID=A6A83A1EA839EE05   /mnt/windows            ntfs    defaults,noatime,utf8,nofail,uid=1000,gid=1000,umask=022                                0       0
+#UUID=AABD-CA5F          /efi/EFI/Windows        vfat    defaults,relatime,umask=0022,utf8                                                       0       2
 #-------------------------------------------------------------------------------------------------------------------------------------------------------#
