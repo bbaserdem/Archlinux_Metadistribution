@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-editor
 pkgver=1.0
-pkgrel=40
+pkgrel=50
 pkgdesc="SBP Meta Package: Editing"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -18,16 +18,26 @@ package() {
     )
     # Latex suite
     depends+=(
-        'biber'             # Bibliography
-        'texlive-bibtexextra'
+        'texlive-basic'
         'texlive-bin'
-        'texlive-core'
-        'texlive-humanities'
+        'texlive-binextra'
         'texlive-fontsextra'
+        'texlive-fontutils'
+        'texlive-formatsextra'
+        'texlive-latex'
         'texlive-latexextra'
+        'texlive-latexrecommended'
+        'texlive-luatex'
         'texlive-pictures'
         'texlive-pstricks'
-        'texlive-science'
+        'texlive-publishers'
+        'texlive-xetex'
+        'biber'                 # Bibliography
+        'texlive-bibtexextra'
+        'texlive-humanities'    # Subjects
+        'texlive-mathscience'
+        'texlive-meta'
+        'texlive-music'
     )
     # Need these for plugins
     depends+=(

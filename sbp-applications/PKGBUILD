@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-applications
 pkgver=1.0
-pkgrel=50
+pkgrel=60
 pkgdesc="SBP Meta Package: Applications"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -126,7 +126,8 @@ package() {
         'octave'                # Open-Matlab
         'jupyter-octave_kernel'
         'lapack'                # Linear algebra package
-        'openblas'              # BLAS libraries
+        'blas64-openblas'       # BLAS libraries
+        'blas-openblas'         # BLAS libraries
         'libxcrypt-compat'      # Matlab dependency
         'qemu-full'             # Hypervisor
         'qemu-block-iscsi'
@@ -146,7 +147,7 @@ package() {
     depends+=(
         'noto-fonts-extra'                  # Fallback glyphs
         'noto-fonts-emoji'                  # Emoji fonts
-        'ttf-nerd-fonts-symbols-1000-em'    # Glyphs
+        'ttf-nerd-fonts-symbols'            # Glyphs
         'ttf-liberation'                    # Windows compatibility font
         'ttf-caladea'                       # Office fonts alternative
         'ttf-carlito'                       # Georgia alternative
