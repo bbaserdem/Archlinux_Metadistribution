@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-applications
 pkgver=1.0
-pkgrel=50
+pkgrel=55
 pkgdesc="SBP Meta Package: Applications"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -121,6 +121,7 @@ package() {
         'jupyterlab'
         'bpython'               # Better python shell
         'python-pip'            # Python package management
+        'python-pipx'           # Python package management
         'python-pipenv'
         'spyder'                # Python IDE like matlab
         'octave'                # Open-Matlab
