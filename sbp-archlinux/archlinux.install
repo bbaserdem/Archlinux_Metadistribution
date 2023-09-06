@@ -46,9 +46,7 @@ systemd_services() {
     /usr/bin/systemctl "${action}" cups.service
 
     echo '['"${prestr}"']==> '"${prstrn}"' Network services.'
-    /usr/bin/systemctl "${action}" dhcpcd.service
-    /usr/bin/systemctl "${action}" unbound.service
-    /usr/bin/systemctl "${action}" iwd.service
+    /usr/bin/systemctl "${action}" NetworkManager.service
 
     echo '['"${prestr}"']==> '"${prstrn}"' Docker management'
     /usr/bin/systemctl "${action}" docker.service

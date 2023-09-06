@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-archlinux
 pkgver=1.0
-pkgrel=42
+pkgrel=45
 pkgdesc="SBP Meta Package: Archlinux base system (excludes kernel)"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -211,11 +211,11 @@ package() {
         'cups'              # Network printing
         'cups-pdf'
         'cups-pk-helper'
-        'dhcpcd'            # DHCP daemon; internet provider
         'firewalld'         # Firewall
         'geoclue2'          # Geolocation
         'iwd'               # Wireless interface
         'nmap'              # Network discovery
+        'networkmanager'    # Network manager
         'openbsd-netcat'    # Some tools
         'openresolv'        # Resolvconf implementation
         'unbound'           # DNS server
