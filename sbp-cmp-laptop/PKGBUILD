@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-laptop
 pkgver=1
-pkgrel=60
+pkgrel=65
 pkgdesc='SBP Meta Package: Computer setup of Laptop'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'

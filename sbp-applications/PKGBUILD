@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-applications
 pkgver=1.0
-pkgrel=65
+pkgrel=70
 pkgdesc="SBP Meta Package: Applications"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -165,7 +165,7 @@ package() {
         'breeze-hacked-cursor-theme'
         'vimix-cursors'
         'arc-gtk-theme'
-        'kvantum-qt5'
+        'kvantum'
         'kvantum-theme-arc'
     )
 }
