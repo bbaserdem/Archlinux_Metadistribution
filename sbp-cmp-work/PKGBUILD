@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-cmp-work
 pkgver=1
-pkgrel=50
+pkgrel=55
 pkgdesc='SBP Meta Package: Computer setup of Workstation'
 arch=('any')
 url='https://github.com/bbaserdem/Archlinux_Metadistribution'
@@ -97,8 +97,8 @@ package() {
     # OpenCL
     depends+=(
         'libclc'
-        'opencl-mesa'
-        'lib32-opencl-mesa'
+        'opencl-clover-mesa' 'opencl-rusticl-mesa'
+        'lib32-opencl-clover-mesa'
     )
     # Specific hardware
     depends+=(
