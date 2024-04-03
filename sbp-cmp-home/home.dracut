@@ -1,2 +1,2 @@
-# File put by sbp-cmp-work
+# File put by sbp-cmp-home
 kernel_cmdline+=" resume=UUID=25b3f901-a8d2-4af4-bf67-52b2884d90c4 "

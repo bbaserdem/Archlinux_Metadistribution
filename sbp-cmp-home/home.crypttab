@@ -1,0 +1,9 @@
+# File put by sbp-cmp-home
+
+# Configuration for encrypted block devices.
+# See crypttab(5) for details.
+
+# <name>    <device>                                    <password>  <options>
+Home-OS     UUID=dfe78f22-c728-429e-a301-45008115c28b   none        luks,timeout=0,x-systemd.device-timeout=0
+Home-Data   UUID=bb9bb99d-1eac-451f-8212-375742300eeb   -           luks,timeout=180
+Home-Work   UUID=db8b2e2c-ad47-473f-8560-e7937002b539   -           luks,timeout=180

@@ -1,4 +1,4 @@
-# File put by sbp-cmp-work
+# File put by sbp-cmp-home
 # vim: ft=fstab
 
 # Static information about the filesystems.
@@ -7,26 +7,27 @@
 #-------------------------------------------------------------------File System Table-------------------------------------------------------------------#
 # <file system>         <dir>                   <type>  <options>                                                       <dump>  <pass>  #
 #----------------------------------------------------------------Root system : Archlinux----------------------------------------------------------------#
-/dev/mapper/Work-OS     /                       btrfs   defaults,strictatime,lazytime,compress=zstd,user_subvol_rm_allowed,subvol=@arch-root    0       0
-/dev/mapper/Work-OS     /.snapshots             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-snap                           0       0
-/dev/mapper/Work-OS     /var/log                btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-log                            0       0
-/dev/mapper/Work-OS     /swap                   btrfs   defaults,strictatime,lazytime,compress=no,subvol=@arch-swap                             0       0
+/dev/mapper/Home-OS     /                       btrfs   defaults,strictatime,lazytime,compress=zstd,user_subvol_rm_allowed,subvol=@arch-root    0       0
+/dev/mapper/Home-OS     /.snapshots             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-snap                           0       0
+/dev/mapper/Home-OS     /var/log                btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@arch-log                            0       0
+/dev/mapper/Home-OS     /swap                   btrfs   defaults,strictatime,lazytime,compress=no,subvol=@arch-swap                             0       0
 /swap/swapfile          none                    swap    defaults                                                                                0       0
 UUID=585A-EF43          /efi                    vfat    defaults,relatime,umask=0022,utf8                                                       0       2
 /efi/EFI/Arch           /boot                   none    defaults,bind                                                                           0       0
 /efi/EFI/Arch           /efi/EFI/Linux          none    defaults,bind                                                                           0       0
 #----------------------------------------------------------------------Data system----------------------------------------------------------------------#
-/dev/mapper/Work-OS     /mnt/filesystem         btrfs   defaults,strictatime,lazytime,compress=zstd                                             0       1
-/dev/mapper/Work-OS     /root                   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@roothome                            0       0
-/dev/mapper/Work-OS     /opt                    btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@opt                                 0       0
-/dev/mapper/Work-OS     /home                   btrfs   defaults,strictatime,lazytime,compress=zstd,user_subvol_rm_allowed,subvol=@home         0       0
-/dev/mapper/Work-Data   /home/data              ext4    defaults,strictatime,lazytime                                                           0       1
+/dev/mapper/Home-OS     /mnt/filesystem         btrfs   defaults,strictatime,lazytime,compress=zstd                                             0       1
+/dev/mapper/Home-OS     /root                   btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@roothome                            0       0
+/dev/mapper/Home-OS     /opt                    btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@opt                                 0       0
+/dev/mapper/Home-OS     /home                   btrfs   defaults,strictatime,lazytime,compress=zstd,user_subvol_rm_allowed,subvol=@home         0       0
+/dev/mapper/Home-Data   /home/data              ext4    defaults,strictatime,lazytime                                                           0       1
+/dev/mapper/Home-Work   /home/work              ext4    defaults,strictatime,lazytime                                                           0       1
 #------------------------------------------------------------------Root system: Gentoo------------------------------------------------------------------#
-/dev/mapper/Work-OS     /mnt/gentoo             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-root                         0       0
-/dev/mapper/Work-OS     /mnt/gentoo/.snapshots  btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-snap                         0       0
-/dev/mapper/Work-OS     /mnt/gentoo/swap        btrfs   defaults,strictatime,lazytime,compress=no,subvol=@gentoo-swap                           0       0
-/dev/mapper/Work-OS     /mnt/gentoo/distfiles   btrfs   defaults,strictatime,lazytime,compress=no,subvol=@gentoo-dist                           0       0
-/dev/mapper/Work-OS     /mnt/gentoo/vm          btrfs   defaults,strictatime,lazytime,compress=no,subvol=@gentoo-virt                           0       0
+/dev/mapper/Home-OS     /mnt/gentoo             btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-root                         0       0
+/dev/mapper/Home-OS     /mnt/gentoo/.snapshots  btrfs   defaults,strictatime,lazytime,compress=zstd,subvol=@gentoo-snap                         0       0
+/dev/mapper/Home-OS     /mnt/gentoo/swap        btrfs   defaults,strictatime,lazytime,compress=no,subvol=@gentoo-swap                           0       0
+/dev/mapper/Home-OS     /mnt/gentoo/distfiles   btrfs   defaults,strictatime,lazytime,compress=no,subvol=@gentoo-dist                           0       0
+/dev/mapper/Home-OS     /mnt/gentoo/vm          btrfs   defaults,strictatime,lazytime,compress=no,subvol=@gentoo-virt                           0       0
 /root                   /mnt/gentoo/root        none    defaults,bind                                                                           0       0
 /home                   /mnt/gentoo/home        none    defaults,bind                                                                           0       0
 /home/data              /mnt/gentoo/home/data   none    defaults,bind                                                                           0       0

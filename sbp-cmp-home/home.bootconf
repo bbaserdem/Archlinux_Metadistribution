@@ -1,7 +1,7 @@
-# File put by sbp-cmp-work
+# File put by sbp-cmp-home
 title       Arch Linux
 version     Zen
 linux       /EFI/Arch/vmlinuz-linux-zen
 initrd      /EFI/Arch/amd-ucode.img
 initrd      /EFI/Arch/initramfs-linux-zen.img
-options     rd.luks.name=dfe78f22-c728-429e-a301-45008115c28b=Work-OS root=/dev/mapper/Work-OS rootflags=subvol=@arch-root
+options     rd.luks.name=dfe78f22-c728-429e-a301-45008115c28b=Home-OS root=/dev/mapper/Home-OS rootflags=subvol=@arch-root

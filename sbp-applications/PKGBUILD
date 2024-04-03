@@ -2,7 +2,7 @@
 # vim: ft=PKGBUILD
 pkgname=sbp-applications
 pkgver=1.0
-pkgrel=70
+pkgrel=85
 pkgdesc="SBP Meta Package: Applications"
 arch=('any')
 url="https://github.com/bbaserdem/Archlinux_Metadistribution"
@@ -40,6 +40,7 @@ package() {
     #---Tools
     depends+=(
         'dex'                   # Autostart launcher
+        'fd'                    # File finder utility
         'freerdp'               # Remote desktop protocol
         'gtk2fontsel'           # Font viewer
         'gucharmap'             # Character viewer
@@ -55,6 +56,7 @@ package() {
         'profile-sync-daemon'   # Move browser profile to tmpfs
         'profile-cleaner'       # Cleans browser profile
         'pass'                  # Password store
+        'ripgrep'               # Fast search like grep
         's3cmd'                 # Amazon bucket management
         'syncthing'             # File syncing
         'smartmontools'         # Check harddrives
@@ -70,13 +72,16 @@ package() {
         'aria2'         # Download manager
         'deluge'        # Bittorrent client
         'bpytop'        # Resourcess usage, fancier
+        'htop'          # Resourcess usage
         'khal'          # Calendar
         'khard'         # Contacts
         'kmon'          # Kernel modules usage
+        'lazygit'       # Git usage
         'ncdu'          # Disk usage analyzer
         'neomutt'       # Mail client
         'nethogs'       # Network traffic viewer
         'newsboat'      # RSS reader
+        'rclone'        # Cloud storage sync
         'termdown'      # Terminal counter
         'todoman'       # Todo manager
         'vifm'          # File browser
@@ -87,6 +92,7 @@ package() {
     depends+=(
         'baobab'                    # Disk space analyser
         'calibre'                   # Library
+        'digikam'                   # Photo organizer
         'dynalist-desktop'          # List client
         'firefox'                   # Browser
         'uget-integrator-firefox'
@@ -138,6 +144,7 @@ package() {
     depends+=(
         'blueman'                   # Bluetooth management
         'deluge-gtk'                # Torrent client
+        'network-manager-applet'    # Network indicator
         'udiskie'                   # Udisks frontend
         'uget'                      # Download manager
         'uget-integrator'
